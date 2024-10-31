@@ -1,0 +1,13 @@
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const router = express.Router();
+const cartController = require('../controllers/cartController');
+const authenticate = require('../middlewares/authenticate');
+const cartApp = express();
+cartApp.use(cors());
+cartApp.use(bodyParser.json());
+cartApp.use(bodyParser.urlencoded({ extended: false }));
+cartApp.get('/api/:cartId/total', cartController.getCartTotal);
+cartApp.post('/api/add', authenticate, cartController.addToCart);
+module.exports = cartApp;
