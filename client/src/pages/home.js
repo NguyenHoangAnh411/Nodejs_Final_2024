@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../css/Home.css';
+import Navbar from '../components/navbar';
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5002/api/products')
+
+    axios.get('http://localhost:5003/api/products')
       .then(response => {
-        console.log(response.data)
         setProducts(response.data);
       })
       .catch(error => {
@@ -23,8 +25,8 @@ function Home() {
 
   return (
     <div className="home">
+      <Navbar />
       <header>
-        <h1>Welcome to Our E-commerce Store</h1>
         <p>Explore our wide range of products!</p>
       </header>
       

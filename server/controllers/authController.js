@@ -47,8 +47,23 @@ const changepassword = async (req, res) => {
     }
 }
 
+const profile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error(error); // In ra lỗi trong console
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+
 module.exports = {
     register,
     login,
-    changepassword
+    changepassword,
+    profile
 }

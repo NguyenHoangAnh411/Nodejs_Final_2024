@@ -13,4 +13,6 @@ authApp.post('/api/users/register',AuthValidator.registerValidator, controller.r
 authApp.post('/api/users/login', AuthValidator.loginValidator, controller.login)
 
 authApp.post('/api/users/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
+
+authApp.get('/api/users/profile', authenticate, controller.profile);
 module.exports = authApp;
