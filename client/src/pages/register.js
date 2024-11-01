@@ -24,7 +24,7 @@ function Register() {
             console.log('Registration success:', response.data);
             setSuccess(response.data.message);
             setError('');
-            setTimeout(() => navigate('/login'), 2000);
+            setTimeout(() => navigate('/login'), 2000); // Điều hướng đến trang đăng nhập sau 2 giây
         } catch (err) {
             console.error('Registration failed:', err.response?.data);
             setError(err.response?.data?.error || 'Registration failed');
@@ -86,9 +86,10 @@ function Register() {
                 <button type='submit'>Register</button>
             </form>
             <div>
-                <div>Don't have an account? <a href='/register'>Sign up</a></div>
+                <div>Already have an account? 
+                    <button onClick={() => navigate('/login')}>Sign in</button>
+                </div>
             </div>
-            
         </div>
     );
 }

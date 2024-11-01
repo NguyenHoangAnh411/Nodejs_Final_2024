@@ -31,6 +31,10 @@ function Login() {
         }
     };
 
+    const goToRegister = () => {
+        navigate('/register');
+    };
+
     return (
         <div className="login">
             <form onSubmit={handleSubmit} method='POST'>
@@ -63,7 +67,7 @@ function Login() {
                 <button type='submit'>Login</button>
             </form>
             <div>
-                <div>Don't have an account? <a href='/register'>Sign up</a></div>
+                <div>Don't have an account? <button onClick={goToRegister}>Sign up</button></div>
             </div>
         </div>
     );
