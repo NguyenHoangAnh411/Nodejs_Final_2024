@@ -9,7 +9,7 @@ function Home() {
 
   useEffect(() => {
 
-    axios.get('http://localhost:5003/api/products')
+    axios.get('http://localhost:5000/api/products/')
       .then(response => {
         setProducts(response.data);
       })

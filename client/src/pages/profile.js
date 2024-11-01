@@ -13,13 +13,12 @@ function Profile() {
         const fetchUserData = async () => {
             if (isAuthenticated) {
                 try {
-                    const response = await axios.get('http://localhost:5001/api/users/profile', {
+                    const response = await axios.get('http://localhost:5000/api/users/profile', {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
                     setUserData(response.data);
-                    console.log(response.data)
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                 } finally {

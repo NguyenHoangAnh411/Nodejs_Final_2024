@@ -25,16 +25,18 @@ function Navbar() {
         <nav className="navbar">
             <a href='/'>KA</a>
             <div className="nav-links">
-                <div className="menu">
-                    <button onClick={toggleMenu} className="menu-button">
-                    </button>
-                    {menuVisible && (
-                        <div className="dropdown-menu">
-                            <button onClick={goToProfile}>Profile</button>
-                            <button onClick={handleLogout}>Logout</button>
-                        </div>
-                    )}
-                </div>
+            <div className="menu">
+                <button onClick={toggleMenu} className="menu-button">
+                    &#9660; {/* Mũi tên hướng xuống */}
+                </button>
+                {menuVisible && (
+                    <div className="dropdown-menu">
+                        <button onClick={goToProfile}>Profile</button>
+                        <button onClick={handleLogout}>Logout</button>
+                    </div>
+                )}
+            </div>
+
             </div>
         </nav>
     );
