@@ -8,9 +8,9 @@ const authApp = express();
 authApp.use(cors());
 authApp.use(bodyParser.json());
 authApp.use(bodyParser.urlencoded({ extended: false }));
-authApp.post('/api/register',AuthValidator.registerValidator, controller.register)
+authApp.post('/api/users/register',AuthValidator.registerValidator, controller.register)
 
-authApp.post('/api/login', AuthValidator.loginValidator, controller.login)
+authApp.post('/api/users/login', AuthValidator.loginValidator, controller.login)
 
-authApp.post('/api/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
+authApp.post('/api/users/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
 module.exports = authApp;
