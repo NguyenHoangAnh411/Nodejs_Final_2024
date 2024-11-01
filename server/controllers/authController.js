@@ -55,15 +55,40 @@ const profile = async (req, res) => {
         }
         res.json(user);
     } catch (error) {
-        console.error(error); // In ra lỗi trong console
+        console.error(error); 
         res.status(500).json({ message: 'Server error' });
     }
 }
 
+const avatarUpload = async (req, res) => {
+    const { userId, avatar } = req.body;
+
+    if (!userId || !avatar) {
+        return res.status(400).json({ message: 'userId and avatar are required.' });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { avatar: avatar },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json({ message: 'Avatar URL updated successfully.', user });
+    } catch (error) {
+        console.error('Error updating avatar URL:', error);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+}
 
 module.exports = {
     register,
     login,
     changepassword,
-    profile
+    profile,
+    avatarUpload
 }

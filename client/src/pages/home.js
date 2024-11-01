@@ -45,10 +45,6 @@ function Home() {
           ))
         )}
       </div>
-
-      <footer>
-        <p>Total items in cart: {cart.length}</p>
-      </footer>
     </div>
   );
 }

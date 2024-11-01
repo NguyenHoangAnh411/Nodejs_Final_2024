@@ -26,6 +26,16 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "Customer",
+  },
+  avatar: {
+      url: {
+          type: String,
+          required: true,
+      },
+      alt: {
+          type: String,
+          default: '',
+      }
   }
 }, {
   timestamps: true,

@@ -1,57 +1,74 @@
+
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    color: white;
-    padding: 10px 20px;
-  }
-  
-  .navbar a {
-    margin: 0;
-    text-decoration: none;
-    color: white;
-    font-size: 25px;
-    font-weight: 500;
-  }
-  
-  /* .menu {
-    position: relative;
-  } */
-  
-  .menu-button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  .dropdown-menu {
-    position: absolute;
-    background-color: white; /* Màu nền cho menu */
-    border: 1px solid #ccc; /* Đường viền cho menu */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Đổ bóng cho menu */
-    z-index: 1000; /* Đảm bảo menu nằm trên các phần tử khác */
-    padding: 10px; /* Padding cho menu */
-    right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
 }
 
+.navbar a {
+  text-decoration: none;
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
+}
 
-  
-  .dropdown-menu button {
-    display: block;
-    padding: 10px 15px;
-    background: none;
-    color: black;
-    border: none;
-    text-align: left;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .dropdown-menu button:hover {
-    background-color: #777;
-  }
-  
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 18px;
+  color: #ddd;
+  margin-right: 10px;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+.menu-button:hover {
+  color: #aaa;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: #444;
+  border: 1px solid #555;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 10px 0;
+  right: 0;
+  top: 45px;
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.dropdown-menu button {
+  display: block;
+  padding: 10px 15px;
+  background: none;
+  color: white;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 16px;
+}
+
+.dropdown-menu button:hover {
+  background-color: #666;
+  color: #fff;
+}

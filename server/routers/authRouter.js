@@ -12,5 +12,5 @@ router.post('/register', AuthValidator.registerValidator, controller.register);
 router.post('/login', AuthValidator.loginValidator, controller.login);
 router.post('/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
 router.get('/profile', authenticate, controller.profile);
-
+router.put('/profile/avatar', authenticate, controller.avatarUpload);
 module.exports = router;

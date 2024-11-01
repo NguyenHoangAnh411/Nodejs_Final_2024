@@ -1,0 +1,16 @@
+.menu-item {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #b1a9a9;
+    border-radius: 5px;
+}
+
+.detail-infomation {
+    margin-top: 7%;
+}
