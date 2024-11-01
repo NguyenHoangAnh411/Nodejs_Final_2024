@@ -24,7 +24,7 @@ function Register() {
             console.log('Registration success:', response.data);
             setSuccess(response.data.message);
             setError('');
-            setTimeout(() => navigate('/login'), 2000); // Điều hướng đến trang đăng nhập sau 2 giây
+            setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
             console.error('Registration failed:', err.response?.data);
             setError(err.response?.data?.error || 'Registration failed');
