@@ -38,8 +38,8 @@ const shopSchema = new mongoose.Schema({
         },
     },
     products: [{
-        type: mongoose.Schema.Types.ObjectId, // Thay đổi thành ObjectId
-        ref: 'Product', // Tham chiếu tới mô hình Product
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
     }],
     ratings: {
         type: Number,
@@ -52,6 +52,10 @@ const shopSchema = new mongoose.Schema({
     isVerified: {
         type: Boolean,
         default: false,
+    },
+    description: {
+        type: String,
+        default: '',
     },
 }, {
     timestamps: true,
