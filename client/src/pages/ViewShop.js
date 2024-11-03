@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar';
-import Modal from 'react-modal'; // Import react-modal
-import '../css/ViewShop.css'; // Tạo file CSS nếu cần
+import Modal from 'react-modal';
+import '../css/ViewShop.css';
 
-// Thiết lập các thuộc tính cho modal
 Modal.setAppElement('#root');
 
 function ViewShop() {
@@ -24,7 +23,7 @@ function ViewShop() {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setShops(response.data.shops); // Giả định response.data có thuộc tính shops
+                setShops(response.data.shops);
             } catch (error) {
                 console.error('Error fetching shops:', error);
             } finally {
@@ -36,7 +35,7 @@ function ViewShop() {
     }, [token]);
 
     const handleShopClick = (shopId) => {
-        navigate(`/shop/${shopId}`); // Điều hướng đến trang chi tiết của shop
+        navigate(`/shop/${shopId}`);
     };
 
     const handleOpenModal = (shopId) => {
@@ -50,20 +49,20 @@ function ViewShop() {
     };
 
     const handleDeleteShop = async () => {
-        if (!shopToDelete) return; // Kiểm tra xem có shop để xóa không
+        if (!shopToDelete) return;
         try {
             await axios.delete(`http://localhost:5000/api/shops/${shopToDelete}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setShops(shops.filter(shop => shop._id !== shopToDelete)); // Cập nhật danh sách shop
+            setShops(shops.filter(shop => shop._id !== shopToDelete));
             alert('Shop deleted successfully!');
         } catch (error) {
             console.error('Error deleting shop:', error);
             alert('Failed to delete shop.');
         } finally {
-            handleCloseModal(); // Đóng modal sau khi xóa
+            handleCloseModal();
         }
     };
 
@@ -86,7 +85,7 @@ function ViewShop() {
                             <p>Followers: {shop.followers}</p>
                             <p>Ratings: {shop.ratings}</p>
                             <button onClick={(e) => {
-                                e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+                                e.stopPropagation();
                                 handleOpenModal(shop._id);
                             }}>Delete Shop</button>
                             <button onClick={() => handleShopClick(shop._id)}>View Shop</button>
