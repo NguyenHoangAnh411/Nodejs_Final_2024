@@ -95,12 +95,11 @@ function ViewShop() {
                 </div>
             )}
 
-            {/* Modal xác nhận xóa */}
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={handleCloseModal}
                 contentLabel="Confirm Delete"
-                className="modal" // Bạn có thể tạo thêm CSS cho modal
+                className="modal"
                 overlayClassName="overlay"
             >
                 <h2>Confirm Delete</h2>

@@ -1,9 +1,10 @@
 .menu-item {
-    background: none;
+    background: #d4d2d2;
     border: none;
     padding: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    color: black;
 }
 
 .menu-item:hover {
@@ -13,4 +14,17 @@
 
 .detail-infomation {
     margin-top: 7%;
+}
+
+.avatar-container {
+    display: inline-block;
+    border: 2px solid black;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%; 
 }

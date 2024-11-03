@@ -1,6 +1,4 @@
 const { initializeApp } = require('firebase/app');
-const { getAuth } = require('firebase/auth');
-const { getFirestore } = require('firebase/firestore');
 const { getStorage } = require('firebase/storage');
 
 const firebaseConfig = {
@@ -13,11 +11,7 @@ const firebaseConfig = {
   appId: "1:1001125044077:web:b112be3376d17813080464",
   measurementId: "G-X2CNCX09E8"
 };
-
 const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-const db = getFirestore(app);
 const storage = getStorage(app);
 
-module.exports = { auth, db, storage, app };
+module.exports = { storage };
