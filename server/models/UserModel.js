@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: '',
+        default: 'https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2021/07/lol-t1-1.jpg',
     },
     isVerified: {
         type: Boolean,
