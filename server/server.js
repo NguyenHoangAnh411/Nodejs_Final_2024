@@ -14,10 +14,12 @@ mongoose.connect(process.env.MONGO_URI)
 const authRoutes = require('./routers/authRouter');
 const cartRoutes = require('./routers/cartRouter');
 const productRoutes = require('./routers/productRouter');
+const shopRoutes = require('./routers/shopRouter');
 
 app.use('/api/users', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/shops', shopRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

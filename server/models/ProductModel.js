@@ -1,5 +1,7 @@
+// ProductModel.js
 const mongoose = require('mongoose');
 
+// Define the product schema
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -14,8 +16,10 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true,
-        validate(value) {
-            if (value < 0) throw new Error('Price must be a positive number');
+        min: 0,
+        validate: {
+            validator: Number.isFinite,
+            message: 'Price must be a finite number',
         },
     },
     category: {
@@ -36,10 +40,13 @@ const productSchema = new mongoose.Schema({
     ratings: {
         type: Number,
         default: 0,
+        min: 0,
+        max: 5,
     },
     numReviews: {
         type: Number,
         default: 0,
+        min: 0,
     },
     images: [
         {
@@ -50,22 +57,14 @@ const productSchema = new mongoose.Schema({
             alt: {
                 type: String,
                 default: '',
-            }
-        }
+            },
+        },
     ],
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
+}, {
+    timestamps: true,
 });
 
+// Create the Product model
 const Product = mongoose.model('Product', productSchema);
 
-module.exports = {
-  Product,
-  productSchema
-};
+module.exports = Product;

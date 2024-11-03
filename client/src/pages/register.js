@@ -20,8 +20,6 @@ function Register() {
                 password,
                 phone,
             });
-
-            console.log('Registration success:', response.data);
             setSuccess(response.data.message);
             setError('');
             setTimeout(() => navigate('/login'), 2000);

@@ -6,6 +6,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import useUserProfile from '../hooks/userinfomation'; 
 import '../css/Profile.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 function Profile() {
     const { isAuthenticated } = useContext(AuthContext);
     const token = localStorage.getItem('token');
@@ -14,6 +16,7 @@ function Profile() {
     const [avatarUrl, setAvatarUrl] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
     const menuRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (userData) {
@@ -80,6 +83,14 @@ function Profile() {
         document.querySelector('input[type=file]').click();
     };
 
+    const handleCreateShop = () => {
+        navigate('/create-shop'); // Điều hướng đến trang tạo shop
+    };
+
+    const handleViewShops = () => {
+        navigate('/my-shops'); // Điều hướng đến trang danh sách shop
+    };
+
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -126,6 +137,11 @@ function Profile() {
                         style={{ display: 'none' }}
                         accept="image/*"
                     />
+
+                    <div className="shop-actions">
+                        <button onClick={handleCreateShop}>Create Shop</button>
+                        <button onClick={handleViewShops}>View My Shops</button>
+                    </div>
                 </div>
             ) : (
                 <p>No user data found.</p>

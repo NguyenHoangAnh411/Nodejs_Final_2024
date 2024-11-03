@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { productSchema } = require('./Product');
+const { productSchema } = require('./ProductModel');
 
 const shopSchema = new mongoose.Schema({
     name: {
@@ -9,7 +9,16 @@ const shopSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['standard', 'mall'],
+        enum: [
+            'Clothing',
+            'Electronics',
+            'Food',
+            'Books',
+            'Beauty',
+            'Home Goods',
+            'standard',
+            'mall'
+        ],
         default: 'standard',
     },
     owner: {
@@ -28,7 +37,10 @@ const shopSchema = new mongoose.Schema({
             default: 0,
         },
     },
-    products: [productSchema],
+    products: [{
+        type: mongoose.Schema.Types.ObjectId, // Thay đổi thành ObjectId
+        ref: 'Product', // Tham chiếu tới mô hình Product
+    }],
     ratings: {
         type: Number,
         default: 0,
@@ -48,3 +60,4 @@ const shopSchema = new mongoose.Schema({
 const Shop = mongoose.model('Shop', shopSchema);
 
 module.exports = Shop;
+
