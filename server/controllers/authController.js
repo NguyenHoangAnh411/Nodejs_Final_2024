@@ -58,7 +58,7 @@ const profile = async (req, res) => {
 }
 
 const avatarUpload = async (req, res) => {
-    const userId = req.user.userId; // Lấy userId từ req.user
+    const userId = req.user.userId;
     const file = req.file;
 
     if (!userId || !file) {
@@ -67,7 +67,7 @@ const avatarUpload = async (req, res) => {
 
     try {
         const avatarRef = ref(storage, `avatars/${userId}`);
-        await uploadBytes(avatarRef, file.buffer); // Dùng file.buffer
+        await uploadBytes(avatarRef, file.buffer);
         const downloadUrl = await getDownloadURL(avatarRef);
 
         const user = await User.findByIdAndUpdate(
@@ -87,10 +87,27 @@ const avatarUpload = async (req, res) => {
     }
 };
 
+const getUserById = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user by ID:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
 module.exports = {
     register,
     login,
     changepassword,
     profile,
-    avatarUpload
+    avatarUpload,
+    getUserById
 };

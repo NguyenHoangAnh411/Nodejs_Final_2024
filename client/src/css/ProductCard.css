@@ -1,0 +1,33 @@
+/* src/css/ProductCard.css */
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    position: relative; /* Để đặt nút vào đúng vị trí */
+    overflow: hidden; /* Ẩn phần tràn ra ngoài */
+    cursor: pointer;
+  }
+  
+  .product-card img {
+    width: 100%; /* Đặt chiều rộng hình ảnh bằng chiều rộng card */
+    height: 200px; /* Giữ tỷ lệ hình ảnh */
+    object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+  }
+  
+  .product-card h5 {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .product-card p {
+    margin: 2px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .product-card button:hover {
+    background-color: #0056b3;
+  }
+  

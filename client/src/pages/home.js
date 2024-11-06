@@ -2,47 +2,48 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/Home.css';
 import Navbar from '../components/navbar';
+import ProductCard from '../components/ProductCard';
 
 function Home() {
-  const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [shops, setShops] = useState([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const shopResponse = await axios.get('http://localhost:5000/api/shops/getallshops');
+        setShops(shopResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-    axios.get('http://localhost:5000/api/products/')
-      .then(response => {
-        setProducts(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the products!', error);
-      });
+    fetchData();
   }, []);
-
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-    alert(`${product.name} added to cart!`);
-  };
 
   return (
     <div className="home">
       <Navbar />
-      <header>
+      <header className="home-header">
+        <h1>Welcome to Our E-Commerce Store</h1>
         <p>Explore our wide range of products!</p>
       </header>
-      
-      <div className="product-list">
-        {products.length === 0 ? (
-          <p>Loading products...</p>
+
+      <div className="shop-list">
+        {shops.length === 0 ? (
+          <p>Loading shops...</p>
         ) : (
-          products.map((product) => (
-            <div key={product.id} className="product-item">
-              <img src={product.image} alt={product.name} className="product-image" />
-              <h2>{product.name}</h2>
-              <p>{product.description}</p>
-              <p>${product.price}</p>
-              <button onClick={() => addToCart(product)}>Add to Cart</button>
-            </div>
-          ))
+          shops
+            .filter((shop) => shop.products.length > 0)
+            .map((shop) => (
+              <div key={shop._id} className="shop-item">
+                <h3>Shop: {shop.name}</h3>
+                <div className="product-list">
+                  {shop.products.map((productId) => (
+                    <ProductCard key={productId} productId={productId} shopId={shop._id} />
+                  ))}
+                </div>
+              </div>
+            ))
         )}
       </div>
     </div>

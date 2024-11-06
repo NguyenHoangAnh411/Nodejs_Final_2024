@@ -8,7 +8,7 @@ import Profile from './pages/profile';
 import ViewShop from './pages/ViewShop';
 import ShopDetail from './pages/shopDetail';
 import CreateShop from './pages/createShop';
-
+import ProductDetail from './pages/ProductDetail';
 function App() {
   return (
     <AuthProvider>
@@ -21,6 +21,7 @@ function App() {
           <Route path="/my-shops" element={<ViewShop />} />
           <Route path="/shop/:shopId" element={<ShopDetail />} /> 
           <Route path="/create-shop" element={<CreateShop />} /> 
+          <Route path="/product/:productId/:shopId" element={<ProductDetail />} />
         </Routes>
       </Router>
     </AuthProvider>

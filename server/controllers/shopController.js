@@ -28,13 +28,13 @@ const createShop = async (req, res) => {
         }
 
         const ownerId = req.user.userId;
-
+        const ownerName = req.user.name;
         const newShop = new Shop({
             name,
             type: type || 'standard',
             owner: {
                 ownerId: ownerId,
-                ownerName: req.user.name || 'Unknown',
+                ownerName: ownerName || 'Unknown',
                 rating: 0
             },
             products: [],
@@ -118,4 +118,13 @@ const deleteShop = async (req, res) => {
     }
 };
 
-module.exports = { createShop, getShopsByOwnerId, getShopDetail, editShop, deleteShop }
+const getShops = async (req, res) => {
+    try {
+        const shops = await Shop.find();
+        res.status(200).json(shops);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+}
+
+module.exports = { createShop, getShopsByOwnerId, getShopDetail, editShop, deleteShop, getShops }

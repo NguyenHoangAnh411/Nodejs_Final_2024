@@ -9,6 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 router.use(cors());
 
+router.get('/:userId', controller.getUserById);
 router.post('/register', AuthValidator.registerValidator, controller.register);
 router.post('/login', AuthValidator.loginValidator, controller.login);
 router.post('/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);

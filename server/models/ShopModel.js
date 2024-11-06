@@ -21,21 +21,10 @@ const shopSchema = new mongoose.Schema({
         ],
         default: 'standard',
     },
-    owner: {
-        ownerId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: true,
-        },
-        ownerName: {
-            type: String,
-            required: true,
-            trim: true,
-        },
-        rating: {
-            type: Number,
-            default: 0,
-        },
+    ownerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
     products: [{
         type: mongoose.Schema.Types.ObjectId,
