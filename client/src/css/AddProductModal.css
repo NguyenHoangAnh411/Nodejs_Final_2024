@@ -7,9 +7,9 @@
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 400px; /* Điều chỉnh chiều rộng modal */
-    max-width: 90%; /* Để đảm bảo modal không quá rộng trên thiết bị nhỏ */
-    z-index: 1000; /* Đảm bảo modal nổi bật hơn các thành phần khác */
+    width: 400px;
+    max-width: 90%;
+    z-index: 1000;
 }
 
 .modal-overlay {
@@ -18,43 +18,101 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); /* Màu nền mờ cho overlay */
-    z-index: 999; /* Đảm bảo overlay nằm dưới modal */
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999;
 }
 
 .modal h1 {
     margin-bottom: 20px;
-    text-align: center; /* Căn giữa tiêu đề */
+    text-align: center;
 }
 
 .modal input[type="text"],
 .modal input[type="number"],
 .modal textarea,
 .modal input[type="file"] {
-    width: 100%; /* Đặt chiều rộng 100% cho các input */
+    width: 100%;
     padding: 10px;
-    margin: 10px 0; /* Khoảng cách giữa các input */
+    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; /* Để padding không làm rộng thêm */
+    box-sizing: border-box;
 }
 
 .modal button {
-    background-color: #4CAF50; /* Màu nền cho nút */
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     padding: 10px;
     cursor: pointer;
-    width: 100%; /* Chiều rộng đầy đủ cho nút */
-    font-size: 16px; /* Kích thước chữ lớn hơn */
+    width: 100%;
+    font-size: 16px;
 }
 
 .modal button:hover {
-    background-color: #45a049; /* Hiệu ứng hover cho nút */
+    background-color: #45a049;
 }
 
 .modal textarea {
-    resize: none; /* Không cho phép người dùng thay đổi kích thước */
-    height: 80px; /* Đặt chiều cao cố định cho textarea */
+    resize: none;
+    height: 80px;
+}
+
+.file-input-container {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.file-label {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: block;
+    color: #555;
+    cursor: pointer;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #f1f1f1;
+    border-radius: 6px;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.file-label:hover {
+    background-color: #ddd;
+}
+
+.file-input {
+    display: none;
+}
+
+.image-preview {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.image-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
 }

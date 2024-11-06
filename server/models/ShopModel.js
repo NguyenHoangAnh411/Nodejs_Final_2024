@@ -21,10 +21,12 @@ const shopSchema = new mongoose.Schema({
         ],
         default: 'standard',
     },
-    ownerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+    owner: {
+        ownerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
     },
     products: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -44,8 +46,8 @@ const shopSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        default: '',
-    },
+        require: false
+    }
 }, {
     timestamps: true,
 });
@@ -53,4 +55,3 @@ const shopSchema = new mongoose.Schema({
 const Shop = mongoose.model('Shop', shopSchema);
 
 module.exports = Shop;
-

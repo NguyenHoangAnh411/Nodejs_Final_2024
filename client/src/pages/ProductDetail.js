@@ -4,7 +4,7 @@ import { getProductById, getRelatedProducts } from '../hooks/productApi';
 import { getShopById } from '../hooks/shopApi';
 import { getUserById } from '../hooks/userApi';
 import { getReviewsByProductId, submitReview } from '../hooks/reviewApi';
-import { addToCart } from '../hooks/cartApi'; // Import API để thêm vào giỏ hàng
+import { addToCart } from '../hooks/cartApi';
 import '../css/ProductDetail.css';
 import Navbar from '../components/navbar';
 import ProductCard from '../components/ProductCard';
@@ -35,8 +35,8 @@ function ProductDetail() {
       try {
         const shopData = await getShopById(shopId);
         setShop(shopData);
-        if (shopData.ownerId) {
-          const ownerData = await getUserById(shopData.ownerId);
+        if (shopData.owner.ownerId) {
+          const ownerData = await getUserById(shopData.owner.ownerId);
           setOwner(ownerData);
         }
       } catch (error) {
@@ -82,8 +82,8 @@ function ProductDetail() {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart(productId); // Gọi API để thêm sản phẩm vào giỏ hàng
-      alert('Product added to cart!'); // Hiển thị thông báo cho người dùng
+      await addToCart(productId);
+      alert('Product added to cart!');
     } catch (error) {
       console.error('Error adding product to cart:', error);
     }

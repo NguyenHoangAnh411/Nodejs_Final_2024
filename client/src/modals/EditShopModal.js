@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import axios from 'axios';
-
+import '../css/EditShopModal.css'
 Modal.setAppElement('#root');
 
 function EditShopModal({ isOpen, onRequestClose, onEditShopProduct, initialShopData }) {
@@ -27,7 +26,7 @@ function EditShopModal({ isOpen, onRequestClose, onEditShopProduct, initialShopD
             return;
         }
 
-        onEditShopProduct(tempShopData); // Gọi hàm cập nhật shop từ ShopDetail
+        onEditShopProduct(tempShopData); 
     };
 
     return (
@@ -55,13 +54,21 @@ function EditShopModal({ isOpen, onRequestClose, onEditShopProduct, initialShopD
                 <div>
                     <label>
                         Type:
-                        <input
-                            type="text"
+                        <select
                             name="type"
                             value={tempShopData?.type || ''}
                             onChange={handleChange}
                             required
-                        />
+                        >
+                            <option value="Clothing">Clothing</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Food">Food</option>
+                            <option value="Books">Books</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Home Goods">Home Goods</option>
+                            <option value="standard">Standard</option>
+                            <option value="mall">Mall</option>
+                        </select>
                     </label>
                 </div>
                 <div>
@@ -74,8 +81,11 @@ function EditShopModal({ isOpen, onRequestClose, onEditShopProduct, initialShopD
                         />
                     </label>
                 </div>
-                <button type="submit">Update Shop</button>
-                <button type="button" onClick={onRequestClose}>Cancel</button>
+                <div className="modal-actions">
+                    <button type="submit">Update Shop</button>
+                    <button type="button" onClick={onRequestClose}>Cancel</button>
+                </div>
+
             </form>
         </Modal>
     );

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import '../css/AddProductModal.css';
 Modal.setAppElement('#root');
 
-function AddProductModal({ isOpen, onRequestClose }) {
+function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
     const { shopId } = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -15,6 +15,7 @@ function AddProductModal({ isOpen, onRequestClose }) {
     const [stock, setStock] = useState('');
     const [images, setImages] = useState([]);
     const token = localStorage.getItem('token');
+
     const handleImageChange = (e) => {
         setImages(Array.from(e.target.files));
     };
@@ -29,7 +30,7 @@ function AddProductModal({ isOpen, onRequestClose }) {
         formData.append('category', category);
         formData.append('brand', brand);
         formData.append('stock', stock); 
-    
+        
         images.forEach((image) => {
             formData.append('images', image);
         });
@@ -41,9 +42,16 @@ function AddProductModal({ isOpen, onRequestClose }) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log('Sản phẩm đã được thêm:', response.data);
+
+            console.log('Product added:', response.data);
+
+            onAddProduct();
+            onRequestClose();
+            alert('Product added successfully!');
+
         } catch (error) {
-            console.error('Lỗi khi thêm sản phẩm:', error);
+            console.error('Error adding product:', error);
+            alert('Failed to add product!');
         }
     };
     
@@ -55,16 +63,45 @@ function AddProductModal({ isOpen, onRequestClose }) {
             className="modal"
             overlayClassName="modal-overlay"
         >
-            <h1>Thêm sản phẩm</h1>
+            <h1>Add Product</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tên sản phẩm" required />
-                <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Mô tả sản phẩm" required />
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Giá" required />
-                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Danh mục" required />
-                <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Thương hiệu" required />
-                <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="Số lượng" required />
-                <input type="file" multiple onChange={handleImageChange} required />
-                <button type="submit">Thêm sản phẩm</button>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Product Name" required />
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product Description" required />
+                <input
+                    type="text"
+                    value={`$${price}`}
+                    onChange={(e) => setPrice(e.target.value.replace('$', '').replace(',', ''))}
+                    placeholder="Price"
+                    required
+                />
+                <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" required />
+                <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand" required />
+                <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" required />
+
+                <div className="file-input-container">
+                    <label htmlFor="file-input" className="file-label">Choose Product Images</label>
+                    <input 
+                        type="file" 
+                        id="file-input" 
+                        className="file-input" 
+                        multiple 
+                        onChange={handleImageChange} 
+                        required 
+                    />
+                </div>
+
+                <div className="image-preview">
+                    {images && images.length > 0 && images.map((image, index) => (
+                        <img
+                            key={index}
+                            src={URL.createObjectURL(image)}
+                            alt={`product-preview-${index}`}
+                            className="image-thumbnail"
+                        />
+                    ))}
+                </div>
+
+                <button type="submit" className="submit-button">Add Product</button>
             </form>
         </Modal>
     );

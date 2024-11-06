@@ -6,8 +6,8 @@ const getShopsByOwnerId = async (req, res) => {
     const ownerId = req.user.userId;
 
     try {
-        const shops = await Shop.find({ 'owner.ownerId': ownerId }).populate('owner.ownerId', 'name email');
-        console.log(ownerId)
+        const shops = await Shop.find({ 'owner.ownerId': ownerId }).populate('owner.ownerId', 'name email'); 
+
         if (!shops.length) {
             return res.status(404).json({ message: 'No shops found for this owner' });
         }
@@ -19,28 +19,27 @@ const getShopsByOwnerId = async (req, res) => {
     }
 };
 
-const createShop = async (req, res) => {
-    try {
-        const { name, type } = req.body;
 
+const createShop = async (req, res) => {
+    const { name, type } = req.body;
+
+    try {
         if (!name) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
         const ownerId = req.user.userId;
-        const ownerName = req.user.name;
+
         const newShop = new Shop({
             name,
             type: type || 'standard',
             owner: {
                 ownerId: ownerId,
-                ownerName: ownerName || 'Unknown',
-                rating: 0
             },
             products: [],
             ratings: 0,
             followers: 0,
-            isVerified: false
+            isVerified: false,
         });
 
         await newShop.save();
@@ -51,6 +50,7 @@ const createShop = async (req, res) => {
         res.status(500).json({ message: 'Failed to create shop' });
     }
 };
+
 
 const getShopDetail = async (req, res) => {
     const { shopId } = req.params;
@@ -68,6 +68,7 @@ const getShopDetail = async (req, res) => {
         res.status(500).json({ message: 'Failed to retrieve shop details' });
     }
 };
+
 
 const editShop = async (req, res) => {
     const { shopId } = req.params;
@@ -94,6 +95,7 @@ const editShop = async (req, res) => {
         res.status(500).json({ message: 'Failed to update shop' });
     }
 };
+
 
 const deleteShop = async (req, res) => {
     const { shopId } = req.params;
@@ -125,6 +127,6 @@ const getShops = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
-}
+};
 
 module.exports = { createShop, getShopsByOwnerId, getShopDetail, editShop, deleteShop, getShops }

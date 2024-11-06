@@ -6,7 +6,6 @@ import AddProductModal from '../modals/AddProductModal';
 import EditShopModal from '../modals/EditShopModal';
 import '../css/ShopDetail.css';
 
-
 function ShopDetail() {
     const { shopId } = useParams();
     const [shop, setShop] = useState(null);
@@ -97,18 +96,18 @@ function ShopDetail() {
 
             <h2>List of Products:</h2>
             <div className="product-list">
-                {shop.products.length > 0 ? (
+                {Array.isArray(shop.products) && shop.products.length > 0 ? (
                     shop.products.map(product => (
                         <div key={product._id} className="product-card">
                             <h3>{product.name}</h3>
                             <p><strong>Description:</strong> {product.description}</p>
-                            <p><strong>Price:</strong> ${product.price}</p>
+                            <p><strong>Price:</strong> ${product.price}</p> 
                             <p><strong>Category:</strong> {product.category}</p>
                             <p><strong>Brand:</strong> {product.brand}</p>
                             <p><strong>Stock:</strong> {product.stock}</p>
                             <div>
                                 <strong>Images:</strong>
-                                {product.images.map(image => (
+                                {Array.isArray(product.images) && product.images.map(image => (
                                     <img key={image._id} src={image.url} alt={image.alt} style={{ width: '100px', margin: '5px' }} />
                                 ))}
                             </div>
@@ -118,6 +117,7 @@ function ShopDetail() {
                     <p>No products available.</p>
                 )}
             </div>
+
 
             <button onClick={handleEditShop}>Edit Shop</button>
             <button onClick={handleProductModalOpen}>Add Product</button>
@@ -131,8 +131,8 @@ function ShopDetail() {
             <EditShopModal
                 isOpen={modalIsOpen}
                 onRequestClose={handleCloseModal}
-                onEditShopProduct={handleUpdateShop} 
-                initialShopData={initialShopData} 
+                onEditShopProduct={handleUpdateShop}
+                initialShopData={initialShopData}
             />
         </div>
     );

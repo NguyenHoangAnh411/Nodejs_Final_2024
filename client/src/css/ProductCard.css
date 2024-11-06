@@ -1,17 +1,16 @@
-/* src/css/ProductCard.css */
 .product-card {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
-    position: relative; /* Để đặt nút vào đúng vị trí */
-    overflow: hidden; /* Ẩn phần tràn ra ngoài */
+    position: relative;
+    overflow: hidden;
     cursor: pointer;
   }
   
   .product-card img {
-    width: 100%; /* Đặt chiều rộng hình ảnh bằng chiều rộng card */
-    height: 200px; /* Giữ tỷ lệ hình ảnh */
-    object-fit: cover; /* Đảm bảo hình ảnh không bị méo */
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
   }
   
   .product-card h5 {

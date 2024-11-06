@@ -9,10 +9,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 router.use(cors());
 
-router.get('/:userId', controller.getUserById);
+
 router.post('/register', AuthValidator.registerValidator, controller.register);
 router.post('/login', AuthValidator.loginValidator, controller.login);
 router.post('/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
 router.get('/profile', authenticate, controller.profile);
 router.put('/profile/avatar', authenticate, upload.single('avatar'), controller.avatarUpload);
+router.get('/:userId', controller.getUserById);
 module.exports = router;
