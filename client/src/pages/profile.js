@@ -1,16 +1,18 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import '../css/Profile.css';
 import { useNavigate } from 'react-router-dom';
-
+import UpdateProfileModal from '../modals/UpdateProfileModal';
+import Sidebar from '../components/Sidebar';
 function Profile() {
     const { isAuthenticated } = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const token = localStorage.getItem('token');
     const menuRef = useRef(null);
     const navigate = useNavigate();
@@ -92,6 +94,13 @@ function Profile() {
     const handleCreateShop = () => navigate('/create-shop');
     const handleViewShops = () => navigate('/my-shops');
 
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+    const handleProfileUpdated = (updatedData) => {
+        setUserData(updatedData);
+    };
+    
     if (loading) return <p>Loading...</p>;
 
     if (!isAuthenticated) return <p>You are not logged in. Please log in to view your profile.</p>;
@@ -99,6 +108,8 @@ function Profile() {
     return (
         <div className="profile">
             <Navbar />
+            <Sidebar />
+            <div className="main-content">
             <h1>User Profile</h1>
             {userData ? (
                 <div>
@@ -109,7 +120,6 @@ function Profile() {
                             className="avatar-image"
                         />
                     </label>
-
 
                     {menuVisible && (
                         <div
@@ -136,6 +146,14 @@ function Profile() {
                         <p><strong>Name:</strong> {userData.name}</p>
                         <p><strong>Email:</strong> {userData.email}</p>
                         <p><strong>Phone:</strong> {userData.phone}</p>
+                        <h3>Addresses:</h3>
+                        <ul>
+                            {userData.addresses && userData.addresses.map((address, index) => (
+                                <li key={index}>
+                                    {address.recipientName}, {address.street}, {address.city}, {address.postalCode}, {address.phone}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
                     <input
@@ -148,11 +166,21 @@ function Profile() {
                     <div className="shop-actions">
                         <button onClick={handleCreateShop}>Create Shop</button>
                         <button onClick={handleViewShops}>View My Shops</button>
+                        <button onClick={openModal}>Update Profile</button>
                     </div>
+
+                    <UpdateProfileModal 
+                        isOpen={isModalOpen}
+                        onRequestClose={closeModal}
+                        userData={userData}
+                        token={token}
+                        onProfileUpdated={handleProfileUpdated}
+                    />
                 </div>
             ) : (
                 <p>No user data found.</p>
             )}
+            </div>
         </div>
     );
 }

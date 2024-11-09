@@ -1,71 +1,92 @@
 const Product = require('../models/ProductModel');
 const Shop = require('../models/ShopModel');
+const Category = require('../models/CategoryModel');
 const { storage } = require('../../client/src/components/firebaseService');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
-
+const mongoose = require('mongoose');
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const { category, minPrice, maxPrice, sort, tags, page = 1, limit = 10 } = req.query;
+        let query = {};
+
+        if (category) query.category = category;
+        if (minPrice) query.price = { $gte: minPrice };
+        if (maxPrice) query.price = { ...query.price, $lte: maxPrice };
+        if (tags) query.tags = { $in: tags.split(',') };
+
+        let products = await Product.find(query)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .populate('category', 'name description');
+
+        if (sort) {
+            products = products.sort((a, b) => {
+                if (sort === 'price-asc') return a.price - b.price;
+                if (sort === 'price-desc') return b.price - a.price;
+                return 0;
+            });
+        }
+
         res.status(200).json(products);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi server', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
-}
+};
+
 
 const getProductById = async (req, res) => {
     try {
+        const product = await Product.findById(req.params.productId);
+        if (!product) {
+          return res.status(404).json({ message: 'Product not found' });
+        }
+        res.json(product);
+      } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+      }
+};
+
+const updateProduct = async (req, res) => {
+    try {
         const { productId } = req.params;
+        const updates = req.body;
 
         const product = await Product.findById(productId);
 
         if (!product) {
-            return res.status(404).json({ message: 'Sản phẩm không tìm thấy' });
+            return res.status(404).json({ message: 'Product not found' });
         }
 
-        res.status(200).json(product);
+        Object.assign(product, updates);
+        await product.save();
+
+        res.status(200).json({ message: 'Product updated', product });
     } catch (error) {
-        console.error('Error fetching product:', error);
-        res.status(500).json({ message: 'Lỗi server khi lấy sản phẩm', error: error.message });
+        res.status(500).json({ message: 'Server error when updating product', error: error.message });
     }
 };
-
-const addProduct = async (req, res) => {
-    try {
-        const { name, description, price, category, brand, stock } = req.body; // Bỏ hình ảnh ra khỏi đây
-
-        if (!name || !description || !price || !category || !brand || stock === undefined) {
-            return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin sản phẩm' });
-        }
-
-        const newProduct = new Product({
-            name,
-            description,
-            price,
-            category,
-            brand,
-            stock,
-            images: [], // Khởi tạo hình ảnh như một mảng rỗng
-        });
-
-        const savedProduct = await newProduct.save();
-        res.status(201).json(savedProduct);
-    } catch (error) {
-        res.status(500).json({ message: 'Lỗi server khi thêm sản phẩm', error: error.message });
-    }
-}
 
 const addProductToShop = async (req, res) => {
     try {
         const { shopId } = req.params;
-        const { name, description, price, category, brand, stock } = req.body;
+        const { name, description, price, category, brand, stock, color } = req.body;
+
+        if (!category) {
+            return res.status(400).json({ message: 'Please provide category name' });
+        }
+
+        const foundCategory = await Category.findOne({ name: category });
+        if (!foundCategory) {
+            return res.status(400).json({ message: 'Category not found' });
+        }
 
         const images = req.files;
         if (!images || images.length === 0) {
-            return res.status(400).json({ message: 'Vui lòng cung cấp hình ảnh cho sản phẩm' });
+            return res.status(400).json({ message: 'Please provide product images' });
         }
 
-        if (!name || !description || !price || !category || !brand || stock === undefined) {
-            return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin sản phẩm' });
+        if (!name || !description || !price || !brand || stock === undefined) {
+            return res.status(400).json({ message: 'Please fill in all required fields' });
         }
 
         const numericPrice = parseFloat(price);
@@ -83,10 +104,11 @@ const addProductToShop = async (req, res) => {
             name,
             description,
             price: numericPrice,
-            category,
+            category: foundCategory._id,
             brand,
             stock: numericStock,
             images: uploadedImages,
+            color,
         });
 
         const savedProduct = await newProduct.save();
@@ -98,15 +120,35 @@ const addProductToShop = async (req, res) => {
         );
 
         if (!updatedShop) {
-            return res.status(404).json({ message: 'Shop không tìm thấy' });
+            return res.status(404).json({ message: 'Shop not found' });
         }
 
-        res.status(201).json({ message: 'Sản phẩm đã được thêm vào shop và hình ảnh đã được cập nhật.', product: savedProduct });
+        res.status(201).json({ message: 'Product added to shop', product: savedProduct });
     } catch (error) {
-        console.error('Error adding product to shop:', error);
-        res.status(500).json({ message: 'Lỗi server khi thêm sản phẩm vào shop', error: error.message });
+        res.status(500).json({ message: 'Server error when adding product to shop', error: error.message });
     }
 };
 
+const deleteProduct = async (req, res) => {
+    try {
+        const { productId } = req.params;
 
-module.exports = { getProducts, addProduct, addProductToShop, getProductById };
+        const product = await Product.findByIdAndDelete(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json({ message: 'Product deleted' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error when deleting product', error: error.message });
+    }
+};
+
+module.exports = { 
+    getProducts,
+    addProductToShop, 
+    getProductById, 
+    updateProduct, 
+    deleteProduct, 
+};

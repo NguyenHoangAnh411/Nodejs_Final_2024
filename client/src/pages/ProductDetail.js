@@ -6,9 +6,9 @@ import { getUserById } from '../hooks/userApi';
 import { getReviewsByProductId, submitReview } from '../hooks/reviewApi';
 import { addToCart } from '../hooks/cartApi';
 import '../css/ProductDetail.css';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
-
+import Sidebar from '../components/Sidebar';
 function ProductDetail() {
   const { productId, shopId } = useParams(); 
 
@@ -19,6 +19,7 @@ function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -81,11 +82,19 @@ function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
+    setLoading(true);
     try {
-      await addToCart(productId);
-      alert('Product added to cart!');
+      const response = await addToCart(productId);
+      if (response) {
+        alert('Sản phẩm đã được thêm vào giỏ hàng');
+      } else {
+        alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+      }
     } catch (error) {
-      console.error('Error adding product to cart:', error);
+      console.error("Lỗi khi thêm sản phẩm vào giỏ hàng", error);
+      alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,13 +103,17 @@ function ProductDetail() {
   return (
     <div className="product-detail">
       <Navbar />
+      <Sidebar />
+      <div className="main-content">
       <h2>{product.name}</h2>
       {product.images && product.images.length > 0 && (
         <img src={product.images[0]?.url} alt={product.name} className="product-image" />
       )}
       <p><strong>Price:</strong> ${product.price}</p>
       <p><strong>Description:</strong> {product.description}</p>
-      <button onClick={handleAddToCart} className="add-to-cart-button">Add to Cart</button>
+      <button onClick={handleAddToCart} className="add-to-cart-button" disabled={loading}>
+        {loading ? 'Đang thêm...' : 'Add to Cart'}
+      </button>
 
       <div className="shop-info">
         <h3>Shop Information</h3>
@@ -153,9 +166,17 @@ function ProductDetail() {
         <h3>Related Products</h3>
         <div className="related-products-list">
           {relatedProducts.map((relatedProduct) => (
-            <ProductCard key={relatedProduct._id} productId={relatedProduct._id} shopId={relatedProduct.shopId} />
+            <ProductCard 
+              key={relatedProduct._id} 
+              productId={relatedProduct._id} 
+              shopId={relatedProduct.shopId} 
+              productName={relatedProduct.name}
+              productPrice={relatedProduct.price}
+              productImage={relatedProduct.images[0]?.url || ''}
+            />
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import Navbar from '../components/navbar';
+import Navbar from '../components/Navbar';
 import AddProductModal from '../modals/AddProductModal';
 import EditShopModal from '../modals/EditShopModal';
 import '../css/ShopDetail.css';
-
+import Sidebar from '../components/Sidebar';
 function ShopDetail() {
     const { shopId } = useParams();
     const [shop, setShop] = useState(null);
@@ -13,6 +13,7 @@ function ShopDetail() {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [productModalIsOpen, setProductModalIsOpen] = useState(false);
     const [initialShopData, setInitialShopData] = useState(null);
+    const [categories, setCategories] = useState({});
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -21,6 +22,16 @@ function ShopDetail() {
                 const response = await axios.get(`http://localhost:5000/api/shops/${shopId}`);
                 setShop(response.data.shop);
                 setInitialShopData(response.data.shop);
+
+                const categoryIds = response.data.shop.products.map(product => product.category);
+                const categoryPromises = categoryIds.map(id => axios.get(`http://localhost:5000/api/category/getcategories/${id}`));
+                const categoryResponses = await Promise.all(categoryPromises);
+
+                const categoryMap = categoryResponses.reduce((acc, res) => {
+                    acc[res.data._id] = res.data;
+                    return acc;
+                }, {});
+                setCategories(categoryMap);
             } catch (error) {
                 console.error('Error fetching shop details:', error);
             } finally {
@@ -88,52 +99,59 @@ function ShopDetail() {
     return (
         <div className="shop-detail">
             <Navbar />
-            <h1>{shop.name}</h1>
-            <p><strong>Type:</strong> {shop.type}</p>
-            <p><strong>Followers:</strong> {shop.followers}</p>
-            <p><strong>Ratings:</strong> {shop.ratings}</p>
-            <p><strong>Description:</strong> {shop.description || 'No description available.'}</p>
+            <Sidebar/>
+            <div className="shopDetail-content">
+                <div className="main-content">
+                    <h1>{shop.name}</h1>
+                    <p><strong>Type:</strong> {shop.type}</p>
+                    <p><strong>Followers:</strong> {shop.followers}</p>
+                    <p><strong>Ratings:</strong> {shop.ratings}</p>
+                    <p><strong>Description:</strong> {shop.description || 'No description available.'}</p>
 
-            <h2>List of Products:</h2>
-            <div className="product-list">
-                {Array.isArray(shop.products) && shop.products.length > 0 ? (
-                    shop.products.map(product => (
-                        <div key={product._id} className="product-card">
-                            <h3>{product.name}</h3>
-                            <p><strong>Description:</strong> {product.description}</p>
-                            <p><strong>Price:</strong> ${product.price}</p> 
-                            <p><strong>Category:</strong> {product.category}</p>
-                            <p><strong>Brand:</strong> {product.brand}</p>
-                            <p><strong>Stock:</strong> {product.stock}</p>
-                            <div>
-                                <strong>Images:</strong>
-                                {Array.isArray(product.images) && product.images.map(image => (
-                                    <img key={image._id} src={image.url} alt={image.alt} style={{ width: '100px', margin: '5px' }} />
-                                ))}
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No products available.</p>
-                )}
+                    <h2>List of Products:</h2>
+                    <div className="product-list">
+                        {Array.isArray(shop.products) && shop.products.length > 0 ? (
+                            shop.products.map(product => {
+                                const category = categories[product.category];
+                                return (
+                                    <div key={product._id} className="product-card">
+                                        <h3>{product.name}</h3>
+                                        <p><strong>Description:</strong> {product.description}</p>
+                                        <p><strong>Price:</strong> ${product.price}</p> 
+                                        <p><strong>Category:</strong> {category ? category.name : 'Loading category...'}</p>
+                                        <p><strong>Brand:</strong> {product.brand}</p>
+                                        <p><strong>Stock:</strong> {product.stock}</p>
+                                        <div>
+                                            <strong>Images:</strong>
+                                            {Array.isArray(product.images) && product.images.map(image => (
+                                                <img key={image._id} src={image.url} alt={image.alt} style={{ width: '100px', margin: '5px' }} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p>No products available.</p>
+                        )}
+                    </div>
+
+                    <button onClick={handleEditShop}>Edit Shop</button>
+                    <button onClick={handleProductModalOpen}>Add Product</button>
+
+                    <AddProductModal
+                        isOpen={productModalIsOpen}
+                        onRequestClose={handleProductModalClose}
+                        onAddProduct={refreshShopDetail}
+                    />
+
+                    <EditShopModal
+                        isOpen={modalIsOpen}
+                        onRequestClose={handleCloseModal}
+                        onEditShopProduct={handleUpdateShop}
+                        initialShopData={initialShopData}
+                    />
+                    </div>
             </div>
-
-
-            <button onClick={handleEditShop}>Edit Shop</button>
-            <button onClick={handleProductModalOpen}>Add Product</button>
-
-            <AddProductModal
-                isOpen={productModalIsOpen}
-                onRequestClose={handleProductModalClose}
-                onAddProduct={refreshShopDetail}
-            />
-
-            <EditShopModal
-                isOpen={modalIsOpen}
-                onRequestClose={handleCloseModal}
-                onEditShopProduct={handleUpdateShop}
-                initialShopData={initialShopData}
-            />
         </div>
     );
 }

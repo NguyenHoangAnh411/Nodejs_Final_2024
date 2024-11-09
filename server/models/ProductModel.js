@@ -1,67 +1,23 @@
 const mongoose = require('mongoose');
 
+const variantSchema = new mongoose.Schema({
+    size: { type: String },
+    color: { type: String },
+    stock: { type: Number, required: true, min: 0 },
+});
+
 const productSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    price: {
-        type: Number,
-        required: true,
-        min: 0,
-        validate: {
-            validator: Number.isFinite,
-            message: 'Price must be a finite number',
-        },
-    },
-    category: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    brand: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    stock: {
-        type: Number,
-        required: true,
-        min: 0,
-    },
-    ratings: {
-        type: Number,
-        default: 0,
-        min: 0,
-        max: 5,
-    },
-    numReviews: {
-        type: Number,
-        default: 0,
-        min: 0,
-    },
-    images: [
-        {
-            url: {
-                type: String,
-                required: true,
-            },
-            alt: {
-                type: String,
-                default: '',
-            },
-        },
-    ],
-}, {
-    timestamps: true,
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+    brand: { type: String, required: true },
+    stock: { type: Number, required: true },
+    variants: { type: [variantSchema], default: [] },
+    tags: { type: [String], default: [] },
+    images: { type: Array, default: [] },
+    color: { type: String, default: '' },
 });
 
 const Product = mongoose.model('Product', productSchema);
-
 module.exports = Product;

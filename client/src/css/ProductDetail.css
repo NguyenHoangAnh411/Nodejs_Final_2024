@@ -1,6 +1,10 @@
 .product-detail {
-    padding: 10px;
-    font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #f4f4f4;
+  overflow-x: hidden;
   }
   .product-image {
     max-width: 100%;

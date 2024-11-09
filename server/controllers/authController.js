@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const { storage } = require('../../client/src/components/firebaseService');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const mongoose = require('mongoose');
+
 const register = async (req, res) => {
     try {
         const result = await authService.register(req.body);
@@ -11,7 +12,28 @@ const register = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}
+};
+
+const verifyEmail = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const user = await User.findOne({ verificationToken: token });
+
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired verification token' });
+        }
+
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        await user.save();
+
+        res.status(200).json({ message: 'Email verified successfully' });
+    } catch (error) {
+        console.error('Error verifying email:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
 const login = async (req, res) => {
     try {
@@ -107,8 +129,38 @@ const avatarUpload = async (req, res) => {
     }
 };
 
+const updateUserProfile = async (req, res) => {
+    const { userId } = req.user;
+    const { name, email, phone, addresses } = req.body;
+  
+    try {
 
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(phone && { phone }),
+            ...(addresses && { addresses }),
+          }
+        },
+        { new: true }
+      );
 
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({
+        message: 'User profile updated successfully',
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ message: 'Server error', error });
+    }
+  };
 module.exports = {
     register,
     login,
@@ -116,5 +168,6 @@ module.exports = {
     changepassword,
     profile,
     avatarUpload,
-    
+    verifyEmail,
+    updateUserProfile
 };
