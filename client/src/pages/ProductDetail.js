@@ -6,7 +6,6 @@ import { getUserById } from '../hooks/userApi';
 import { getReviewsByProductId, submitReview } from '../hooks/reviewApi';
 import { addToCart } from '../hooks/cartApi';
 import '../css/ProductDetail.css';
-import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Sidebar from '../components/Sidebar';
 function ProductDetail() {
@@ -102,7 +101,6 @@ function ProductDetail() {
 
   return (
     <div className="product-detail">
-      <Navbar />
       <Sidebar />
       <div className="main-content">
       <h2>{product.name}</h2>

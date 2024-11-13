@@ -87,5 +87,50 @@ const getHomePageProducts = async (req, res) => {
     }
 };
 
+const searchProducts = async (req, res) => {
+    const { query = '', page = 1, limit = 20, priceRange, category, shopName } = req.query;
+  
+    const filters = {};
+  
+    if (query) {
+      filters.name = new RegExp(query, 'i');
+    }
+  
+    if (priceRange) {
+      const [min, max] = priceRange.split(',').map(Number);
+      filters.price = { $gte: min, $lte: max };
+    }
+  
+    try {
+      let shopIds = [];
+      if (shopName) {
+        const shops = await Shop.find({ name: new RegExp(shopName, 'i') }, '_id');
+        shopIds = shops.map((shop) => shop._id);
+        filters.shop = { $in: shopIds };
+      }
+  
+      if (category) {
+        const categoryObj = await Category.findOne({ name: new RegExp(category, 'i') });
+        if (categoryObj) {
+          filters.category = categoryObj._id;
+        }
+      }
+  
+      const totalProducts = await Product.countDocuments(filters);
+      const products = await Product.find(filters)
+        .populate('shop', 'name type ratings followers isVerified description')
+        .skip((page - 1) * limit)
+        .limit(parseInt(limit));
+  
+      res.json({
+        products,
+        totalPages: Math.ceil(totalProducts / limit),
+      });
+    } catch (error) {
+      console.error('Detailed error fetching products:', error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
 
-module.exports = { getCategories, getCategoryById, createCategory, getHomePageProducts };
+module.exports = { getCategories, getCategoryById, createCategory, getHomePageProducts, searchProducts };

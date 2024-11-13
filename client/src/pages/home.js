@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/Home.css';
-import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
 import Sidebar from '../components/Sidebar';
 import Spinner from '../components/Spinner';
 import ReactPaginate from 'react-paginate';
 
 function Home() {
-  const [categories, setCategories] = useState({});  // Lưu trữ sản phẩm theo từng danh mục
-  const [cart, setCart] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);  // Trang hiện tại
-  const [totalPages, setTotalPages] = useState(1);  // Tổng số trang
-  const productsPerPage = 20;  // Số lượng sản phẩm hiển thị trên mỗi trang
-  const [allProducts, setAllProducts] = useState([]);  // Lưu tất cả sản phẩm trong một mảng
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedPriceRange, setSelectedPriceRange] = useState(null); // Định nghĩa selectedPriceRange
+  const productsPerPage = 20;
 
-  // Hàm phân trang sản phẩm
+  // Hàm phân trang
   const getPaginatedData = (page) => {
     const offset = (page - 1) * productsPerPage;
-    return allProducts.slice(offset, offset + productsPerPage);  // Lấy sản phẩm theo trang
+    return filteredProducts.slice(offset, offset + productsPerPage);
   };
 
   useEffect(() => {
@@ -28,20 +27,16 @@ function Home() {
         const categoryResponse = await axios.get('http://localhost:5000/api/category/home-products');
         const allCategoryProducts = categoryResponse.data;
         const productList = [];
-        
-        // Chuyển tất cả sản phẩm từ các danh mục thành một mảng duy nhất
+
+        // Lấy tất cả sản phẩm từ các category
         Object.keys(allCategoryProducts).forEach(category => {
-          productList.push(...allCategoryProducts[category]);  // Kết hợp tất cả sản phẩm vào mảng
+          productList.push(...allCategoryProducts[category]);
         });
 
-        setAllProducts(productList);  // Lưu tất cả sản phẩm vào state
-        setTotalPages(Math.ceil(productList.length / productsPerPage));  // Tính tổng số trang
+        setAllProducts(productList);
+        setFilteredProducts(productList);
+        setTotalPages(Math.ceil(productList.length / productsPerPage));
 
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          const cartResponse = await axios.get(`http://localhost:5000/api/cart/${userId}`);
-          setCart(cartResponse.data);
-        }
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error);
       } finally {
@@ -52,21 +47,41 @@ function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const filtered = allProducts.filter((product) => {
+      const matchesPrice = selectedPriceRange ? product.price >= selectedPriceRange[0] && product.price <= selectedPriceRange[1] : true;
+      return matchesPrice;
+    });
+  
+    setFilteredProducts(filtered);
+    setTotalPages(Math.ceil(filtered.length / productsPerPage));
+  }, [selectedPriceRange, allProducts]);
+  
+
   const handlePageClick = (event) => {
-    setCurrentPage(event.selected + 1);  // Cập nhật trang hiện tại khi người dùng chọn trang mới
+    setCurrentPage(event.selected + 1); 
+  };
+
+  const handlePriceRangeChange = (range) => {
+    setSelectedPriceRange(selectedPriceRange === range ? null : range);
   };
 
   if (loading) {
     return <Spinner />;
   }
 
-  const paginatedProducts = getPaginatedData(currentPage);  // Lấy dữ liệu sản phẩm cho trang hiện tại
+  const paginatedProducts = getPaginatedData(currentPage);
 
   return (
     <div className="home">
-      <Navbar />
-      <Sidebar className="sidebar" />
       <div className="home-content">
+        <div className="sidebar-container">
+          <Sidebar 
+            selectedPriceRange={selectedPriceRange}
+            handlePriceRangeChange={handlePriceRangeChange}
+          />
+        </div>
+
         <div className="main-content">
           <div className="categories">
             {paginatedProducts.length > 0 ? (
@@ -78,22 +93,21 @@ function Home() {
                 </div>
               </div>
             ) : (
-              <div>Không có sản phẩm nào để hiển thị</div>
+              <div>No Products</div>
             )}
           </div>
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"..."}
+            pageCount={totalPages}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={3}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            activeClassName={"active"}
+          />
         </div>
-
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          pageCount={totalPages}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={3}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-        />
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getCartByUserId, updateCartItemQuantity, removeFromCart, checkout } from '../hooks/cartApi';
-import Navbar from '../components/Navbar';
 import '../css/Cart.css';
 
 function Cart() {
@@ -116,7 +115,6 @@ function Cart() {
 
   return (
     <div className="cart-page">
-      <Navbar />
       <h2>Your Cart</h2>
 
       {cart && cart.items.length > 0 ? (

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
 import '../css/Profile.css';
 import { useNavigate } from 'react-router-dom';
 import UpdateProfileModal from '../modals/UpdateProfileModal';
@@ -108,7 +107,6 @@ function Profile() {
 
     return (
         <div className="profile">
-            <Navbar />
             <Sidebar />
             <div className="main-content">
             <h1>User Profile</h1>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import '../css/CreateShop.css';
 
 function CreateShop() {
@@ -44,7 +43,6 @@ function CreateShop() {
 
     return (
         <div className="create-shop">
-            <Navbar />
             <h1>Create New Shop</h1>
             <form onSubmit={handleSubmit}>
                 <div>

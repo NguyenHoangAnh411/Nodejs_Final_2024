@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import Modal from 'react-modal';
 import '../css/ViewShop.css';
 
@@ -72,7 +71,6 @@ function ViewShop() {
 
     return (
         <div className="view-shop">
-            <Navbar />
             <h1>My Shops</h1>
             {shops.length === 0 ? (
                 <p>No shops found. Please create a shop!</p>

@@ -1,21 +1,16 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../css/NavBar.css';
 import useUserProfile from '../hooks/userinfomation';
 import CartIcon from './Icon/CartIcon';
 import axios from 'axios';
-
+import SearchBar from './SearchBar';
 function Navbar() {
     const token = localStorage.getItem('token');
     const { logout, isAuthenticated } = useContext(AuthContext);
     const { userData, loading } = useUserProfile(isAuthenticated, token);
     const navigate = useNavigate();
-    const [menuVisible, setMenuVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const menuRef = useRef(null);
-    
     const [cartItemCount, setCartItemCount] = useState(0);
 
     const handleLogout = () => {
@@ -23,33 +18,11 @@ function Navbar() {
         navigate('/login');
     };
 
-    const goToProfile = () => {
-        navigate('/profile');
-    };
-
-    const toggleMenu = () => {
-        setMenuVisible(!menuVisible);
-    };
-
     const goToLogin = () => {
         navigate('/login');
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            navigate(`/search?query=${searchQuery}`);
-        }
-    };
-
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setMenuVisible(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-
         const fetchCartData = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/cart/${localStorage.getItem('userId')}`);
@@ -62,26 +35,12 @@ function Navbar() {
         if (isAuthenticated) {
             fetchCartData();
         }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
     }, [isAuthenticated]);
 
     return (
         <nav className="navbar">
-            <a href='/'>KA</a>
             <div className="nav-links">
-                <form onSubmit={handleSearch} className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button type="submit">Search</button>
-                </form>
-
+            <SearchBar />
                 <CartIcon itemCount={cartItemCount} />
 
                 {isAuthenticated && userData && !loading ? (
@@ -95,14 +54,11 @@ function Navbar() {
                     </>
                 ) : null}
 
-            {isAuthenticated ? (
-                <>
-                <button onClick={handleLogout}>Logout</button>
-                </>
-            ) : (
-                <button onClick={goToLogin}>Login</button>
-            )}
-
+                {isAuthenticated ? (
+                    <button onClick={handleLogout}>Logout</button>
+                ) : (
+                    <button onClick={goToLogin}>Login</button>
+                )}
             </div>
         </nav>
     );

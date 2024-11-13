@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import AddProductModal from '../modals/AddProductModal';
 import EditShopModal from '../modals/EditShopModal';
 import '../css/ShopDetail.css';
@@ -98,7 +97,6 @@ function ShopDetail() {
 
     return (
         <div className="shop-detail">
-            <Navbar />
             <Sidebar/>
             <div className="shopDetail-content">
                 <div className="main-content">
