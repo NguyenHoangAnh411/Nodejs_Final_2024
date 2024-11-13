@@ -17,7 +17,6 @@ router.put('/profile', authenticate, controller.updateUserProfile);
 router.post('/change-password', AuthValidator.changePasswordValidator, authenticate, controller.changepassword);
 router.get('/profile', authenticate, controller.profile);
 router.put('/profile/avatar', authenticate, upload.single('avatar'), controller.avatarUpload);
-router.get('/verify/:token', controller.verifyEmail);
 router.get('/:userId', controller.getUserById);
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

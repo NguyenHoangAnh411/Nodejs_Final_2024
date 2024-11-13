@@ -117,3 +117,28 @@
     height: auto;
   }
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  list-style-type: none;
+  padding: 0;
+}
+
+.pagination li {
+  margin: 0 5px;
+}
+
+.pagination li a {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pagination .active a {
+  background-color: #007bff;
+  color: white;
+}

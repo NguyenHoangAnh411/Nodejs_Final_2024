@@ -6,6 +6,7 @@ import '../css/Profile.css';
 import { useNavigate } from 'react-router-dom';
 import UpdateProfileModal from '../modals/UpdateProfileModal';
 import Sidebar from '../components/Sidebar';
+
 function Profile() {
     const { isAuthenticated } = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
@@ -13,6 +14,10 @@ function Profile() {
     const [avatarUrl, setAvatarUrl] = useState('');
     const [menuVisible, setMenuVisible] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [passwordChangeMessage, setPasswordChangeMessage] = useState('');
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
     const token = localStorage.getItem('token');
     const menuRef = useRef(null);
     const navigate = useNavigate();
@@ -38,15 +43,19 @@ function Profile() {
         fetchUserData();
     }, [isAuthenticated, token]);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuVisible && menuRef.current && !menuRef.current.contains(event.target)) {
-                setMenuVisible(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [menuVisible]);
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/users/change-password',
+                { oldpassword: oldPassword, newpassword: newPassword },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setPasswordChangeMessage(response.data.msg);
+        } catch (error) {
+            setPasswordChangeMessage(error.response?.data?.msg || 'Error changing password');
+        }
+    };
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -80,16 +89,8 @@ function Profile() {
         }
     };
 
-    const viewProfileImage = () => {
-        window.open(avatarUrl, '_blank');
-        setMenuVisible(false);
-    };
-
     const toggleMenu = () => setMenuVisible(!menuVisible);
-
-    const handleChoosePicture = () => {
-        document.querySelector('input[type=file]').click();
-    };
+    const togglePasswordForm = () => setShowPasswordForm(!showPasswordForm);
 
     const handleCreateShop = () => navigate('/create-shop');
     const handleViewShops = () => navigate('/my-shops');
@@ -121,27 +122,6 @@ function Profile() {
                         />
                     </label>
 
-                    {menuVisible && (
-                        <div
-                            ref={menuRef}
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                position: 'absolute',
-                                border: '1px solid #ccc',
-                                marginLeft: '5%',
-                                backgroundColor: '#fff',
-                                borderRadius: '5px',
-                                padding: '10px',
-                                marginTop: '10px',
-                                zIndex: 1000
-                            }}
-                        >
-                            <button className="menu-item" onClick={viewProfileImage}>View Profile Image</button>
-                            <button className="menu-item" onClick={handleChoosePicture}>Choose Profile Picture</button>
-                        </div>
-                    )}
-
                     <div className="detail-information">
                         <p><strong>Name:</strong> {userData.name}</p>
                         <p><strong>Email:</strong> {userData.email}</p>
@@ -163,7 +143,34 @@ function Profile() {
                         accept="image/*"
                     />
 
+                    {showPasswordForm && (
+                        <form onSubmit={handlePasswordChange} className="change-password-form">
+                            <h3>Change Password</h3>
+                            <label>
+                                Old Password:
+                                <input 
+                                    type="password" 
+                                    value={oldPassword} 
+                                    onChange={(e) => setOldPassword(e.target.value)} 
+                                    required 
+                                />
+                            </label>
+                            <label>
+                                New Password:
+                                <input 
+                                    type="password" 
+                                    value={newPassword} 
+                                    onChange={(e) => setNewPassword(e.target.value)} 
+                                    required 
+                                />
+                            </label>
+                            <button type="submit">Change Password</button>
+                            {passwordChangeMessage && <p>{passwordChangeMessage}</p>}
+                        </form>
+                    )}
+
                     <div className="shop-actions">
+                        <button onClick={togglePasswordForm}>Change Password</button>
                         <button onClick={handleCreateShop}>Create Shop</button>
                         <button onClick={handleViewShops}>View My Shops</button>
                         <button onClick={openModal}>Update Profile</button>
