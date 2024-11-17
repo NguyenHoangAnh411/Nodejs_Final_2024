@@ -20,16 +20,14 @@ function Sidebar({ selectedPriceRange, handlePriceRangeChange }) {
         {userData?.role === 'admin' && (
           <>
             <li><Link to="/admin-page">Admin Dashboard</Link></li>
-            <li><Link to="/product-management">Product Management</Link></li>
-            <li><Link to="/category-management">Category Management</Link></li>
           </>
         )}
       </ul>
 
-      <Filter 
+      {/* <Filter 
         selectedPriceRange={selectedPriceRange} 
         handlePriceRangeChange={handlePriceRangeChange}
-      />
+      /> */}
     </div>
   );
 }

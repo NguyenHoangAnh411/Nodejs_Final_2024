@@ -9,6 +9,8 @@ const cartRoutes = require('./routers/cartRouter');
 const productRoutes = require('./routers/productRouter');
 const shopRoutes = require('./routers/shopRouter');
 const categoryRoutes = require('./routers/categoryRouter');
+const couponRoutes = require('./routers/couponRouter');
+const orderRoutes = require('./routers/orderRouter');
 const app = express();
 
 app.use(express.json());
@@ -36,6 +38,8 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/shops', shopRoutes);
 app.use('/api/category', categoryRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/orders', orderRoutes);
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });
 });

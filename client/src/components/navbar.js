@@ -7,9 +7,8 @@ import CartIcon from './Icon/CartIcon';
 import axios from 'axios';
 import SearchBar from './SearchBar';
 function Navbar() {
-    const token = localStorage.getItem('token');
     const { logout, isAuthenticated } = useContext(AuthContext);
-    const { userData, loading } = useUserProfile(isAuthenticated, token);
+    const { userData, loading } = useUserProfile();
     const navigate = useNavigate();
     const [cartItemCount, setCartItemCount] = useState(0);
 

@@ -52,27 +52,7 @@ export const applyCoupon = async (couponCode) => {
     const response = await axios.post(`${API_URL}/cart/coupon`, { couponCode });
     return response.data;
   } catch (error) {
-    console.error('Error applying coupon:', error);
-    throw error;
-  }
-};
-
-export const checkout = async (items, addresses) => {
-  try {
-    const response = await axios.post(`${API_URL}/checkout`, { items, addresses });
-    return response.data;
-  } catch (error) {
-    console.error('Error during checkout:', error);
-    throw error;
-  }
-};
-
-export const guestCheckout = async (name, phone, addresses, items) => {
-  try {
-    const response = await axios.post(`${API_URL}/guest-checkout`, { name, phone, addresses, items });
-    return response.data;
-  } catch (error) {
-    console.error('Error during guest checkout:', error);
+    console.error('Lỗi khi áp dụng voucher:', error);
     throw error;
   }
 };

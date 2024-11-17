@@ -17,6 +17,7 @@ import AdminPage from './pages/admin/AdminPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import SearchPage from './pages/SearchPage';
 import Navbar from './components/Navbar';
+import CouponManagementPage from './pages/admin/CouponManagementPage';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function AppWithNavBar() {
         <Route path="/admin-page" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         <Route path="/product-management" element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} />
         <Route path="/category-management" element={<ProtectedRoute><CategoryManagement /></ProtectedRoute>} />
+        <Route path="/coupon-management" element={<ProtectedRoute><CouponManagementPage /></ProtectedRoute>} />
       </Routes>
     </div>
   );

@@ -11,8 +11,4 @@ router.put('/update/:cartItemId', authenticate, cartController.updateCartItemQua
 
 router.delete('/remove/:cartItemId', authenticate, cartController.removeFromCart);
 
-router.post('/apply-coupon', cartController.applyCoupon);
-router.post('/checkout', authenticate, cartController.checkoutForLoggedUser);
-router.post('/guest-checkout', cartController.guestCheckout);
-
 module.exports = router;
