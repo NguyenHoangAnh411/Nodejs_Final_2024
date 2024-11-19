@@ -11,8 +11,14 @@ const OrderSchema = new mongoose.Schema(
         },
         message: 'Order must have at least one item.',
       },
+    },
+    shippingAddress: {
+      recipientName: { type: String, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      phone: { type: String, required: true },
     },    
-    shippingAddress: { type: String, required: true },
     status: { type: String, enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
     paymentMethod: { type: String, enum: ['credit-card', 'paypal', 'cod'], required: true },
     totalAmount: { type: Number, required: true },
@@ -20,6 +26,5 @@ const OrderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 module.exports = mongoose.model('Order', OrderSchema);

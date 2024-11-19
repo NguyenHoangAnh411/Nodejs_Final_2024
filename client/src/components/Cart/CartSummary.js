@@ -1,6 +1,7 @@
 import React from 'react';
 
 function CartSummary({ totalPrice, taxes, shippingFee, discount, totalPayment, onCheckout }) {
+  
   return (
     <div>
       <h3>Order Summary</h3>

@@ -11,8 +11,10 @@ const shopRoutes = require('./routers/shopRouter');
 const categoryRoutes = require('./routers/categoryRouter');
 const couponRoutes = require('./routers/couponRouter');
 const orderRoutes = require('./routers/orderRouter');
-const app = express();
+const Order = require('./models/OrderModel');
 
+const app = express();
+const cron = require('node-cron');
 app.use(express.json());
 app.use(cors());
 
@@ -40,6 +42,17 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/orders', orderRoutes);
+
+cron.schedule('0 * * * *', async () => { // Mỗi giờ sẽ chạy
+  const orders = await Order.find({ status: 'Pending' });
+
+  orders.forEach(async (order) => {
+    if (order.createdAt < Date.now() - 24 * 60 * 60 * 1000) { // Nếu đơn hàng đã tồn tại hơn 24 giờ
+      order.status = 'Shipped';
+      await order.save();
+    }
+  });
+});
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });
 });

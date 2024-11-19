@@ -18,6 +18,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import SearchPage from './pages/SearchPage';
 import Navbar from './components/Navbar';
 import CouponManagementPage from './pages/admin/CouponManagementPage';
+import OrderHistoryPage from './pages/OrderHistory';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function AppWithNavBar() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/guest-checkout" element={<GuestCheckoutPage />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/admin-page" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         <Route path="/product-management" element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} />
         <Route path="/category-management" element={<ProtectedRoute><CategoryManagement /></ProtectedRoute>} />

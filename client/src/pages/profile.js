@@ -18,7 +18,6 @@ function Profile() {
     const [passwordChangeMessage, setPasswordChangeMessage] = useState('');
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const token = localStorage.getItem('token');
-    const menuRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -100,6 +99,10 @@ function Profile() {
     const handleProfileUpdated = (updatedData) => {
         setUserData(updatedData);
     };
+
+    const handleViewTransactionHistory = () => {
+        navigate('/order-history');
+    };
     
     if (loading) return <p>Loading...</p>;
 
@@ -172,6 +175,9 @@ function Profile() {
                         <button onClick={handleCreateShop}>Create Shop</button>
                         <button onClick={handleViewShops}>View My Shops</button>
                         <button onClick={openModal}>Update Profile</button>
+                        <button onClick={handleViewTransactionHistory}>
+                            View Transaction History
+                        </button>
                     </div>
 
                     <UpdateProfileModal 

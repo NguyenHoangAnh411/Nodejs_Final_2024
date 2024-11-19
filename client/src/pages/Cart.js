@@ -14,6 +14,7 @@ function Cart() {
     items: [],
     totalAmount: 0,
     discount: 0,
+    shippingFee: 0,
   });
   const [loading, setLoading] = useState(true);
   const [voucherName, setVoucherName] = useState('');
@@ -22,10 +23,14 @@ function Cart() {
   const [isCheckoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [isVoucherModalOpen, setVoucherModalOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
   const [checkoutInfo, setCheckoutInfo] = useState({
     address: '',
     paymentMethod: '',
   });
+  const [shippingMethod, setShippingMethod] = useState('standard');
+  const [shippingCost, setShippingCost] = useState(0);
   const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
@@ -46,24 +51,52 @@ function Cart() {
     fetchCart();
   }, []);
 
+  const handleShippingMethodChange = (fee) => {
+    console.log("Changing shipping fee to: ", fee); // Debug log
+    setCart((prevCart) => {
+      const updatedTotals = calculateTotal(prevCart.items, selectedItems, null);
+      console.log("Updated totals: ", updatedTotals); // Debug log
+      return {
+        ...prevCart,
+        shippingFee: fee,
+        ...updatedTotals,
+      };
+    });
+  };
+
+  const handleShippingChange = (e) => {
+    const method = e.target.value;
+    setShippingMethod(method);
+
+    let cost = 0;
+    if (method === 'standard') {
+      cost = 2;
+    } else if (method === 'fast') {
+      cost = 4;
+    }
+
+    setShippingCost(cost);
+    handleShippingMethodChange(cost);
+  };
+  
   const calculateTotal = (items, selectedItemIds = [], voucher = null) => {
     let totalPrice = 0;
     let taxes = 0;
-    const shippingFee = 5;
+    const shippingFee = shippingCost;
     let discount = 0;
-
+  
     const filteredItems = items.filter(item => selectedItemIds.includes(item._id));
-
+  
     filteredItems.forEach(item => {
       totalPrice += item.productId.price * item.quantity;
     });
-
+  
     taxes = totalPrice * 0.1;
-
+  
     if (voucher) {
       discount = totalPrice * (voucher.discount / 100);
     }
-
+  
     return {
       totalPrice,
       taxes,
@@ -137,20 +170,20 @@ function Cart() {
     const selectedCartItems = cart.items.filter(item => selectedItems.includes(item._id));
     const orderDetails = {
       userId: userData._id,
+      userEmail: userData.email,
       items: selectedCartItems.map(item => ({
         productId: item.productId._id,
+        productName: item.productId.name,
         quantity: item.quantity,
       })),
-      shippingAddress: checkoutInfo.address,
+      shippingAddress: userData.addresses,
       paymentMethod: checkoutInfo.paymentMethod,
       totalAmount: cart.totalPayment,
     };
-
+    console.log(orderDetails)
     setOrderDetails(orderDetails);
     setCheckoutModalOpen(true);
-};
-
-  
+  };
 
   const handleCloseCheckoutModal = () => {
     setCheckoutModalOpen(false);
@@ -186,11 +219,14 @@ function Cart() {
     try {
       setCart(null);
       setCheckoutModalOpen(false);
+      setSuccessMessage('Payment successful! Your order is confirmed.');
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       setError('Checkout failed');
     }
   };
-  
+
   if (loading) return <p>Loading...</p>;
 
   if (error) return <p>{error}</p>;
@@ -228,10 +264,18 @@ function Cart() {
               )}
             </div>
 
+            <div>
+              <h3>Shipping Method</h3>
+              <select value={shippingMethod} onChange={handleShippingChange}>
+                <option value="standard">Standard</option>
+                <option value="fast">Fast</option>
+              </select>
+            </div>
+
             <CartSummary
               totalPrice={cart.totalPrice}
               taxes={cart.taxes}
-              shippingFee={cart.shippingFee}
+              shippingFee={shippingCost}
               discount={cart.discount}
               totalPayment={cart.totalPayment}
               onCheckout={handleOpenCheckoutModal}
@@ -254,12 +298,9 @@ function Cart() {
             orderDetails={orderDetails}
           />
         )}
-
+        {showSuccess && <div className="success">{successMessage}</div>}
         {isVoucherModalOpen && (
-          <CouponForm
-            updateCart={handleApplyVoucher}
-            onClose={handleCloseVoucherModal}
-          />
+          <CouponForm onClose={handleCloseVoucherModal} onApplyVoucher={handleApplyVoucher} />
         )}
       </div>
     </div>
