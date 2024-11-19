@@ -11,119 +11,134 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const checkout = async (req, res) => {
-  try {
-    const { userId, items, shippingAddress, paymentMethod, totalAmount } = req.body;
+// Helper function to calculate total price
+const calculateTotal = (cartItems) => {
+  return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+};
 
-    if (!userId || !items || !shippingAddress || !paymentMethod || !totalAmount) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
+// Guest Checkout: Create order without login, auto-create user if necessary
+const guestCheckout = async (req, res) => {
+  const { name, phone, address, cartItems, paymentMethod } = req.body;
 
-    const { recipientName, street, city, postalCode, phone } = shippingAddress;
-    if (!recipientName || !street || !city || !postalCode || !phone) {
-      return res.status(400).json({ error: 'Incomplete shipping address details' });
-    }
+  if (!name || !phone || !address || !cartItems || !paymentMethod) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    const newOrder = new Order({
-      userId,
-      items,
-      shippingAddress: {
-        recipientName,
-        street,
-        city,
-        postalCode,
-        phone,
-      },
-      paymentMethod,
-      totalAmount,
-      paymentStatus: 'Pending',
-      status: 'Pending',
+  // Check if user exists, if not, create new user
+  let user = await User.findOne({ $or: [{ name }, { phone }] });
+  if (!user) {
+    user = new User({
+      name,
+      phone,
+      address,
+      role: 'customer',
     });
-
-    await newOrder.save();
-
-    const productIdsToRemove = items.map(item => item.productId);
-    await Cart.updateOne(
-      { userId },
-      { $pull: { items: { productId: { $in: productIdsToRemove } } } }
-    );
-
-    const mailOptions = {
-      from: 'facebookmangxahoi22@gmail.com',
-      to: user.email,
-      subject: 'Order Confirmation',
-      text: `Thank you for your order! Here are your order details:\n\n
-             Order ID: ${newOrder._id}\n
-             Items: ${newOrder.items.map(item => `${item.productName} (x${item.quantity})`).join(', ')}\n
-             Total Amount: ${newOrder.totalAmount}$\n
-             Shipping Address: ${newOrder.shippingAddress.street}, ${newOrder.shippingAddress.city}\n
-             Payment Method: ${newOrder.paymentMethod}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    res.json({ message: 'Order created successfully and confirmation email sent', order: newOrder });
-  } catch (error) {
-    console.error('Error creating order:', error);
-    res.status(500).json({ error: 'Error creating order' });
+    await user.save();
   }
+
+  const totalAmount = calculateTotal(cartItems);
+
+  const newOrder = new Order({
+    userId: user._id,
+    items: cartItems,
+    shippingAddress: address,
+    paymentMethod,
+    totalAmount,
+    paymentStatus: 'Pending',
+    status: 'Pending',
+  });
+
+  await newOrder.save();
+
+  // Remove purchased items from the cart
+  const productIdsToRemove = cartItems.map(item => item.productId);
+  await Cart.updateOne(
+    { userId: user._id },
+    { $pull: { items: { productId: { $in: productIdsToRemove } } } }
+  );
+
+  // Send confirmation email
+  const mailOptions = {
+    from: 'facebookmangxahoi22@gmail.com',
+    to: user.email,
+    subject: 'Order Confirmation',
+    text: `Thank you for your order! Here are your order details:\n\n
+           Order ID: ${newOrder._id}\n
+           Items: ${newOrder.items.map(item => `${item.productName} (x${item.quantity})`).join(', ')}\n
+           Total Amount: ${newOrder.totalAmount}$\n
+           Shipping Address: ${newOrder.shippingAddress.street}, ${newOrder.shippingAddress.city}\n
+           Payment Method: ${newOrder.paymentMethod}`,
+  };
+
+  await transporter.sendMail(mailOptions);
+
+  res.json({ message: 'Order created successfully and confirmation email sent', order: newOrder });
 };
 
-const getOrdersByUserId = async (req, res) => {
-  try {
-    const { userId } = req.user;
+// Logged-In Checkout: Pre-fill address for logged-in users
+const loggedInCheckout = async (req, res) => {
+  const { cartItems, newShippingAddress, paymentMethod } = req.body;
+  const userId = req.user.userId;
+  const user = await User.findById(userId);
 
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
+  const shippingAddress = newShippingAddress || user.address;
+  const totalAmount = calculateTotal(cartItems);
 
-    const orders = await Order.find({ userId });
+  const newOrder = new Order({
+    userId,
+    items: cartItems,
+    shippingAddress,
+    paymentMethod,
+    totalAmount,
+    paymentStatus: 'Pending',
+    status: 'Pending',
+  });
 
-    if (orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found for this user' });
-    }
+  await newOrder.save();
 
-    res.json({ orders });
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    res.status(500).json({ error: 'Error fetching orders' });
-  }
+  // Remove purchased items from the cart
+  const productIdsToRemove = cartItems.map(item => item.productId);
+  await Cart.updateOne(
+    { userId },
+    { $pull: { items: { productId: { $in: productIdsToRemove } } } }
+  );
+
+  res.json({ message: 'Order created successfully', order: newOrder });
 };
 
+// Update Order Status (Cancel, Delivered, etc.)
 const updateOrderStatus = async (req, res) => {
-  try {
-    const { orderId, status } = req.body;
-    const order = await Order.findById(orderId);
+  const { orderId, status } = req.body;
+  const order = await Order.findById(orderId);
 
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-
-    if (status === 'Cancelled') {
-      order.status = 'Cancelled';
-      await order.save();
-      return res.status(200).json({ message: 'Order status updated to Cancelled', order });
-    }
-
-    if (status === 'Delivered' && order.status === 'Shipped') {
-      order.status = 'Delivered';
-      await order.save();
-      return res.status(200).json({ message: 'Order status updated to Delivered', order });
-    }
-
-    return res.status(400).json({ error: 'Invalid status transition' });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+  if (!order) {
+    return res.status(404).json({ error: 'Order not found' });
   }
+
+  // Handle order status transitions
+  if (status === 'Cancelled') {
+    order.status = 'Cancelled';
+    await order.save();
+    return res.status(200).json({ message: 'Order status updated to Cancelled', order });
+  }
+
+  if (status === 'Shipped' && order.status === 'Pending') {
+    order.status = 'Shipped';
+    await order.save();
+    return res.status(200).json({ message: 'Order status updated to Shipped', order });
+  }
+
+  if (status === 'Delivered' && order.status === 'Shipped') {
+    order.status = 'Delivered';
+    await order.save();
+    return res.status(200).json({ message: 'Order status updated to Delivered', order });
+  }
+
+  return res.status(400).json({ error: 'Invalid status transition' });
 };
 
 module.exports = {
-  checkout,
-  getOrdersByUserId,
-  updateOrderStatus
+  guestCheckout,
+  loggedInCheckout,
+  updateOrderStatus,
 };
