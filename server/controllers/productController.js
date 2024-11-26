@@ -1,9 +1,9 @@
 const Product = require('../models/ProductModel');
-const Shop = require('../models/ShopModel');
 const Category = require('../models/CategoryModel');
 const { storage } = require('../../client/src/components/firebaseService');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
-const mongoose = require('mongoose');
+
+// Fetch all products
 const getProducts = async (req, res) => {
     try {
         const { category, minPrice, maxPrice, sort, tags, page = 1, limit = 10 } = req.query;
@@ -33,42 +33,22 @@ const getProducts = async (req, res) => {
     }
 };
 
-
+// Fetch a single product by ID
 const getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.productId);
         if (!product) {
-          return res.status(404).json({ message: 'Product not found' });
-        }
-        res.json(product);
-      } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-      }
-};
-
-const updateProduct = async (req, res) => {
-    try {
-        const { productId } = req.params;
-        const updates = req.body;
-
-        const product = await Product.findById(productId);
-
-        if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-
-        Object.assign(product, updates);
-        await product.save();
-
-        res.status(200).json({ message: 'Product updated', product });
+        res.json(product);
     } catch (error) {
-        res.status(500).json({ message: 'Server error when updating product', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
-const addProductToShop = async (req, res) => {
+// Add a new product
+const addProduct = async (req, res) => {
     try {
-        const { shopId } = req.params;
         const { name, description, price, category, brand, stock, color } = req.body;
 
         if (!category) {
@@ -94,7 +74,7 @@ const addProductToShop = async (req, res) => {
 
         const uploadedImages = [];
         for (const image of images) {
-            const imageRef = ref(storage, `products/${shopId}/${Date.now()}_${image.originalname}`);
+            const imageRef = ref(storage, `products/${Date.now()}_${image.originalname}`);
             await uploadBytes(imageRef, image.buffer);
             const downloadURL = await getDownloadURL(imageRef);
             uploadedImages.push({ url: downloadURL, alt: image.originalname });
@@ -112,23 +92,34 @@ const addProductToShop = async (req, res) => {
         });
 
         const savedProduct = await newProduct.save();
-
-        const updatedShop = await Shop.findByIdAndUpdate(
-            shopId,
-            { $push: { products: savedProduct._id } },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedShop) {
-            return res.status(404).json({ message: 'Shop not found' });
-        }
-
-        res.status(201).json({ message: 'Product added to shop', product: savedProduct });
+        res.status(201).json({ message: 'Product added successfully', product: savedProduct });
     } catch (error) {
-        res.status(500).json({ message: 'Server error when adding product to shop', error: error.message });
+        res.status(500).json({ message: 'Server error when adding product', error: error.message });
     }
 };
 
+// Update an existing product
+const updateProduct = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const updates = req.body;
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        Object.assign(product, updates);
+        await product.save();
+
+        res.status(200).json({ message: 'Product updated', product });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error when updating product', error: error.message });
+    }
+};
+
+// Delete a product
 const deleteProduct = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -147,8 +138,8 @@ const deleteProduct = async (req, res) => {
 
 module.exports = { 
     getProducts,
-    addProductToShop, 
-    getProductById, 
+    getProductById,
+    addProduct, 
     updateProduct, 
     deleteProduct, 
 };

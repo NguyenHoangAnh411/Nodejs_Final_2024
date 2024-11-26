@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import '../css/AddProductModal.css';
 Modal.setAppElement('#root');
 
 function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
-    const { shopId } = useParams();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -36,7 +34,7 @@ function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
         });
     
         try {
-            const response = await axios.post(`http://localhost:5000/api/products/${shopId}/add-product`, formData, {
+            const response = await axios.post(`http://localhost:5000/api/products/add-product`, formData, { // Adjusted endpoint
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,

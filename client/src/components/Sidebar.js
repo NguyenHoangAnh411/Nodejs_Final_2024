@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../css/Sidebar.css';
 import useUserProfile from '../hooks/userinfomation';
-import Filter from './Filter';
 
 function Sidebar({ selectedPriceRange, handlePriceRangeChange }) {
   const { isAuthenticated } = useContext(AuthContext);
@@ -15,7 +14,6 @@ function Sidebar({ selectedPriceRange, handlePriceRangeChange }) {
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/profile">Profile</Link></li>
-        <li><Link to="/my-shops">My Shops</Link></li>
 
         {userData?.role === 'admin' && (
           <>
@@ -24,6 +22,7 @@ function Sidebar({ selectedPriceRange, handlePriceRangeChange }) {
         )}
       </ul>
 
+      {/* Uncomment and adjust this section if you want to include filtering */}
       {/* <Filter 
         selectedPriceRange={selectedPriceRange} 
         handlePriceRangeChange={handlePriceRangeChange}

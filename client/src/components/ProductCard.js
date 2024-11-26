@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/ProductCard.css';
 
-function ProductCard({ productId, shopId }) {
+function ProductCard({ productId }) { // Removed shopId
   const [product, setProduct] = useState(null);
   const navigate = useNavigate(); 
 
@@ -27,7 +27,7 @@ function ProductCard({ productId, shopId }) {
     : product.description;
 
   return (
-    <div className="product-card" onClick={() => navigate(`/product/${productId}/${shopId}`)}>
+    <div className="product-card" onClick={() => navigate(`/product/${productId}`)}> {/* Removed shopId */}
       {product.images && product.images.length > 0 ? (
         <img src={product.images[0]?.url} alt={product.name} />
       ) : (

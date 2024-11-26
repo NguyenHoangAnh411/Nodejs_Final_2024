@@ -1,15 +1,17 @@
 const Category = require('../models/CategoryModel');
 const Product = require('../models/ProductModel');
-const Shop = require('../models/ShopModel');
+
+// Fetch all categories
 const getCategories = async (req, res) => {
     try {
         const categories = await Category.find();
         res.status(200).json(categories);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi server', error: error.message });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
+// Fetch a category by ID
 const getCategoryById = async (req, res) => {
     try {
         const { categoryId } = req.params;
@@ -22,10 +24,11 @@ const getCategoryById = async (req, res) => {
 
         res.status(200).json(category);
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi server khi tìm category', error: error.message });
+        res.status(500).json({ message: 'Server error when fetching category', error: error.message });
     }
 };
 
+// Create a new category
 const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -46,6 +49,7 @@ const createCategory = async (req, res) => {
     }
 };
 
+// Fetch products for the homepage grouped by category
 const getHomePageProducts = async (req, res) => {
     try {
         const categories = await Category.find();
@@ -54,83 +58,68 @@ const getHomePageProducts = async (req, res) => {
             return res.status(404).json({ message: 'No categories found' });
         }
 
-        const shops = await Shop.find().populate('products');
+        const categoryProducts = await Promise.all(
+            categories.map(async (category) => {
+                const products = await Product.find({ category: category._id }).lean();
+                return {
+                    category: category.name.toLowerCase(),
+                    products: products.map((product) => ({
+                        ...product,
+                        shop: {}, // Add an empty shop object if frontend expects it
+                    })),
+                };
+            })
+        );
 
-        const categoryProducts = categories.reduce((acc, category) => {
-            const products = shops.flatMap(shop => 
-                shop.products
-                    .filter(product => product.category.toString() === category._id.toString())
-                    .map(product => ({
-                        ...product.toObject(), 
-                        shop: {
-                            _id: shop._id,
-                            name: shop.name,
-                            type: shop.type,
-                            ratings: shop.ratings,
-                            followers: shop.followers,
-                            isVerified: shop.isVerified,
-                            description: shop.description,
-                        },
-                    }))
-            );
-            acc[category.name.toLowerCase()] = products;
-            return acc;
-        }, {});
-
-        res.json({
-            ...categoryProducts,
-        });
-
+        res.json(
+            categoryProducts.reduce((acc, curr) => {
+                acc[curr.category] = curr.products;
+                return acc;
+            }, {})
+        );
     } catch (error) {
-        console.error('Server error when fetching products', error);
-        res.status(500).json({ message: 'Server error when fetching products', error: error.message });
+        console.error('Server error when fetching homepage products:', error);
+        res.status(500).json({ message: 'Server error when fetching homepage products', error: error.message });
     }
 };
 
+
+// Search for products with filters
 const searchProducts = async (req, res) => {
-    const { query = '', page = 1, limit = 20, priceRange, category, shopName } = req.query;
-  
+    const { query = '', page = 1, limit = 20, priceRange, category } = req.query;
+
     const filters = {};
-  
+
     if (query) {
-      filters.name = new RegExp(query, 'i');
+        filters.name = new RegExp(query, 'i');
     }
-  
+
     if (priceRange) {
-      const [min, max] = priceRange.split(',').map(Number);
-      filters.price = { $gte: min, $lte: max };
+        const [min, max] = priceRange.split(',').map(Number);
+        filters.price = { $gte: min, $lte: max };
     }
-  
-    try {
-      let shopIds = [];
-      if (shopName) {
-        const shops = await Shop.find({ name: new RegExp(shopName, 'i') }, '_id');
-        shopIds = shops.map((shop) => shop._id);
-        filters.shop = { $in: shopIds };
-      }
-  
-      if (category) {
+
+    if (category) {
         const categoryObj = await Category.findOne({ name: new RegExp(category, 'i') });
         if (categoryObj) {
-          filters.category = categoryObj._id;
+            filters.category = categoryObj._id;
         }
-      }
-  
-      const totalProducts = await Product.countDocuments(filters);
-      const products = await Product.find(filters)
-        .populate('shop', 'name type ratings followers isVerified description')
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
-  
-      res.json({
-        products,
-        totalPages: Math.ceil(totalProducts / limit),
-      });
-    } catch (error) {
-      console.error('Detailed error fetching products:', error);
-      res.status(500).json({ error: error.message });
     }
-  };
-  
+
+    try {
+        const totalProducts = await Product.countDocuments(filters);
+        const products = await Product.find(filters)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        res.json({
+            products,
+            totalPages: Math.ceil(totalProducts / limit),
+        });
+    } catch (error) {
+        console.error('Detailed error fetching products:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 module.exports = { getCategories, getCategoryById, createCategory, getHomePageProducts, searchProducts };

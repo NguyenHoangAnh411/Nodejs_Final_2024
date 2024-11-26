@@ -91,7 +91,6 @@ function Profile() {
     const togglePasswordForm = () => setShowPasswordForm(!showPasswordForm);
 
     const handleCreateShop = () => navigate('/create-shop');
-    const handleViewShops = () => navigate('/my-shops');
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -173,7 +172,6 @@ function Profile() {
                     <div className="shop-actions">
                         <button onClick={togglePasswordForm}>Change Password</button>
                         <button onClick={handleCreateShop}>Create Shop</button>
-                        <button onClick={handleViewShops}>View My Shops</button>
                         <button onClick={openModal}>Update Profile</button>
                         <button onClick={handleViewTransactionHistory}>
                             View Transaction History
