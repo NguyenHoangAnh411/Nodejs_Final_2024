@@ -5,11 +5,11 @@ require('dotenv').config();
 
 const authService = {
   async register(userData) {
-    const { name, phone, password } = userData;
+    const { name, email, phone, password } = userData;
 
-    const existingUser = await User.findOne({ phone });
+    const existingUser = await User.findOne({ $or: [{ phone }, { email }] });
     if (existingUser) {
-        throw new Error('Phone number already exists');
+        throw new Error('Phone number or email already exists');
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -17,14 +17,16 @@ const authService = {
 
     const newUser = new User({
         name,
+        email,
         phone,
-        password: hashedPassword
+        password: hashedPassword,
     });
 
     await newUser.save();
 
     return { message: 'User registered successfully' };
   },
+
 
   async login(userData) {
     const { phone, password } = userData;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import '../css/Profile.css';
@@ -88,9 +88,9 @@ function Profile() {
     };
 
     const toggleMenu = () => setMenuVisible(!menuVisible);
+    
+    // Define togglePasswordForm function to toggle the visibility of password change form
     const togglePasswordForm = () => setShowPasswordForm(!showPasswordForm);
-
-    const handleCreateShop = () => navigate('/create-shop');
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -102,7 +102,7 @@ function Profile() {
     const handleViewTransactionHistory = () => {
         navigate('/order-history');
     };
-    
+
     if (loading) return <p>Loading...</p>;
 
     if (!isAuthenticated) return <p>You are not logged in. Please log in to view your profile.</p>;
@@ -111,84 +111,88 @@ function Profile() {
         <div className="profile">
             <Sidebar />
             <div className="main-content">
-            <h1>User Profile</h1>
-            {userData ? (
-                <div>
-                    <label style={{ cursor: 'pointer' }} onClick={toggleMenu} className="avatar-container">
-                        <img
-                            src={avatarUrl || userData.avatar}
-                            alt="Avatar"
-                            className="avatar-image"
+                <h1>User Profile</h1>
+                {userData ? (
+                    <div>
+                        <label style={{ cursor: 'pointer' }} onClick={toggleMenu} className="avatar-container">
+                            <img
+                                src={avatarUrl || userData.avatar}
+                                alt="Avatar"
+                                className="avatar-image"
+                            />
+                        </label>
+
+                        {menuVisible && (
+                            <div className="avatar-menu">
+                                <input
+                                    type="file"
+                                    onChange={handleAvatarChange}
+                                    style={{ display: 'block' }}
+                                    accept="image/*"
+                                />
+                                <button onClick={() => setMenuVisible(false)}>Close Menu</button>
+                            </div>
+                        )}
+
+                        <div className="detail-information">
+                            <p><strong>Name:</strong> {userData.name}</p>
+                            <p><strong>Email:</strong> {userData.email}</p>
+                            <p><strong>Phone:</strong> {userData.phone}</p>
+                            <h3>Addresses:</h3>
+                            <ul>
+                                {userData.addresses && userData.addresses.map((address, index) => (
+                                    <li key={index}>
+                                        {address.recipientName}, {address.street}, {address.city}, {address.postalCode}, {address.phone}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {showPasswordForm && (
+                            <form onSubmit={handlePasswordChange} className="change-password-form">
+                                <h3>Change Password</h3>
+                                <label>
+                                    Old Password:
+                                    <input 
+                                        type="password" 
+                                        value={oldPassword} 
+                                        onChange={(e) => setOldPassword(e.target.value)} 
+                                        required 
+                                    />
+                                </label>
+                                <label>
+                                    New Password:
+                                    <input 
+                                        type="password" 
+                                        value={newPassword} 
+                                        onChange={(e) => setNewPassword(e.target.value)} 
+                                        required 
+                                    />
+                                </label>
+                                <button type="submit">Change Password</button>
+                                {passwordChangeMessage && <p>{passwordChangeMessage}</p>}
+                            </form>
+                        )}
+
+                        <div className="shop-actions">
+                            <button onClick={togglePasswordForm}>Change Password</button>
+                            <button onClick={openModal}>Update Profile</button>
+                            <button onClick={handleViewTransactionHistory}>
+                                View Transaction History
+                            </button>
+                        </div>
+
+                        <UpdateProfileModal 
+                            isOpen={isModalOpen}
+                            onRequestClose={closeModal}
+                            userData={userData}
+                            token={token}
+                            onProfileUpdated={handleProfileUpdated}
                         />
-                    </label>
-
-                    <div className="detail-information">
-                        <p><strong>Name:</strong> {userData.name}</p>
-                        <p><strong>Email:</strong> {userData.email}</p>
-                        <p><strong>Phone:</strong> {userData.phone}</p>
-                        <h3>Addresses:</h3>
-                        <ul>
-                            {userData.addresses && userData.addresses.map((address, index) => (
-                                <li key={index}>
-                                    {address.recipientName}, {address.street}, {address.city}, {address.postalCode}, {address.phone}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
-
-                    <input
-                        type="file"
-                        onChange={handleAvatarChange}
-                        style={{ display: 'none' }}
-                        accept="image/*"
-                    />
-
-                    {showPasswordForm && (
-                        <form onSubmit={handlePasswordChange} className="change-password-form">
-                            <h3>Change Password</h3>
-                            <label>
-                                Old Password:
-                                <input 
-                                    type="password" 
-                                    value={oldPassword} 
-                                    onChange={(e) => setOldPassword(e.target.value)} 
-                                    required 
-                                />
-                            </label>
-                            <label>
-                                New Password:
-                                <input 
-                                    type="password" 
-                                    value={newPassword} 
-                                    onChange={(e) => setNewPassword(e.target.value)} 
-                                    required 
-                                />
-                            </label>
-                            <button type="submit">Change Password</button>
-                            {passwordChangeMessage && <p>{passwordChangeMessage}</p>}
-                        </form>
-                    )}
-
-                    <div className="shop-actions">
-                        <button onClick={togglePasswordForm}>Change Password</button>
-                        <button onClick={handleCreateShop}>Create Shop</button>
-                        <button onClick={openModal}>Update Profile</button>
-                        <button onClick={handleViewTransactionHistory}>
-                            View Transaction History
-                        </button>
-                    </div>
-
-                    <UpdateProfileModal 
-                        isOpen={isModalOpen}
-                        onRequestClose={closeModal}
-                        userData={userData}
-                        token={token}
-                        onProfileUpdated={handleProfileUpdated}
-                    />
-                </div>
-            ) : (
-                <p>No user data found.</p>
-            )}
+                ) : (
+                    <p>No user data found.</p>
+                )}
             </div>
         </div>
     );

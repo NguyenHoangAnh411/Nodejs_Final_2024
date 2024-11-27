@@ -34,6 +34,7 @@ const registerValidator = [
   }
 ];
 
+
 const loginValidator = [
   body('phone')
     .notEmpty()

@@ -13,6 +13,7 @@ function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        console.log("Form data:", { name, email, password, phone });
         try {
             const response = await axios.post('http://localhost:5000/api/users/register', {
                 name,
@@ -28,6 +29,7 @@ function Register() {
             setError(err.response?.data?.error || 'Registration failed');
         }
     };
+    
 
     return (
         <div className="register">
