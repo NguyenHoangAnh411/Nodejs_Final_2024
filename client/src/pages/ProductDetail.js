@@ -1,39 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { getProductById, getRelatedProducts } from '../hooks/productApi';
-import { getReviewsByProductId, submitReview } from '../hooks/reviewApi';
+import { getProductById, getRelatedProducts, getCommentsForProduct, addCommentToProduct, deleteCommentFromProduct } from '../hooks/productApi';
 import { addToCart } from '../hooks/cartApi';
+import useUserProfile from '../hooks/userinfomation';
 import '../css/ProductDetail.css';
 import ProductCard from '../components/ProductCard';
 import Sidebar from '../components/Sidebar';
 
 function ProductDetail() {
   const { productId } = useParams();
-
+  const { currentUser } = useUserProfile();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductData = async () => {
       try {
         const productData = await getProductById(productId);
         setProduct(productData);
         fetchRelatedProducts(productData.category);
+        fetchComments();
       } catch (error) {
         console.error('Error fetching product:', error);
-      }
-    };
-
-    const fetchReviews = async () => {
-      try {
-        const reviewData = await getReviewsByProductId(productId);
-        setReviews(reviewData);
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
       }
     };
 
@@ -46,35 +39,72 @@ function ProductDetail() {
       }
     };
 
-    fetchProduct();
-    fetchReviews();
+    const fetchComments = async () => {
+      try {
+        const commentData = await getCommentsForProduct(productId);
+        setReviews(commentData.comments);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
+
+    fetchProductData();
   }, [productId]);
 
-  const handleReviewSubmit = async (e) => {
+  const handleReviewSubmit = useCallback(async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    if (reviewText.trim() === '' || rating < 1 || rating > 5) {
+      alert('Vui lòng điền đầy đủ thông tin bình luận và xếp hạng.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const newReview = {
+      productId,
+      content: reviewText,
+      rating,
+      user: currentUser,
+    };
+
     try {
-      const newReview = { productId, rating, comment: reviewText };
-      await submitReview(productId, newReview);
-      setReviews([...reviews, newReview]);
+      const addedReview = await addCommentToProduct(productId, newReview);
+      setReviews((prevReviews) => [addedReview, ...prevReviews]);
       setReviewText('');
       setRating(0);
     } catch (error) {
-      console.error('Error submitting review:', error);
+      console.error('Error submitting review:', error.message);
+      alert('Có lỗi khi gửi bình luận.');
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, [reviewText, rating, currentUser, productId]);
+
+  const handleDeleteComment = useCallback(async (commentId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xoá bình luận này?')) {
+      try {
+        await deleteCommentFromProduct(productId, commentId);
+        setReviews((prevReviews) => prevReviews.filter((review) => review._id !== commentId));
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+        alert('Có lỗi khi xoá bình luận.');
+      }
+    }
+  }, [productId]);
 
   const handleAddToCart = async () => {
     setLoading(true);
     try {
       const response = await addToCart(productId);
       if (response) {
-        alert('Product added to cart.');
+        alert('Sản phẩm đã được thêm vào giỏ hàng.');
       } else {
-        alert('Error adding product to cart.');
+        alert('Lỗi khi thêm sản phẩm vào giỏ hàng.');
       }
     } catch (error) {
-      console.error("Error adding product to cart:", error);
-      alert('Error adding product to cart.');
+      console.error('Error adding product to cart:', error);
+      alert('Có lỗi khi thêm sản phẩm vào giỏ hàng.');
     } finally {
       setLoading(false);
     }
@@ -98,6 +128,7 @@ function ProductDetail() {
 
         <div className="reviews-section">
           <h3>Reviews</h3>
+
           <form onSubmit={handleReviewSubmit}>
             <label>
               Rating:
@@ -119,7 +150,9 @@ function ProductDetail() {
               placeholder="Write your review here..."
               required
             />
-            <button type="submit">Submit Review</button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Review'}
+            </button>
           </form>
 
           <ul>
@@ -129,21 +162,23 @@ function ProductDetail() {
               reviews.map((review, index) => (
                 <li key={index}>
                   <p><strong>Rating: {review.rating} Stars</strong></p>
-                  <p>{review.comment}</p>
+                  <p>{review.content}</p>
+                  <p><strong>Reviewed by:</strong> {review.user?.name || 'Anonymous'}</p>
+                  {currentUser && currentUser._id === review.user?._id && (
+                    <button onClick={() => handleDeleteComment(review._id)}>Delete Comment</button>
+                  )}
                 </li>
               ))
             )}
           </ul>
+
         </div>
 
         <div className="related-products">
           <h3>Related Products</h3>
           <div className="related-products-list">
             {relatedProducts.map((relatedProduct) => (
-              <ProductCard 
-                key={relatedProduct._id} 
-                productId={relatedProduct._id} 
-              />
+              <ProductCard key={relatedProduct._id} productId={relatedProduct._id} />
             ))}
           </div>
         </div>

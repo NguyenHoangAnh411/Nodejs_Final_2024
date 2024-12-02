@@ -21,12 +21,6 @@ function Sidebar({ selectedPriceRange, handlePriceRangeChange }) {
           </>
         )}
       </ul>
-
-      {/* Uncomment and adjust this section if you want to include filtering */}
-      {/* <Filter 
-        selectedPriceRange={selectedPriceRange} 
-        handlePriceRangeChange={handlePriceRangeChange}
-      /> */}
     </div>
   );
 }

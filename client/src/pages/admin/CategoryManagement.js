@@ -1,86 +1,103 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../../css/CategoryManagement.css'
+import Sidebar from '../../components/Sidebar';
 
-function CategoryManagement() {
+function ProductManagement() {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState({ name: '', description: '' });
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products/categories');
+        const response = await axios.get('http://localhost:5000/api/category/getcategories');
+        console.log(response.data);
         setCategories(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching categories:', error);
+        setLoading(false);
       }
     };
     fetchCategories();
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNewCategory((prevCategory) => ({ ...prevCategory, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
+  
+  const handleCategorySubmit = async (e) => {
     e.preventDefault();
-    if (!newCategory.name) {
-      setError('Category name is required');
-      return;
-    }
-
     try {
-      await axios.post('http://localhost:5000/api/products/categories', newCategory, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      setCategories((prevCategories) => [...prevCategories, newCategory]);
+      const response = await axios.post(
+        'http://localhost:5000/api/category/categories',
+        newCategory,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+      console.log(response.data); 
+      setCategories([...categories, response.data]);
       setNewCategory({ name: '', description: '' });
-      setError('');
     } catch (error) {
-      setError('Error creating category: ' + error.message);
+      console.error('Error creating category:', error);
     }
   };
 
   return (
-    <div>
-      <h1>Category Management</h1>
+    <div className="category-management">
+      <h1>Product Management</h1>
+      <Sidebar/>
+      <div className="create-category-form">
+        <h2>Create New Category</h2>
+        <form onSubmit={handleCategorySubmit}>
+          <div>
+            <label htmlFor="name">Category Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={newCategory.name}
+              onChange={(e) =>
+                setNewCategory({ ...newCategory, name: e.target.value })
+              }
+              placeholder="Category name"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="description">Category Description</label>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              value={newCategory.description}
+              onChange={(e) =>
+                setNewCategory({ ...newCategory, description: e.target.value })
+              }
+              placeholder="Category description"
+              required
+            />
+          </div>
+          <button type="submit">Create Category</button>
+        </form>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={newCategory.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Description</label>
-          <input
-            type="text"
-            name="description"
-            value={newCategory.description}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit">Create Category</button>
-      </form>
-
-      {error && <p>{error}</p>}
-
-      <h2>Existing Categories</h2>
-      <ul>
-        {categories.map((category) => (
-          <li key={category._id}>
-            {category.name} - {category.description}
-          </li>
-        ))}
-      </ul>
+      <h3>Existing Categories</h3>
+      {loading ? (
+        <p>Loading categories...</p>
+      ) : (
+        categories.length === 0 ? (
+          <p>No categories found.</p>
+        ) : (
+          <ul>
+            {categories.map((category) => (
+              <li key={category._id}>
+                <strong>{category.name}</strong>: {category.description}
+              </li>
+            ))}
+          </ul>
+        )
+      )}
     </div>
   );
 }
 
-export default CategoryManagement;
+export default ProductManagement;

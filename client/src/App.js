@@ -8,7 +8,6 @@ import Profile from './pages/profile';
 import ProductDetail from './pages/ProductDetail';
 import CartPage from './pages/Cart';
 import GuestCheckoutPage from './pages/GuestCheckoutPage';
-import ProductManagement from './pages/admin/ProductManagement';
 import CategoryManagement from './pages/admin/CategoryManagement';
 import AdminPage from './pages/admin/AdminPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -16,6 +15,7 @@ import SearchPage from './pages/SearchPage';
 import Navbar from './components/Navbar';
 import CouponManagementPage from './pages/admin/CouponManagementPage';
 import OrderHistoryPage from './pages/OrderHistory';
+import ManageProduct from './pages/admin/ManageProduct';
 
 function App() {
   return (
@@ -39,15 +39,15 @@ function AppWithNavBar() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/product/:productId" element={<ProductDetail />} /> {/* Removed shopId */}
+        <Route path="/product/:productId" element={<ProductDetail />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/guest-checkout" element={<GuestCheckoutPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/admin-page" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-        <Route path="/product-management" element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} />
         <Route path="/category-management" element={<ProtectedRoute><CategoryManagement /></ProtectedRoute>} />
         <Route path="/coupon-management" element={<ProtectedRoute><CouponManagementPage /></ProtectedRoute>} />
+        <Route path="/products-management" element={<ProtectedRoute><ManageProduct /></ProtectedRoute>} />
       </Routes>
     </div>
   );
