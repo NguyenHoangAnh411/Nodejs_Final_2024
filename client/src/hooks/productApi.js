@@ -77,12 +77,11 @@ export const getCommentsForProduct = async (productId) => {
   }
 };
 
-// Thêm bình luận cho sản phẩm
 export const addCommentToProduct = async (productId, commentData) => {
   try {
     const response = await axios.post(`${BASE_URL}/${productId}/comments`, commentData, {
       headers: {
-        'Authorization': `Bearer ${token}`,  // Kiểm tra token
+        'Authorization': `Bearer ${token}`,
       },
     });
     return response.data;
@@ -100,7 +99,7 @@ export const deleteCommentFromProduct = async (productId, commentId) => {
     if (!response.ok) {
       throw new Error('Failed to delete comment');
     }
-    return await response.json();  // Trả về dữ liệu phản hồi từ server nếu cần
+    return await response.json();
   } catch (error) {
     throw new Error(error.message);
   }

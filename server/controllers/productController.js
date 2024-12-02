@@ -121,10 +121,9 @@ const deleteProduct = async (req, res) => {
 const addComment = async (req, res) => {
     try {
       const { productId } = req.params;
-      const { content, rating } = req.body; // Lấy content và rating từ body
+      const { content, rating } = req.body;
       const { userId } = req.user;
-  
-      // Kiểm tra xem có thiếu thông tin không
+
       if (!content || typeof content !== 'string' || content.trim() === '') {
         return res.status(400).json({ message: 'Nội dung bình luận không hợp lệ' });
       }
@@ -132,34 +131,29 @@ const addComment = async (req, res) => {
       if (rating === undefined || typeof rating !== 'number' || rating < 1 || rating > 5) {
         return res.status(400).json({ message: 'Xếp hạng phải là số trong khoảng từ 1 đến 5' });
       }
-  
-      // Tìm sản phẩm theo ID
+
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
       }
-  
-      // Kiểm tra xem trường comments có tồn tại không
+
       if (!product.comments) {
-        // Nếu chưa có trường comments, tạo trường comments là một mảng rỗng
         product.comments = [];
       }
-  
-      // Tạo bình luận mới
+
       const newComment = {
         user: userId,
         content: content,
-        rating: rating, // Thêm rating vào bình luận
+        rating: rating,
       };
-  
-      // Thêm bình luận vào sản phẩm
+
       product.comments.push(newComment);
   
       await product.save();
   
       res.status(200).json({ message: 'Bình luận đã được thêm thành công', product });
     } catch (error) {
-      console.error('Error adding comment:', error); // In chi tiết lỗi để kiểm tra
+      console.error('Error adding comment:', error);
       res.status(500).json({ message: 'Lỗi máy chủ khi thêm bình luận', error: error.message });
     }
   };
@@ -168,8 +162,7 @@ const addComment = async (req, res) => {
   const getComments = async (req, res) => {
     try {
       const { productId } = req.params;
-  
-      // Tìm sản phẩm và lấy danh sách bình luận
+
       const product = await Product.findById(productId).populate('comments.user', 'name');
       if (!product) {
         return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
@@ -184,14 +177,13 @@ const addComment = async (req, res) => {
   const deleteComment = async (req, res) => {
     try {
       const { productId, commentId } = req.params;
-      const userId = req.user.id; // Giả sử bạn có thông tin người dùng trong req.user
+      const userId = req.user.id;
   
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
       }
-  
-      // Tìm bình luận
+
       const commentIndex = product.comments.findIndex(
         (comment) => comment._id.toString() === commentId && comment.user.toString() === userId
       );
@@ -199,8 +191,7 @@ const addComment = async (req, res) => {
       if (commentIndex === -1) {
         return res.status(404).json({ message: 'Bình luận không tồn tại hoặc bạn không có quyền xóa' });
       }
-  
-      // Xóa bình luận
+
       product.comments.splice(commentIndex, 1);
       await product.save();
   
