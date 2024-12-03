@@ -122,8 +122,206 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+const getOrders = async (req, res) => {
+  try {
+    const { filter, timeFilter, startDate, endDate } = req.query;
+    let dateFilter = {};
+
+    let statusFilter = {};
+    if (filter) {
+      statusFilter.status = filter;
+    }
+
+    if (timeFilter) {
+      const now = new Date();
+      if (timeFilter === 'today') {
+        dateFilter.createdAt = { $gte: new Date(now.setHours(0, 0, 0, 0)) };
+      } else if (timeFilter === 'yesterday') {
+        const yesterday = new Date(now.setDate(now.getDate() - 1));
+        dateFilter.createdAt = { $gte: new Date(yesterday.setHours(0, 0, 0, 0)), $lt: new Date(yesterday.setHours(23, 59, 59, 999)) };
+      } else if (timeFilter === 'thisWeek') {
+        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+        dateFilter.createdAt = { $gte: startOfWeek };
+      } else if (timeFilter === 'thisMonth') {
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        dateFilter.createdAt = { $gte: startOfMonth };
+      } else if (timeFilter === 'custom') {
+        if (startDate && endDate) {
+          dateFilter.createdAt = {
+            $gte: new Date(startDate),
+            $lte: new Date(endDate)
+          };
+        }
+      }
+    }
+
+    const orders = await Order.find({
+      ...statusFilter,
+      ...dateFilter,
+    }).sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching orders');
+  }
+};
+
+const deleteOrderById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    await Order.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Order deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to delete Order' });
+  }
+};
+
+
+
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    console.error('Error fetching order details:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+const getDailyRevenueForMonth = async (req, res) => {
+  try {
+    const { year, month } = req.query;
+
+    if (!year || !month) {
+      return res.status(400).json({ message: 'Vui lòng cung cấp năm và tháng hợp lệ!' });
+    }
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+
+    const dailyRevenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: { $dayOfMonth: '$createdAt' },
+          totalRevenue: { $sum: '$totalAmount' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const result = dailyRevenue.map((item) => ({
+      day: item._id,
+      revenue: item.totalRevenue,
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi khi truy vấn dữ liệu:', error);
+    res.status(500).json({ message: 'Lỗi hệ thống!' });
+  }
+};
+
+const getMonthlyRevenueForYear = async (req, res) => {
+  try {
+    const { year } = req.query;
+
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
+
+    const monthlyRevenue = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$createdAt' },
+          totalRevenue: { $sum: '$totalAmount' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const result = monthlyRevenue.map((item) => ({
+      month: item._id,
+      revenue: item.totalRevenue,
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi khi truy vấn dữ liệu:', error);
+    res.status(500).json({ message: 'Lỗi hệ thống' });
+  }
+};
+
+const getRevenueByDateRange = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const revenueData = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+        },
+      },
+      {
+        $group: {
+          _id: { $dayOfMonth: '$createdAt' },
+          totalRevenue: { $sum: '$totalAmount' },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const result = revenueData.map((item) => ({
+      day: item._id,
+      revenue: item.totalRevenue,
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi khi lấy doanh thu theo khoảng thời gian:', error);
+    res.status(500).json({ message: 'Lỗi hệ thống' });
+  }
+};
+
+
+
+
 module.exports = {
   checkout,
   getOrdersByUserId,
-  updateOrderStatus
+  updateOrderStatus,
+  getOrders,
+  deleteOrderById,
+  getOrderById,
+  getDailyRevenueForMonth,
+  getMonthlyRevenueForYear,
+  getRevenueByDateRange
 };

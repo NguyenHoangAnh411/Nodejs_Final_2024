@@ -26,58 +26,60 @@ const getProductById = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
-    try {
-        const { name, description, price, category, brand, stock, color } = req.body;
+  try {
+      const { name, description, cost, price, category, brand, stock, color } = req.body;
+      
+      if (!category) {
+          return res.status(400).json({ message: 'Vui lòng cung cấp tên danh mục' });
+      }
 
-        if (!category) {
-            return res.status(400).json({ message: 'Vui lòng cung cấp tên danh mục' });
-        }
+      const foundCategory = await Category.findOne({ name: category });
+      if (!foundCategory) {
+          return res.status(400).json({ message: 'Danh mục không tồn tại' });
+      }
 
-        const foundCategory = await Category.findOne({ name: category });
-        if (!foundCategory) {
-            return res.status(400).json({ message: 'Danh mục không tồn tại' });
-        }
+      if (!name || !description || !price || !brand || stock === undefined) {
+          return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin bắt buộc' });
+      }
 
-        if (!name || !description || !price || !brand || stock === undefined) {
-            return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin bắt buộc' });
-        }
+      const numericPrice = parseFloat(price);
+      const numericCost = parseFloat(cost);
+      const numericStock = parseInt(stock);
 
-        const numericPrice = parseFloat(price);
-        const numericStock = parseInt(stock);
+      if (isNaN(numericPrice) || isNaN(numericCost) ||isNaN(numericStock)) {
+          return res.status(400).json({ message: 'Giá và số lượng phải là số hợp lệ' });
+      }
 
-        if (isNaN(numericPrice) || isNaN(numericStock)) {
-            return res.status(400).json({ message: 'Giá và số lượng phải là số hợp lệ' });
-        }
+      const images = req.files;
+      if (!images || images.length === 0) {
+          return res.status(400).json({ message: 'Vui lòng cung cấp hình ảnh sản phẩm' });
+      }
 
-        const images = req.files;
-        if (!images || images.length === 0) {
-            return res.status(400).json({ message: 'Vui lòng cung cấp hình ảnh sản phẩm' });
-        }
+      const uploadedImages = [];
+      for (const image of images) {
+          const imageRef = ref(storage, `products/${Date.now()}_${image.originalname}`);
+          await uploadBytes(imageRef, image.buffer);
+          const downloadURL = await getDownloadURL(imageRef);
+          uploadedImages.push({ url: downloadURL, alt: image.originalname });
+      }
 
-        const uploadedImages = [];
-        for (const image of images) {
-            const imageRef = ref(storage, `products/${Date.now()}_${image.originalname}`);
-            await uploadBytes(imageRef, image.buffer);
-            const downloadURL = await getDownloadURL(imageRef);
-            uploadedImages.push({ url: downloadURL, alt: image.originalname });
-        }
+      const newProduct = new Product({
+          name,
+          description,
+          cost: numericCost,
+          price: numericPrice,
+          category: foundCategory._id,
+          brand,
+          stock: numericStock,
+          images: uploadedImages,
+          color,
+      });
 
-        const newProduct = new Product({
-            name,
-            description,
-            price: numericPrice,
-            category: foundCategory._id,
-            brand,
-            stock: numericStock,
-            images: uploadedImages,
-            color,
-        });
-
-        const savedProduct = await newProduct.save();
-        res.status(201).json({ message: 'Sản phẩm đã được thêm thành công', product: savedProduct });
-    } catch (error) {
-        res.status(500).json({ message: 'Lỗi máy chủ khi thêm sản phẩm', error: error.message });
-    }
+      const savedProduct = await newProduct.save();
+      res.status(201).json({ message: 'Sản phẩm đã được thêm thành công', product: savedProduct });
+  } catch (error) {
+      res.status(500).json({ message: 'Lỗi máy chủ khi thêm sản phẩm', error: error.message });
+  }
 };
 
 const updateProduct = async (req, res) => {

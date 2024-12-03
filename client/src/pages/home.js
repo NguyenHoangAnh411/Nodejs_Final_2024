@@ -96,7 +96,6 @@ function Home() {
             handlePriceRangeChange={handlePriceRangeChange}
           />
 
-          {/* Sản phẩm */}
           <div className="categories">
             {paginatedProducts.length > 0 ? (
               <div className="category-products">

@@ -10,6 +10,7 @@ const productRoutes = require('./routers/productRouter');
 const categoryRoutes = require('./routers/categoryRouter');
 const couponRoutes = require('./routers/couponRouter');
 const orderRoutes = require('./routers/orderRouter');
+const reportRoutes = require('./routers/reportRouter');
 const Order = require('./models/OrderModel');
 
 const app = express();
@@ -40,12 +41,13 @@ app.use('/api/products', productRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/reports', reportRoutes);
 
-cron.schedule('0 * * * *', async () => { // Mỗi giờ sẽ chạy
+cron.schedule('0 * * * *', async () => {
   const orders = await Order.find({ status: 'Pending' });
 
   orders.forEach(async (order) => {
-    if (order.createdAt < Date.now() - 24 * 60 * 60 * 1000) { // Nếu đơn hàng đã tồn tại hơn 24 giờ
+    if (order.createdAt < Date.now() - 24 * 60 * 60 * 1000) {
       order.status = 'Shipped';
       await order.save();
     }

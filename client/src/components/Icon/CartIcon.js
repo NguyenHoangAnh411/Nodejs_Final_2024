@@ -8,7 +8,7 @@ const CartIcon = ({ itemCount }) => {
     return (
         <div className="cart-icon" onClick={() => navigate('/cart')}>
             <FaShoppingCart size={24} />
-            {itemCount > 0 && <span className="cart-count">{itemCount}</span>}
+            {itemCount > 0 || itemCount === 0 && <span className="cart-count">{itemCount}</span>}
         </div>
     );
 };

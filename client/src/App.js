@@ -16,6 +16,9 @@ import Navbar from './components/Navbar';
 import CouponManagementPage from './pages/admin/CouponManagementPage';
 import OrderHistoryPage from './pages/OrderHistory';
 import ManageProduct from './pages/admin/ManageProduct';
+import UserManagement from './pages/admin/UserManagement';
+import OrderManagement from './pages/admin/OrderManagement';
+import Reports from './pages/admin/Reports';
 
 function App() {
   return (
@@ -48,6 +51,9 @@ function AppWithNavBar() {
         <Route path="/category-management" element={<ProtectedRoute><CategoryManagement /></ProtectedRoute>} />
         <Route path="/coupon-management" element={<ProtectedRoute><CouponManagementPage /></ProtectedRoute>} />
         <Route path="/products-management" element={<ProtectedRoute><ManageProduct /></ProtectedRoute>} />
+        <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute>} />
+        <Route path="/order-management" element={<ProtectedRoute><OrderManagement /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       </Routes>
     </div>
   );

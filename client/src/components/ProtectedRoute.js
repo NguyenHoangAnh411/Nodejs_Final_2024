@@ -13,7 +13,7 @@ function ProtectedRoute({ children }) {
     if (loading) return;
     if (token) {
       try {
-        if (!userData || userData.role !== 'admin') {
+        if (!userData || userData.role !== 'Admin') {
           navigate(`/`);
         }
       } catch (error) {

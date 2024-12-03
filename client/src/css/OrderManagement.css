@@ -1,0 +1,148 @@
+.main-content {
+    margin-left: 16%;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    margin-top: 10px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  thead {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 16px;
+  }
+  
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  tbody select {
+    padding: 5px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+  }
+
+  button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #c82333;
+  }
+
+.action-button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .action-button.details {
+    background-color: #007bff;
+  }
+  
+  .action-button.details:hover {
+    background-color: #0056b3;
+  }
+  
+  .action-button.delete {
+    background-color: #dc3545;
+  }
+  
+  .action-button.delete:hover {
+    background-color: #c82333;
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      padding: 10px;
+    }
+  
+    table {
+      font-size: 12px;
+    }
+  
+    thead th,
+    tbody td {
+      padding: 8px 10px;
+    }
+  
+    select,
+    button {
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+  }
+  
+  .order-details {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .order-details h2 {
+    margin-bottom: 15px;
+  }
+  
+  .order-details ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .order-details ul li {
+    margin-bottom: 10px;
+  }
+  

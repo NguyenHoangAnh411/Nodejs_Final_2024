@@ -2,9 +2,10 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/orders';
 
+const token = localStorage.getItem('token');
+
 export const checkoutOrder = async (orderData) => {
   try {
-    const token = localStorage.getItem('token');
     const response = await axios.post(`${API_URL}/checkout`, orderData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -24,7 +25,6 @@ export const checkoutOrder = async (orderData) => {
 
 export const getOrdersByUserId = async () => {
   try {
-    const token = localStorage.getItem('token');
     const response = await axios.get(`${API_URL}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,7 +39,6 @@ export const getOrdersByUserId = async () => {
 
 export const updateOrderStatus = async (orderId, newStatus) => {
   try {
-    const token = localStorage.getItem('token');
     const response = await axios.put(
       `${API_URL}/update-status`, 
       { orderId, status: newStatus },
@@ -55,3 +54,96 @@ export const updateOrderStatus = async (orderId, newStatus) => {
     throw error;
   }
 };
+
+export const getOrders = async ({ filter = '', timeFilter = '', startDate = '', endDate = '' }) => {
+  try {
+    const params = new URLSearchParams();
+    if (filter) params.append('filter', filter);
+    if (timeFilter) params.append('timeFilter', timeFilter);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+
+    const response = await axios.get(`${API_URL}/getAllOrders?${params.toString()}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Failed to fetch orders');
+  }
+};
+
+export const deleteOrderById = async (id) => {
+  try {
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Failed to delete Order');
+  }
+};
+
+export const getOrderDetails = async (orderId) => {
+  try {
+    const response = await axios.get(`${API_URL}/getOrderDetails/${orderId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Failed to fetch order details');
+  }
+};
+
+export const getDailyRevenue = async (year, month) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/revenue/daily?year=${year}&month=${month}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy doanh thu theo ngày:', error);
+    throw error;
+  }
+};
+
+export const getMonthlyRevenue = async (year) => {
+  try {
+    const response = await axios.get(`${API_URL}/revenue/monthly?year=${year}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy doanh thu theo tháng:', error);
+    throw error;
+  }
+};
+
+export const getRevenueByRange = async (startDate, endDate) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/revenue/range?startDate=${startDate}&endDate=${endDate}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy doanh thu theo khoảng thời gian:', error);
+    throw error;
+  }
+};
+

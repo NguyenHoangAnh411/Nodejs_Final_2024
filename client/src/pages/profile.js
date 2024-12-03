@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import '../css/Profile.css';
 import { useNavigate } from 'react-router-dom';
-import UpdateProfileModal from '../modals/UpdateProfileModal';
+import { getUserData, changePassword, uploadAvatar } from '../hooks/userApi';
+import '../css/Profile.css';
 import Sidebar from '../components/Sidebar';
+import UpdateProfileModal from '../modals/UpdateProfileModal';
 
 function Profile() {
     const { isAuthenticated } = useContext(AuthContext);
@@ -22,34 +22,27 @@ function Profile() {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            if (isAuthenticated) {
-                try {
-                    const response = await axios.get('http://localhost:5000/api/users/profile', {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
-                    setUserData(response.data);
-                    setAvatarUrl(response.data.avatar);
-                } catch (error) {
-                    console.error('Error fetching user data:', error);
-                } finally {
-                    setLoading(false);
-                }
-            } else {
+            try {
+                const data = await getUserData();
+                setUserData(data);
+                setAvatarUrl(data.avatar);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            } finally {
                 setLoading(false);
             }
         };
-        fetchUserData();
-    }, [isAuthenticated, token]);
+
+        if (isAuthenticated) {
+            fetchUserData();
+        }
+    }, [isAuthenticated]);
 
     const handlePasswordChange = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(
-                'http://localhost:5000/api/users/change-password',
-                { oldpassword: oldPassword, newpassword: newPassword },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setPasswordChangeMessage(response.data.msg);
+            const response = await changePassword(oldPassword, newPassword);
+            setPasswordChangeMessage(response.msg);
         } catch (error) {
             setPasswordChangeMessage(error.response?.data?.msg || 'Error changing password');
         }
@@ -57,41 +50,21 @@ function Profile() {
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            uploadAvatar(file);
-        }
-    };
-
-    const uploadAvatar = async (file) => {
-        if (!file || !userData || !userData._id) {
-            console.error('File or userData is undefined:', { file, userData });
-            return;
-        }
-    
-        const formData = new FormData();
-        formData.append('avatar', file);
-        formData.append('userId', userData._id);
-
-        try {
-            const response = await axios.put('http://localhost:5000/api/users/profile/avatar', formData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            setAvatarUrl(response.data.avatar);
-            alert('Avatar uploaded successfully!');
-        } catch (error) {
-            console.error('Error uploading avatar:', error);
-            alert('Error uploading avatar.');
+        if (file && userData) {
+            uploadAvatar(file, userData._id)
+                .then(response => {
+                    setAvatarUrl(response.avatar);
+                    alert('Avatar uploaded successfully!');
+                })
+                .catch(error => {
+                    console.error('Error uploading avatar:', error);
+                    alert('Error uploading avatar.');
+                });
         }
     };
 
     const toggleMenu = () => setMenuVisible(!menuVisible);
-    
-    // Define togglePasswordForm function to toggle the visibility of password change form
     const togglePasswordForm = () => setShowPasswordForm(!showPasswordForm);
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 

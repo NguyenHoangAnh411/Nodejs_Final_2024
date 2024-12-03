@@ -1,0 +1,106 @@
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px auto;
+  max-width: 1200px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-container label {
+  margin: 0 10px 10px 0;
+  font-size: 1rem;
+}
+
+.filter-container input[type="number"],
+.filter-container input[type="date"] {
+  padding: 8px;
+  font-size: 1rem;
+  margin-left: 10px;
+  width: 120px;
+}
+
+.filter-container button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.filter-container button:hover {
+  background-color: #45a049;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.button-container button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.button-container button:hover {
+  background-color: #1976d2;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 500px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.chart {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.chart.active {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .button-container {
+    flex-direction: column;
+  }
+
+  .chart-container {
+    height: 400px;
+  }
+}

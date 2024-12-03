@@ -140,6 +140,47 @@ const updateUserProfile = async (req, res) => {
       res.status(500).json({ message: 'Server error', error });
     }
   };
+
+  const getUsers = async (req, res) => {
+    try {
+      const { search } = req.query;
+      let filter = {};
+      
+      if (search) {
+        filter = {
+          $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } }
+          ]
+        };
+      }
+  
+      const users = await User.find(filter);
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  };
+  
+
+const deleteUserById = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      await User.findByIdAndDelete(id);
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Failed to delete User' });
+    }
+  };
+  
+
 module.exports = {
     register,
     login,
@@ -147,5 +188,7 @@ module.exports = {
     changepassword,
     profile,
     avatarUpload,
-    updateUserProfile
+    updateUserProfile,
+    getUsers,
+    deleteUserById
 };

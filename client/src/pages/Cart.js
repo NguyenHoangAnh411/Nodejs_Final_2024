@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getCartByUserId, updateCartItemQuantity, removeFromCart } from '../hooks/cartApi';
 import '../css/Cart.css';
 import CheckoutModal from '../modals/CheckOutModal';
@@ -37,25 +37,34 @@ function Cart() {
     const fetchCart = async () => {
       try {
         const cartResponse = await getCartByUserId();
-        const totals = calculateTotal(cartResponse.items, cartResponse.items.map(item => item._id));
-        setCart({ ...cartResponse, ...totals });
-        setSelectedItems(cartResponse.items.map(item => item._id));
-        setLoading(false);
+    
+        if (!cartResponse || !cartResponse.items) {
+          throw new Error('Invalid cart response');
+        }
+
+        const validItems = cartResponse.items.filter(item => item.productId !== null);
+
+        const totals = calculateTotal(validItems, validItems.map(item => item._id));
+        setCart({ ...cartResponse, items: validItems, ...totals });
+        setSelectedItems(validItems.map(item => item._id));
       } catch (error) {
         console.error('Error fetching cart:', error);
         setError('Unable to fetch cart');
+      } finally {
         setLoading(false);
       }
     };
-
+    
+  
     fetchCart();
   }, []);
+  
 
   const handleShippingMethodChange = (fee) => {
-    console.log("Changing shipping fee to: ", fee); // Debug log
+    console.log("Changing shipping fee to: ", fee);
     setCart((prevCart) => {
       const updatedTotals = calculateTotal(prevCart.items, selectedItems, null);
-      console.log("Updated totals: ", updatedTotals); // Debug log
+      console.log("Updated totals: ", updatedTotals);
       return {
         ...prevCart,
         shippingFee: fee,
@@ -174,6 +183,8 @@ function Cart() {
       items: selectedCartItems.map(item => ({
         productId: item.productId._id,
         productName: item.productId.name,
+        price: item.productId.price,
+        cost: item.productId.cost,
         quantity: item.quantity,
       })),
       shippingAddress: userData.addresses,

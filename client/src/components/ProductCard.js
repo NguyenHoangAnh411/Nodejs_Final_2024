@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import '../css/ProductCard.css';
+import { getProductById } from '../hooks/productApi';
 
-function ProductCard({ productId }) { // Removed shopId
+function ProductCard({ productId }) {
   const [product, setProduct] = useState(null);
   const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products/${productId}`);
-        setProduct(response.data);
+        const productData = await getProductById(productId);
+        setProduct(productData);
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
-
+  
     fetchProduct();
   }, [productId]);
 
@@ -27,7 +27,7 @@ function ProductCard({ productId }) { // Removed shopId
     : product.description;
 
   return (
-    <div className="product-card" onClick={() => navigate(`/product/${productId}`)}> {/* Removed shopId */}
+    <div className="product-card" onClick={() => navigate(`/product/${productId}`)}>
       {product.images && product.images.length > 0 ? (
         <img src={product.images[0]?.url} alt={product.name} />
       ) : (

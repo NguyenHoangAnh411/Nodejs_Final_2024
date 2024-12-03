@@ -34,7 +34,7 @@ function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
         });
     
         try {
-            const response = await axios.post(`http://localhost:5000/api/products/add-product`, formData, { // Adjusted endpoint
+            const response = await axios.post(`http://localhost:5000/api/products/add-product`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,

@@ -7,6 +7,7 @@ function ManageProduct() {
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
+    cost: '',
     description: '',
     category: '',
     brand: '',
@@ -39,12 +40,13 @@ function ManageProduct() {
           setNewProduct({
             name: result.name,
             price: result.price,
+            cost: result.cost,
             description: result.description,
             category: result.category,
             brand: result.brand,
             stock: result.stock,
             color: result.color,
-            images: [],
+            images: [], // Reset images when editing product
           });
         } catch (error) {
           console.error('Lỗi khi lấy chi tiết sản phẩm:', error.message);
@@ -79,14 +81,20 @@ function ManageProduct() {
       }
     });
 
+    // Append images to FormData
     for (let i = 0; i < newProduct.images.length; i++) {
       formData.append('images', newProduct.images[i]);
     }
 
+    // Log FormData content
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
+
     try {
       let result;
       if (productId) {
-        // Cập nhật sản phẩm
+        // Update existing product
         result = await updateProduct(productId, formData);
         setProducts((prev) =>
           prev.map((product) =>
@@ -95,19 +103,20 @@ function ManageProduct() {
         );
         setMessage('Sản phẩm đã được cập nhật thành công!');
       } else {
-        // Thêm sản phẩm mới
+        // Add new product
         result = await addProduct(formData);
         setProducts((prev) => [...prev, result]);
         setMessage('Sản phẩm đã được thêm thành công!');
       }
 
-      // Xóa thông báo sau 3 giây
+      // Clear message after 3 seconds
       setTimeout(() => setMessage(''), 3000);
 
-      // Làm sạch form
+      // Reset form after submission
       setNewProduct({
         name: '',
         price: '',
+        cost: '',
         description: '',
         category: '',
         brand: '',
@@ -115,28 +124,29 @@ function ManageProduct() {
         color: '',
         images: [],
       });
-      setProductId(''); // Reset productId để thêm sản phẩm mới
+      setProductId(''); // Reset productId for new product
     } catch (error) {
       console.error('Lỗi khi xử lý sản phẩm:', error.message);
       setMessage('Có lỗi xảy ra khi xử lý sản phẩm!');
     }
   };
 
-  // Gửi yêu cầu xoá sản phẩm
+  // Handle delete product
   const handleDeleteProduct = async (id) => {
     try {
       await deleteProduct(id);
-      setProducts((prev) => prev.filter((product) => product._id !== id)); // Xoá sản phẩm khỏi danh sách
+      setProducts((prev) => prev.filter((product) => product._id !== id)); // Remove product from list
     } catch (error) {
       console.error('Lỗi khi xoá sản phẩm:', error.message);
     }
   };
 
-  // Xử lý hủy bỏ (clear form)
+  // Handle cancel (clear form)
   const handleCancel = () => {
     setNewProduct({
       name: '',
       price: '',
+      cost: '',
       description: '',
       category: '',
       brand: '',
@@ -144,7 +154,7 @@ function ManageProduct() {
       color: '',
       images: [],
     });
-    setProductId(''); // Reset productId khi hủy bỏ chỉnh sửa
+    setProductId(''); // Reset productId when cancel editing
     setMessage('');
   };
 
@@ -166,11 +176,21 @@ function ManageProduct() {
           />
         </label>
         <label>
-          Giá:
+          Giá bán:
           <input
             type="number"
             name="price"
             value={newProduct.price}
+            onChange={handleChange}
+            className="input-field"
+          />
+        </label>
+        <label>
+          Giá nhập:
+          <input
+            type="number"
+            name="cost"
+            value={newProduct.cost}
             onChange={handleChange}
             className="input-field"
           />
