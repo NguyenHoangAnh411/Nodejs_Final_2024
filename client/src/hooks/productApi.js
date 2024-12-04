@@ -93,7 +93,7 @@ export const addCommentToProduct = async (productId, commentData) => {
 
 export const deleteCommentFromProduct = async (productId, commentId) => {
   try {
-    const response = await fetch(`/api/products/${productId}/comments/${commentId}`, {
+    const response = await fetch(`${BASE_URL}/${productId}/comments/${commentId}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
@@ -102,5 +102,23 @@ export const deleteCommentFromProduct = async (productId, commentId) => {
     return await response.json();
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+export const fetchProductsFromApi = async (queryParams) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search`, { params: queryParams });
+    return response.data.products;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Error fetching products');
+  }
+};
+
+export const searchProducts = async (queryParams) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/search`, { params: queryParams });
+    return response.data.products;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Error fetching products');
   }
 };

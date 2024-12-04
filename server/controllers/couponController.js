@@ -41,6 +41,23 @@ const getallCoupons = async (req, res) => {
     }
 };
 
+const getUsedCoupons = async (req, res) => {
+  try {
+    // Truy vấn các coupon đã được sử dụng
+    const coupons = await Coupon.find({ used: true });
+    
+    if (coupons.length === 0) {
+      return res.status(404).json({ message: 'No used coupons found' });
+    }
+
+    res.status(200).json(coupons);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch coupons' });
+  }
+};
+
+
 const getCouponById = async (req, res) => {
     const { id } = req.params;
   
@@ -98,10 +115,31 @@ const deleteCouponById = async (req, res) => {
   }
 };
 
+const updateCouponStatus = async (req, res) => {
+  const { id } = req.params;
+  const { used } = req.body;
+
+  try {
+    const coupon = await Coupon.findById(id);
+    if (!coupon) {
+      return res.status(404).json({ message: 'Coupon not found' });
+    }
+
+    coupon.used = used;
+    await coupon.save();
+
+    res.status(200).json(coupon);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update coupon status' });
+  }
+}
+
 module.exports = { 
     addCoupon,
     getCouponById,
     getallCoupons,
     updateCouponById,
     deleteCouponById,
+    updateCouponStatus,
+    getUsedCoupons
  };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/SearchBar.css';
+import { searchProducts } from '../hooks/productApi';
 
 function SearchBar() {
   const [query, setQuery] = useState('');
@@ -12,9 +12,8 @@ function SearchBar() {
     if (e.key === 'Enter' && query.trim() !== '') {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/category/search', {
-          params: { query: query, page: 1, limit: 10 },
-        });
+        const queryParams = { query: query, page: 1, limit: 10 };
+        await searchProducts(queryParams);
         navigate(`/search?query=${query}`);
       } catch (error) {
         console.error('Error fetching products:', error);

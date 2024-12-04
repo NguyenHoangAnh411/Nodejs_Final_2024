@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllCoupons, deleteCoupon } from '../../hooks/couponApi';
+import { getAllCoupons, deleteCoupon, updateCouponStatus } from '../../hooks/couponApi'; // Đảm bảo rằng bạn đã thêm hàm `updateCouponStatus` trong API của mình
 import EditCouponModal from '../../modals/EditCouponModal';
 import CreateCouponModal from '../../modals/CreateCouponModal';
 import '../../css/CouponManagementPage.css';
@@ -34,6 +34,18 @@ function CouponManagementPage() {
       setCoupons(coupons.filter(coupon => coupon._id !== couponId));
     } catch (err) {
       setError('Failed to delete coupon.');
+    }
+  };
+
+  // Hàm để đánh dấu coupon là đã sử dụng
+  const handleMarkAsUsed = async (couponId) => {
+    try {
+      await updateCouponStatus(couponId, { used: true });  // Gọi API để cập nhật trạng thái 'used' của coupon
+      setCoupons(coupons.map(coupon => 
+        coupon._id === couponId ? { ...coupon, used: true } : coupon
+      ));
+    } catch (err) {
+      setError('Failed to update coupon status.');
     }
   };
 
@@ -73,6 +85,7 @@ function CouponManagementPage() {
                 <th>Name</th>
                 <th>Discount</th>
                 <th>Expiry Date</th>
+                <th>Status</th> {/* Cột trạng thái mới */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -83,9 +96,13 @@ function CouponManagementPage() {
                   <td>{coupon.name}</td>
                   <td>{coupon.discount}%</td>
                   <td>{new Date(coupon.expiryDate).toLocaleDateString()}</td>
+                  <td>{coupon.used ? 'Used' : 'Not Used'}</td> {/* Hiển thị trạng thái đã sử dụng hay chưa */}
                   <td>
                     <button onClick={() => handleDeleteCoupon(coupon._id)} className="delete-btn">Delete</button>
                     <button onClick={() => openEditModal(coupon)} className="edit-btn">Edit</button>
+                    {!coupon.used && (  // Chỉ hiển thị nút "Mark as Used" khi coupon chưa sử dụng
+                      <button onClick={() => handleMarkAsUsed(coupon._id)} className="mark-used-btn">Mark as Used</button>
+                    )}
                   </td>
                 </tr>
               ))}

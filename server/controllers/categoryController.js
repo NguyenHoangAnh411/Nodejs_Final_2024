@@ -1,7 +1,6 @@
 const Category = require('../models/CategoryModel');
 const Product = require('../models/ProductModel');
 
-// Fetch all categories
 const getCategories = async (req, res) => {
     try {
         const categories = await Category.find();
@@ -11,7 +10,6 @@ const getCategories = async (req, res) => {
     }
 };
 
-// Fetch a category by ID
 const getCategoryById = async (req, res) => {
     try {
         const { categoryId } = req.params;
@@ -28,7 +26,6 @@ const getCategoryById = async (req, res) => {
     }
 };
 
-// Create a new category
 const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -49,7 +46,6 @@ const createCategory = async (req, res) => {
     }
 };
 
-// Fetch products for the homepage grouped by category
 const getHomePageProducts = async (req, res) => {
     try {
         const categories = await Category.find();
@@ -65,7 +61,7 @@ const getHomePageProducts = async (req, res) => {
                     category: category.name.toLowerCase(),
                     products: products.map((product) => ({
                         ...product,
-                        shop: {}, // Add an empty shop object if frontend expects it
+                        shop: {},
                     })),
                 };
             })
@@ -83,43 +79,4 @@ const getHomePageProducts = async (req, res) => {
     }
 };
 
-
-// Search for products with filters
-const searchProducts = async (req, res) => {
-    const { query = '', page = 1, limit = 20, priceRange, category } = req.query;
-
-    const filters = {};
-
-    if (query) {
-        filters.name = new RegExp(query, 'i');
-    }
-
-    if (priceRange) {
-        const [min, max] = priceRange.split(',').map(Number);
-        filters.price = { $gte: min, $lte: max };
-    }
-
-    if (category) {
-        const categoryObj = await Category.findOne({ name: new RegExp(category, 'i') });
-        if (categoryObj) {
-            filters.category = categoryObj._id;
-        }
-    }
-
-    try {
-        const totalProducts = await Product.countDocuments(filters);
-        const products = await Product.find(filters)
-            .skip((page - 1) * limit)
-            .limit(parseInt(limit));
-
-        res.json({
-            products,
-            totalPages: Math.ceil(totalProducts / limit),
-        });
-    } catch (error) {
-        console.error('Detailed error fetching products:', error);
-        res.status(500).json({ error: error.message });
-    }
-};
-
-module.exports = { getCategories, getCategoryById, createCategory, getHomePageProducts, searchProducts };
+module.exports = { getCategories, getCategoryById, createCategory, getHomePageProducts };

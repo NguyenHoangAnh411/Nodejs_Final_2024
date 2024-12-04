@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { applyCoupon, getAllCoupons } from '../hooks/couponApi';
+import { getUsedCoupons } from '../hooks/couponApi';
 import '../css/CouponModal.css';
 
 function CouponModal({ updateCart, onClose }) {
@@ -11,10 +11,12 @@ function CouponModal({ updateCart, onClose }) {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        const couponsList = await getAllCoupons();
+        const couponsList = await getUsedCoupons();
+        console.log('Fetched Coupons:', couponsList);
         setCoupons(couponsList);
         setLoading(false);
       } catch (error) {
+        console.error('Error fetching coupons:', error);
         setError('Failed to fetch coupons');
         setLoading(false);
       }
@@ -28,20 +30,24 @@ function CouponModal({ updateCart, onClose }) {
       setError('Please select a coupon');
       return;
     }
-  
+
+    console.log('Selected Coupon:', selectedCoupon);
+
     try {
-      const discount = selectedCoupon.discount;
-      const voucherName = selectedCoupon.name;
-      const voucherCode = selectedCoupon.code;
-      updateCart({ discount, voucherName, voucherCode });
+      const { discount, name, code } = selectedCoupon;
+      if (discount === undefined || name === undefined || code === undefined) {
+        throw new Error('Invalid coupon data');
+      }
+
+      updateCart({ discount, voucherName: name, voucherCode: code });
 
       onClose();
     } catch (error) {
+      console.error('Error applying coupon:', error);
       setError('Failed to apply coupon');
     }
   };
-  
-  
+
   const renderCoupons = () => {
     if (loading) {
       return <div className="loading">Loading coupons...</div>;

@@ -76,3 +76,60 @@ export const updateProfile = async (updatedData, token) => {
       throw error;
   }
 };
+
+export const banUser = async (userId, banned) => {
+  try {
+      const response = await axios.patch(
+          `${API_URL}/${userId}/ban`,
+          { banned },
+          {
+              headers: { Authorization: `Bearer ${token}` },
+          }
+      );
+      return response.data;
+  } catch (error) {
+      throw new Error(
+          error.response ? error.response.data.message : 'Failed to ban/unban user'
+      );
+  }
+};
+
+export const updateUser = async (userId, updatedData) => {
+  try {
+      const response = await axios.put(
+          `${API_URL}/${userId}`,
+          updatedData,
+          {
+              headers: { Authorization: `Bearer ${token}` },
+          }
+      );
+      return response.data;
+  } catch (error) {
+      throw new Error(
+          error.response ? error.response.data.message : 'Failed to update user'
+      );
+  }
+};
+
+export const registerUser = async (name, email, password, phone) => {
+  try {
+      const response = await axios.post(`${API_URL}/register`, {
+          name,
+          email,
+          password,
+          phone,
+      });
+      return response.data;
+  } catch (err) {
+      throw err.response?.data || { error: 'Registration failed' };
+  }
+};
+
+export const createUser = async (userData) => {
+  try {
+    const response = await axios.post(`${API_URL}/register`, userData);
+    return response.data;
+  } catch (err) {
+    throw err.response?.data || { error: 'Failed to create user' };
+  }
+};

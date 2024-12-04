@@ -1,35 +1,111 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f7fc;
+  color: #333;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  color: #444;
+}
+
 .category-management {
-    margin-left: 16%;
-    margin-right: 3%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-left: 16%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.create-category-form {
+  margin-left: 150px;
+  width: calc(100% - 270px);
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-category-form h2 {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #5c6bc0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #3f4c9a;
+}
+
+.error {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.category-list ul {
+  list-style-type: none;
+}
+
+.category-list li {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-list li strong {
+  color: #3f4c9a;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading p {
+  font-size: 18px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .category-management {
+    padding: 10px;
   }
-  
+
   .create-category-form {
-    margin-bottom: 20px;
+    margin-left: 0;
+    width: 100%;
   }
-  
-  .create-category-form input {
-    margin: 10px 0;
-    padding: 8px;
-    width: 200px;
+
+  .sidebar {
+    display: none;
   }
-  
-  .create-category-form button {
-    padding: 10px 15px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .create-category-form button:hover {
-    background-color: #45a049;
-  }
-  
-  ul {
-    list-style-type: none;
-  }
-  
-  ul li {
-    margin: 10px 0;
-  }
-  
+}

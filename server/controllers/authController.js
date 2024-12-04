@@ -179,7 +179,84 @@ const deleteUserById = async (req, res) => {
       res.status(500).json({ message: 'Failed to delete User' });
     }
   };
-  
+
+const banUserById = async (req, res) => {
+  const { id } = req.params;
+  const { banned } = req.body;
+
+  try {
+      const user = await User.findByIdAndUpdate(
+          id,
+          { banned },
+          { new: true }
+      );
+
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      const status = banned ? 'banned' : 'unbanned';
+      res.status(200).json({ message: `User ${status} successfully`, user });
+  } catch (error) {
+      console.error('Error banning/unbanning user:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const updateUserById = async (req, res) => {
+  const { id } = req.params; 
+  const { name, email, phone, addresses } = req.body;
+
+  try {
+      const updatedUser = await User.findByIdAndUpdate(
+          id,
+          {
+              $set: {
+                  ...(name && { name }),
+                  ...(email && { email }),
+                  ...(phone && { phone }),
+                  ...(addresses && { addresses }),
+              }
+          },
+          { new: true }
+      );
+
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({
+          message: 'User updated successfully',
+          user: updatedUser
+      });
+  } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+const createUser = async (req, res) => {
+  try {
+    const { name, phone, addresses, email } = req.body;
+
+    let user = await User.findOne({ phone });
+    if (!user) {
+      user = new User({
+        name,
+        phone,
+        addresses,
+        email
+      });
+      await user.save();
+    }
+
+    res.status(201).json({ message: 'User created or found successfully', userId: user._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
 module.exports = {
     register,
@@ -190,5 +267,8 @@ module.exports = {
     avatarUpload,
     updateUserProfile,
     getUsers,
-    deleteUserById
+    deleteUserById,
+    banUserById,
+    updateUserById,
+    createUser
 };

@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const Order = require('../models/OrderModel');
 const Cart = require('../models/CartModel');
 const User = require('../models/UserModel');
-
+const Product = require('../models/ProductModel');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -29,6 +29,10 @@ const checkout = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    const pointsEarned = Math.floor(totalAmount * 0.05);
+    user.loyaltyPoints += pointsEarned;
+    await user.save();
+
     const newOrder = new Order({
       userId,
       items,
@@ -46,6 +50,18 @@ const checkout = async (req, res) => {
     });
 
     await newOrder.save();
+
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (product) {
+        if (product.stock < item.quantity) {
+          return res.status(400).json({ error: `Not enough stock for product: ${product.name}` });
+        }
+
+        product.stock -= item.quantity;
+        await product.save();
+      }
+    }
 
     const productIdsToRemove = items.map(item => item.productId);
     await Cart.updateOne(
@@ -67,12 +83,16 @@ const checkout = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json({ message: 'Order created successfully and confirmation email sent', order: newOrder });
+    res.json({ message: 'Order created successfully and confirmation email sent', 
+      order: newOrder,
+      loyaltyPoints: user.loyaltyPoints,
+    });
   } catch (error) {
     console.error('Error creating order:', error);
     res.status(500).json({ error: 'Error creating order' });
   }
 };
+
 
 const getOrdersByUserId = async (req, res) => {
   try {
@@ -311,8 +331,37 @@ const getRevenueByDateRange = async (req, res) => {
   }
 };
 
+const createOrder = async (req, res) => {
+  try {
+    const { name, phone, addresses, items, paymentMethod, totalAmount, loyaltyPointsUsed } = req.body;
 
+    let user = await User.findOne({ phone });
+    if (!user) {
+      user = new User({
+        name,
+        phone,
+        addresses,
+      });
+      await user.save();
+    }
 
+    const newOrder = new Order({
+      userId: user._id,
+      items,
+      shippingAddress,
+      paymentMethod,
+      totalAmount,
+      loyaltyPointsUsed
+    });
+
+    await newOrder.save();
+
+    res.status(201).json({ message: 'Order placed successfully', orderId: newOrder._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   checkout,
@@ -323,5 +372,6 @@ module.exports = {
   getOrderById,
   getDailyRevenueForMonth,
   getMonthlyRevenueForYear,
-  getRevenueByDateRange
+  getRevenueByDateRange,
+  createOrder
 };

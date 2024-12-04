@@ -23,6 +23,16 @@ export const checkoutOrder = async (orderData) => {
   }
 };
 
+export const checkoutOrderForNotLoggedUser = async (orderData) => {
+  try {
+    const response = await axios.post(`${API_URL}/create-order`, orderData);
+    return response.data;
+  } catch (error) {
+    console.error('Error placing order:', error);
+    throw new Error('Failed to place order');
+  }
+};
+
 export const getOrdersByUserId = async () => {
   try {
     const response = await axios.get(`${API_URL}/`, {

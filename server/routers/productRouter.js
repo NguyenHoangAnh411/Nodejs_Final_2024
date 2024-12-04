@@ -4,7 +4,7 @@ const controller = require('../controllers/productController');
 const authenticate = require('../middlewares/authenticate');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
-
+router.get('/search', controller.searchProducts);
 router.get('/:productId', controller.getProductById);
 router.post('/', authenticate, upload.array('images', 5), controller.addProduct);
 router.put('/:productId', authenticate, upload.array('images', 5), controller.updateProduct);

@@ -190,6 +190,7 @@ function Cart() {
       shippingAddress: userData.addresses,
       paymentMethod: checkoutInfo.paymentMethod,
       totalAmount: cart.totalPayment,
+      loyaltyPoints: userData.loyaltyPoints
     };
     console.log(orderDetails)
     setOrderDetails(orderDetails);
@@ -225,7 +226,7 @@ function Cart() {
       ...calculateTotal(prevCart.items, selectedItems, voucher),
     }));
   };
-
+  
   const handleCheckout = async () => {
     try {
       setCart(null);
@@ -311,7 +312,11 @@ function Cart() {
         )}
         {showSuccess && <div className="success">{successMessage}</div>}
         {isVoucherModalOpen && (
-          <CouponForm onClose={handleCloseVoucherModal} onApplyVoucher={handleApplyVoucher} />
+          <CouponForm 
+            onClose={handleCloseVoucherModal} 
+            onApplyVoucher={handleApplyVoucher} 
+            updateCart={handleApplyVoucher}
+          />
         )}
       </div>
     </div>

@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getOrders, updateOrderStatus, deleteOrderById, getOrderDetails } from '../../hooks/orderApi';
 import Sidebar from '../../components/Sidebar';
-import '../../css/AdminPage.css';
 import '../../css/OrderManagement.css';
 
 function OrderManagement() {
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('');
-  const [timeFilter, setTimeFilter] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filters, setFilters] = useState({
+    filter: '',
+    timeFilter: '',
+    startDate: '',
+    endDate: '',
+  });
 
-  useEffect(() => {
-    const fetchOrders = async () => {
+  const fetchOrders = useMemo(() => {
+    return async () => {
       try {
-        const orderList = await getOrders({ filter, timeFilter, startDate, endDate });
+        const orderList = await getOrders(filters);
         setOrders(orderList);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
+  }, [filters]);
 
+  useEffect(() => {
     fetchOrders();
-  }, [filter, timeFilter, startDate, endDate]);
+  }, [fetchOrders]);
 
   const handleStatusChange = async (orderId, status) => {
     try {
       await updateOrderStatus(orderId, status);
-      setOrders(
-        orders.map((order) =>
-          order._id === orderId ? { ...order, status } : order
-        )
-      );
+      setOrders(orders.map((order) =>
+        order._id === orderId ? { ...order, status } : order
+      ));
     } catch (error) {
       console.error('Error updating order status:', error);
     }
@@ -59,20 +60,25 @@ function OrderManagement() {
     }
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
   return (
     <div>
       <Sidebar />
       <div className="main-content">
         <h1>Order Management</h1>
 
-        <select onChange={(e) => setFilter(e.target.value)}>
+        <select name="filter" onChange={handleFilterChange} value={filters.filter}>
           <option value="">All</option>
           <option value="pending">Pending</option>
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
         </select>
 
-        <select onChange={(e) => setTimeFilter(e.target.value)} value={timeFilter}>
+        <select name="timeFilter" onChange={handleFilterChange} value={filters.timeFilter}>
           <option value="">All Time</option>
           <option value="today">Today</option>
           <option value="yesterday">Yesterday</option>
@@ -80,17 +86,19 @@ function OrderManagement() {
           <option value="thisMonth">This Month</option>
         </select>
 
-        {timeFilter === 'custom' && (
+        {filters.timeFilter === 'custom' && (
           <div>
             <input
               type="date"
-              onChange={(e) => setStartDate(e.target.value)}
-              value={startDate}
+              name="startDate"
+              onChange={handleFilterChange}
+              value={filters.startDate}
             />
             <input
               type="date"
-              onChange={(e) => setEndDate(e.target.value)}
-              value={endDate}
+              name="endDate"
+              onChange={handleFilterChange}
+              value={filters.endDate}
             />
           </div>
         )}
@@ -114,9 +122,7 @@ function OrderManagement() {
                 <td>
                   <select
                     value={order.status}
-                    onChange={(e) =>
-                      handleStatusChange(order._id, e.target.value)
-                    }
+                    onChange={(e) => handleStatusChange(order._id, e.target.value)}
                   >
                     <option value="pending">Pending</option>
                     <option value="completed">Completed</option>

@@ -21,7 +21,8 @@ router.put('/profile/avatar', authenticate, upload.single('avatar'), controller.
 router.get('/:userId', controller.getUserById);
 router.delete('/:id', authenticate, controller.deleteUserById);
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
+router.put('/:id', authenticate, controller.updateUserById);
+router.patch('/:id/ban', authenticate, controller.banUserById);
 router.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {

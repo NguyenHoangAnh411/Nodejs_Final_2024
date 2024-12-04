@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import '../css/CheckOutModal.css';
-import { checkoutOrder } from '../hooks/orderApi';
+import { checkoutOrder, checkoutOrderForNotLoggedUser } from '../hooks/orderApi';
 
-function CheckoutModal({ isOpen, onClose, onConfirm, checkoutInfo, onChange, addresses, orderDetails }) {
-  const [isNewAddress, setIsNewAddress] = useState(false);
+const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, addresses, orderDetails }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState(''); 
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+  const [loyaltyPointsUsed, setLoyaltyPointsUsed] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(orderDetails ? orderDetails.totalAmount : 0);
 
+  useEffect(() => {
+    if (orderDetails) {
+      setLoyaltyPoints(orderDetails.loyaltyPoints || 0);
+      setTotalAmount(orderDetails.totalAmount);
+    }
+  }, [orderDetails]);
 
   if (!isOpen) return null;
 
@@ -20,6 +28,18 @@ function CheckoutModal({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
     setPaymentMethod(e.target.value);
   };
 
+  const handleLoyaltyPointsChange = (e) => {
+    let pointsUsed = parseInt(e.target.value, 10) || 0;
+    const maxPoints = loyaltyPoints >= 1000 ? Math.floor(loyaltyPoints / 1000) : loyaltyPoints;
+    const maxAmount = Math.floor(orderDetails.totalAmount / 1000);
+
+    pointsUsed = pointsUsed > maxPoints ? maxPoints : pointsUsed;
+    pointsUsed = pointsUsed > maxAmount ? maxAmount : pointsUsed;
+
+    setLoyaltyPointsUsed(pointsUsed);
+    setTotalAmount(orderDetails.totalAmount - pointsUsed * 1000);
+};
+
   const handleCheckout = async () => {
     setLoading(true);
     const orderData = {
@@ -27,14 +47,16 @@ function CheckoutModal({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
       items: orderDetails.items,
       shippingAddress: orderDetails.shippingAddress[0],
       paymentMethod,
-      totalAmount: orderDetails.totalAmount,
+      totalAmount,
+      loyaltyPointsUsed,
     };
-    
+
     try {
       const response = await checkoutOrder(orderData);
       setLoading(false);
       
       if (response && response.message) {
+        setLoyaltyPoints(response.loyaltyPoints);
         onConfirm(response);
       }
     } catch (err) {
@@ -69,15 +91,40 @@ function CheckoutModal({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
           </select>
         </div>
 
+        <div>
+          <h3>Loyalty Points</h3>
+          <p>You have {loyaltyPoints} points.</p>
+          <label htmlFor="loyaltyPoints">Use Points: </label>
+          <input
+            type="number"
+            id="loyaltyPoints"
+            value={loyaltyPointsUsed}
+            onChange={handleLoyaltyPointsChange}
+            max={Math.floor(loyaltyPoints / 1000)}
+            min={0}
+            step={1}
+          />
+          <p>Applied: {loyaltyPointsUsed * 1000} VND</p>
+        </div>
+
         {error && <p className="error">{error}</p>}
+
+        <div>
+          <h3>Total Amount: {totalAmount} VND</h3>
+        </div>
 
         <button onClick={handleCheckout} disabled={loading || !paymentMethod}> 
           {loading ? 'Processing...' : 'Confirm'}
         </button>
 
+        {loyaltyPoints > 0 && (
+          <div>
+            <p>You have earned {loyaltyPoints} loyalty points!</p>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default CheckoutModal;

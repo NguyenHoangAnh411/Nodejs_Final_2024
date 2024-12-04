@@ -5,6 +5,7 @@ const authenticate = require('../middlewares/authenticate');
 
 router.get('/getAllOrders', authenticate, controller.getOrders);
 router.post('/checkout', controller.checkout);
+router.post('/create-order', controller.createOrder);
 router.get('/', authenticate, controller.getOrdersByUserId);
 router.put('/update-status', authenticate, controller.updateOrderStatus);
 router.delete('/:id', authenticate, controller.deleteOrderById);

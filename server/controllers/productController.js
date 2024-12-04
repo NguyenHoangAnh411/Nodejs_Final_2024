@@ -203,6 +203,45 @@ const addComment = async (req, res) => {
     }
   };
 
+  const searchProducts = async (req, res) => {
+    const { query = '', page = 1, limit = 20, priceRange } = req.query;
+
+    // Khởi tạo bộ lọc
+    const filters = {};
+
+    // Xử lý tham số tìm kiếm (query)
+    if (query) {
+        filters.name = new RegExp(query, 'i'); // Tìm kiếm theo tên sản phẩm (không phân biệt chữ hoa/thường)
+    }
+
+    // Xử lý tham số priceRange (khoảng giá)
+    if (priceRange) {
+        const [min, max] = priceRange.split(',').map(Number); // Chuyển đổi priceRange thành mảng số
+        filters.price = { $gte: min, $lte: max }; // Tạo bộ lọc giá
+    }
+
+    try {
+        // Đếm tổng số sản phẩm phù hợp với bộ lọc
+        const totalProducts = await Product.countDocuments(filters);
+
+        // Lấy danh sách sản phẩm dựa trên bộ lọc, phân trang
+        const products = await Product.find(filters)
+            .skip((page - 1) * limit) // Bỏ qua các sản phẩm trước đó
+            .limit(parseInt(limit)); // Giới hạn số sản phẩm trả về
+
+        // Trả về kết quả
+        res.json({
+            products,
+            totalPages: Math.ceil(totalProducts / limit), // Tổng số trang
+        });
+    } catch (error) {
+        // Log lỗi và trả về lỗi
+        console.error('Detailed error fetching products:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 module.exports = { 
     getProducts,
     getProductById,
@@ -211,5 +250,6 @@ module.exports = {
     deleteProduct, 
     addComment,
     getComments,
-    deleteComment
+    deleteComment,
+    searchProducts
 };

@@ -9,7 +9,7 @@ import Sidebar from '../components/Sidebar';
 
 function ProductDetail() {
   const { productId } = useParams();
-  const { currentUser } = useUserProfile();
+  const { userData } = useUserProfile();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -65,7 +65,7 @@ function ProductDetail() {
       productId,
       content: reviewText,
       rating,
-      user: currentUser,
+      user: userData,
     };
 
     try {
@@ -79,7 +79,7 @@ function ProductDetail() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [reviewText, rating, currentUser, productId]);
+  }, [reviewText, rating, userData, productId]);
 
   const handleDeleteComment = useCallback(async (commentId) => {
     if (window.confirm('Bạn có chắc chắn muốn xoá bình luận này?')) {
@@ -95,12 +95,21 @@ function ProductDetail() {
 
   const handleAddToCart = async () => {
     setLoading(true);
+    
     try {
-      const response = await addToCart(productId);
-      if (response) {
-        alert('Sản phẩm đã được thêm vào giỏ hàng.');
+      if (userData) {
+        const response = await addToCart(productId);
+        if (response) {
+          alert('Sản phẩm đã được thêm vào giỏ hàng.');
+        } else {
+          alert('Lỗi khi thêm sản phẩm vào giỏ hàng.');
+        }
       } else {
-        alert('Lỗi khi thêm sản phẩm vào giỏ hàng.');
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const productToAdd = { productId, quantity: 1 };
+        cart.push(productToAdd);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Sản phẩm đã được thêm vào giỏ hàng tạm thời.');
       }
     } catch (error) {
       console.error('Error adding product to cart:', error);
@@ -164,7 +173,7 @@ function ProductDetail() {
                   <p><strong>Rating: {review.rating} Stars</strong></p>
                   <p>{review.content}</p>
                   <p><strong>Reviewed by:</strong> {review.user?.name || 'Anonymous'}</p>
-                  {currentUser && currentUser._id === review.user?._id && (
+                  {userData && userData._id === review.user?._id && (
                     <button onClick={() => handleDeleteComment(review._id)}>Delete Comment</button>
                   )}
                 </li>

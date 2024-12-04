@@ -12,13 +12,13 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
-    phone: { type: String },
+    phone: { type: String, required: true, unique: true },
     addresses: { type: [addressSchema], default: [] },
     role: { type: String, default: "Customer", enum: ["Customer", "Admin"] },
     avatar: { type: String, default: 'https://cdn-media.sforum.vn/storage/app/media/wp-content/uploads/2021/07/lol-t1-1.jpg' },
     isVerified: { type: Boolean, default: false },
     googleId: { type: String },
-    facebookId: { type: String }
+    loyaltyPoints: { type: Number, default: 0 },
 }, {
     timestamps: true,
 });

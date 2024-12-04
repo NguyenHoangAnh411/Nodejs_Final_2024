@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/coupons';
+const token = localStorage.getItem('token');
 
 export const createCoupon = async (couponData) => {
   try {
@@ -28,6 +29,16 @@ export const getAllCoupons = async () => {
     throw new Error(error.response ? error.response.data.message : 'Failed to fetch coupons');
   }
 };
+
+export const getUsedCoupons = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/used`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response ? error.response.data.message : 'Failed to fetch coupons');
+  }
+};
+
 
 export const getCouponById = async (id) => {
   try {
@@ -65,5 +76,17 @@ export const deleteCoupon = async (id) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response ? error.response.data.message : 'Failed to delete coupon');
+  }
+};
+
+export const updateCouponStatus = async (couponId, data) => {
+  try {
+    await axios.patch(`${API_URL}/${couponId}/status`, data, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    throw new Error('Error updating coupon status');
   }
 };

@@ -6,6 +6,7 @@ import useUserProfile from '../hooks/userinfomation';
 import CartIcon from './Icon/CartIcon';
 import SearchBar from './SearchBar';
 import { getCartByUserId } from '../hooks/cartApi';
+
 function Navbar() {
     const { logout, isAuthenticated } = useContext(AuthContext);
     const { userData, loading } = useUserProfile();
@@ -24,16 +25,19 @@ function Navbar() {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-                const cartResponse = await getCartByUserId();
-                setCartItemCount(cartResponse.items.length);
+                if (isAuthenticated) {
+                    const cartResponse = await getCartByUserId();
+                    setCartItemCount(cartResponse.items.length);
+                } else {
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    setCartItemCount(cart.length);
+                }
             } catch (error) {
                 console.error('Lỗi khi lấy giỏ hàng:', error);
             }
         };
 
-        if (isAuthenticated) {
-            fetchCartData();
-        }
+        fetchCartData();
     }, [isAuthenticated]);
 
     return (
@@ -62,7 +66,6 @@ function Navbar() {
                         <button onClick={goToLogin}>Login</button>
                     )}
                 </div>
-                
             </div>
         </nav>
     );
