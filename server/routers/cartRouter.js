@@ -11,4 +11,6 @@ router.put('/update/:cartItemId', authenticate, cartController.updateCartItemQua
 
 router.delete('/remove/:cartItemId', authenticate, cartController.removeFromCart);
 
+router.post('/addCartNotLoggedUser', cartController.addCartNotLoggedUser);
+
 module.exports = router;

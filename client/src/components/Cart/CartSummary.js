@@ -1,15 +1,15 @@
 import React from 'react';
 
 function CartSummary({ totalPrice, taxes, shippingFee, discount, totalPayment, onCheckout }) {
-  
+  const formatNumber = (num) => (typeof num === 'number' ? num.toFixed(2) : '0.00');
   return (
     <div>
       <h3>Order Summary</h3>
-      <p>Subtotal: ${totalPrice.toFixed(2)}</p>
-      <p>Taxes: ${taxes.toFixed(2)}</p>
-      <p>Shipping Fee: ${shippingFee.toFixed(2)}</p>
-      <p>Discount: ${discount.toFixed(2)}</p>
-      <h4>Total: ${totalPayment.toFixed(2)}</h4>
+      <p>Subtotal: ${formatNumber(totalPrice ?? 0)}</p>
+      <p>Taxes: ${formatNumber(taxes ?? 0)}</p>
+      <p>Shipping Fee: ${formatNumber(shippingFee ?? 0)}</p>
+      <p>Discount: ${formatNumber(discount ?? 0)}</p>
+      <h4>Total: ${formatNumber(totalPayment ?? 0)}</h4>
       <button onClick={onCheckout}>Checkout</button>
     </div>
   );

@@ -127,9 +127,25 @@ export const registerUser = async (name, email, password, phone) => {
 
 export const createUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, userData);
-    return response.data;
-  } catch (err) {
-    throw err.response?.data || { error: 'Failed to create user' };
+    const response = await fetch(`${API_URL}/create-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('User created successfully:', data);
+      return data.userId; 
+    } else {
+      console.error('Failed to create user:', data.message);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error while creating user:', error);
+    return null;
   }
 };

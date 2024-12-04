@@ -20,6 +20,7 @@ function ProductDetail() {
 
   useEffect(() => {
     const fetchProductData = async () => {
+      setLoading(true);
       try {
         const productData = await getProductById(productId);
         setProduct(productData);
@@ -27,6 +28,9 @@ function ProductDetail() {
         fetchComments();
       } catch (error) {
         console.error('Error fetching product:', error);
+        alert('Có lỗi khi tải sản phẩm.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -95,7 +99,7 @@ function ProductDetail() {
 
   const handleAddToCart = async () => {
     setLoading(true);
-    
+  
     try {
       if (userData) {
         const response = await addToCart(productId);
@@ -105,11 +109,38 @@ function ProductDetail() {
           alert('Lỗi khi thêm sản phẩm vào giỏ hàng.');
         }
       } else {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const productToAdd = { productId, quantity: 1 };
-        cart.push(productToAdd);
+        let cart = JSON.parse(localStorage.getItem('cart')) || {
+          userId: null,
+          items: [],
+          totalPrice: 0,
+          taxes: 0,
+          shippingFee: 0,
+          coupon: "",
+          discount: 0,
+        };
+
+        const existingItemIndex = cart.items.findIndex(item => item.productId._id === productId);
+        if (existingItemIndex > -1) {
+          cart.items[existingItemIndex].quantity += 1;
+        } else {
+          const productData = await getProductById(productId);
+  
+          const productToAdd = {
+            productId: productData,
+            quantity: 1,
+            _id: generateRandomId(),
+          };
+  
+          cart.items.push(productToAdd);
+        }
+  
+        // Tính toán lại tổng giá trị của giỏ hàng (nếu cần)
+        cart.totalPrice = cart.items.reduce((total, item) => total + item.productId.price * item.quantity, 0);
+        cart.taxes = 0; // Tính thuế nếu có
+        cart.shippingFee = 0; // Tính phí vận chuyển nếu có
+  
+        // Cập nhật giỏ hàng trong localStorage
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert('Sản phẩm đã được thêm vào giỏ hàng tạm thời.');
       }
     } catch (error) {
       console.error('Error adding product to cart:', error);
@@ -118,8 +149,12 @@ function ProductDetail() {
       setLoading(false);
     }
   };
-
-  if (!product) return <p>Loading...</p>;
+  
+  const generateRandomId = () => {
+    return Math.random().toString(36).substr(2, 9);
+  };
+  
+  if (loading || !product) return <p>Loading...</p>;
 
   return (
     <div className="product-detail">
@@ -168,8 +203,8 @@ function ProductDetail() {
             {reviews.length === 0 ? (
               <p>No reviews yet.</p>
             ) : (
-              reviews.map((review, index) => (
-                <li key={index}>
+              reviews.map((review) => (
+                <li key={review._id}>
                   <p><strong>Rating: {review.rating} Stars</strong></p>
                   <p>{review.content}</p>
                   <p><strong>Reviewed by:</strong> {review.user?.name || 'Anonymous'}</p>
@@ -180,7 +215,6 @@ function ProductDetail() {
               ))
             )}
           </ul>
-
         </div>
 
         <div className="related-products">

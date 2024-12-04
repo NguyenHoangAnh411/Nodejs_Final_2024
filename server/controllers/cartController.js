@@ -1,8 +1,5 @@
-const User = require('../models/UserModel');
 const Cart = require('../models/CartModel');
-const Order = require('../models/OrderModel');
-const Product = require('../models/ProductModel');
-const Coupon = require('../models/CouponModel');
+
 const addToCart = async (req, res) => {
   const { productId } = req.params; 
   const { userId } = req.user;
@@ -28,6 +25,45 @@ const addToCart = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+const addCartNotLoggedUser = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ message: 'Missing productId' });
+    }
+
+    let cart;
+    if (userId) {
+      cart = await Cart.findOne({ userId });
+      if (!cart) {
+        cart = new Cart({ userId, items: [] }); 
+      }
+    } else {
+      cart = await Cart.findOne({ userId: null });
+      if (!cart) {
+        cart = new Cart({ userId: null, items: [] });
+      }
+    }
+
+    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+
+    if (itemIndex > -1) {
+      cart.items[itemIndex].quantity += 1;
+    } else {
+      cart.items.push({ productId, quantity: 1 });
+    }
+
+    await cart.save();
+
+    res.status(200).json({ message: 'Cart updated successfully', cart });
+  } catch (error) {
+    console.error('Error while adding cart:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 
 const getCartByUserId = async (req, res) => {
   const { userId } = req.user;
@@ -95,4 +131,5 @@ module.exports = {
   getCartByUserId,
   updateCartItemQuantity,
   removeFromCart,
+  addCartNotLoggedUser
 };

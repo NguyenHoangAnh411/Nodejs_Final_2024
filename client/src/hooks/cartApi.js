@@ -44,4 +44,19 @@ export const updateCartItemQuantity = async (cartItemId, quantity) => {
   );
   return response.data;
 };
+export const addCartNotLoggedUser = async (userId, productId) => {
+  try {
+
+    if (!userId) {
+      userId = "temporary-user-id";
+    }
+
+    const response = await axios.post(`${API_URL}/addCartNotLoggedUser`, { userId, productId });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error adding cart for non-logged user:', error);
+    throw error;
+  }
+};
 

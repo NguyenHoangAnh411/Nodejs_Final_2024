@@ -7,9 +7,12 @@ import useUserProfile from '../hooks/userinfomation';
 import CouponForm from '../modals/CouponModal';
 import CartItem from '../components/Cart/CartItem';
 import CartSummary from '../components/Cart/CartSummary';
+import CreateAccountModal from '../modals/CreateAccountModal';
 
 function Cart() {
   const { userData } = useUserProfile();
+  const [userCreatedData, setUserCreatedData] = useState(null);
+
   const [cart, setCart] = useState({
     items: [],
     totalAmount: 0,
@@ -32,34 +35,47 @@ function Cart() {
   const [shippingMethod, setShippingMethod] = useState('standard');
   const [shippingCost, setShippingCost] = useState(0);
   const [orderDetails, setOrderDetails] = useState(null);
-
+  const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
   useEffect(() => {
     const fetchCart = async () => {
+      setLoading(true);
       try {
-        const cartResponse = await getCartByUserId();
-    
-        if (!cartResponse || !cartResponse.items) {
-          throw new Error('Invalid cart response');
+        if (userData) {
+          const cartResponse = await getCartByUserId();
+  
+          if (!cartResponse || !cartResponse.items) {
+            throw new Error('Invalid cart response');
+          }
+          const validItems = cartResponse.items.filter(item => item.productId !== null);
+          const totals = calculateTotal(validItems, validItems.map(item => item._id));
+          setCart({ ...cartResponse, items: validItems, ...totals });
+          setSelectedItems(validItems.map(item => item._id));
+        } else {
+          const cart = JSON.parse(localStorage.getItem('cart')) || { items: [] };
+  
+          if (!cart || !cart.items) {
+            setError('Cart is empty');
+            return;
+          }
+  
+          const validItems = cart.items.filter(item => item.productId !== null);
+          const totals = calculateTotal(validItems, validItems.map(item => item._id));
+  
+          setCart({ ...cart, items: validItems, ...totals });
+          setSelectedItems(validItems.map(item => item._id));
         }
-
-        const validItems = cartResponse.items.filter(item => item.productId !== null);
-
-        const totals = calculateTotal(validItems, validItems.map(item => item._id));
-        setCart({ ...cartResponse, items: validItems, ...totals });
-        setSelectedItems(validItems.map(item => item._id));
       } catch (error) {
         console.error('Error fetching cart:', error);
-        setError('Unable to fetch cart');
+        setError('Failed to load cart.');
       } finally {
         setLoading(false);
       }
     };
-    
   
     fetchCart();
-  }, []);
+  }, [userData]);
   
-
+  
   const handleShippingMethodChange = (fee) => {
     console.log("Changing shipping fee to: ", fee);
     setCart((prevCart) => {
@@ -120,20 +136,25 @@ function Cart() {
 
     try {
       const updatedCart = await updateCartItemQuantity(cartItemId, quantity);
+
       setCart((prevCart) => {
         const updatedItems = prevCart.items.map(item =>
           item._id === cartItemId
             ? { ...item, quantity }
             : item
         );
-
+  
         const totals = calculateTotal(updatedItems, selectedItems);
 
-        return {
+        const updatedCartData = {
           ...prevCart,
           items: updatedItems,
           ...totals,
         };
+
+        localStorage.setItem('cart', JSON.stringify(updatedCartData));
+  
+        return updatedCartData;
       });
     } catch (error) {
       console.error('Error updating quantity:', error);
@@ -147,19 +168,27 @@ function Cart() {
       setCart((prevCart) => {
         const updatedItems = prevCart.items.filter(item => item._id !== cartItemId);
         const totals = calculateTotal(updatedItems, selectedItems);
-
-        return {
+  
+        console.log("Updated cart items:", updatedItems);
+        console.log("Updated totals:", totals);
+  
+        const updatedCartData = {
           ...prevCart,
           items: updatedItems,
           ...totals,
         };
+
+        localStorage.setItem('cart', JSON.stringify(updatedCartData));
+  
+        return updatedCartData;
       });
     } catch (error) {
-      console.error('Error removing item:', error);
-      setError('Unable to remove item');
+      console.error('Lỗi khi xóa sản phẩm:', error);
+      setError('Không thể xóa sản phẩm');
     }
   };
-
+  
+  
   const toggleSelectItem = (itemId) => {
     setSelectedItems((prev) => {
       const newSelected = prev.includes(itemId)
@@ -176,26 +205,45 @@ function Cart() {
   };
 
   const handleOpenCheckoutModal = () => {
-    const selectedCartItems = cart.items.filter(item => selectedItems.includes(item._id));
-    const orderDetails = {
-      userId: userData._id,
-      userEmail: userData.email,
-      items: selectedCartItems.map(item => ({
-        productId: item.productId._id,
-        productName: item.productId.name,
-        price: item.productId.price,
-        cost: item.productId.cost,
-        quantity: item.quantity,
-      })),
-      shippingAddress: userData.addresses,
-      paymentMethod: checkoutInfo.paymentMethod,
-      totalAmount: cart.totalPayment,
-      loyaltyPoints: userData.loyaltyPoints
-    };
-    console.log(orderDetails)
-    setOrderDetails(orderDetails);
+    if (!userData) {
+
+      setIsCreateAccountModalOpen(true);
+    } else {
+
+      const selectedCartItems = cart.items.filter(item => selectedItems.includes(item._id));
+  
+      if (selectedCartItems.length === 0) {
+        setError('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
+        return;
+      }
+  
+      const orderDetails = {
+        userId: userData ? userData._id : null,
+        userEmail: userData ? userData.email : 'guest@domain.com',
+        items: selectedCartItems.map(item => ({
+          productId: item.productId._id,
+          productName: item.productId.name,
+          price: item.productId.price,
+          cost: item.productId.cost,
+          quantity: item.quantity,
+        })),
+        shippingAddress: userData ? userData.addresses : [],
+        paymentMethod: checkoutInfo.paymentMethod,
+        totalAmount: cart.totalPayment,
+        loyaltyPoints: userData ? userData.loyaltyPoints : 0,
+      };
+
+      setOrderDetails(orderDetails);
+      setCheckoutModalOpen(true);
+    }
+  };
+
+  const handleCreateAccountSubmit = (userId, userData) => {
+    setIsCreateAccountModalOpen(false);
+    setUserCreatedData(userData);
     setCheckoutModalOpen(true);
   };
+  
 
   const handleCloseCheckoutModal = () => {
     setCheckoutModalOpen(false);
@@ -316,6 +364,13 @@ function Cart() {
             onClose={handleCloseVoucherModal} 
             onApplyVoucher={handleApplyVoucher} 
             updateCart={handleApplyVoucher}
+          />
+        )}
+        {isCreateAccountModalOpen && (
+          <CreateAccountModal
+            isOpen={isCreateAccountModalOpen}
+            onClose={() => setIsCreateAccountModalOpen(false)}
+            onCreate={handleCreateAccountSubmit}
           />
         )}
       </div>

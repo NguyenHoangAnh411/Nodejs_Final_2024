@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const { storage } = require('../../client/src/components/firebaseService');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const mongoose = require('mongoose');
+const Cart = require('../models/CartModel');
 
 const register = async (req, res) => {
     try {
@@ -237,7 +238,7 @@ const updateUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { name, phone, addresses, email } = req.body;
+    const { name, phone, addresses, email, cartItems } = req.body;
 
     let user = await User.findOne({ phone });
     if (!user) {
@@ -250,10 +251,20 @@ const createUser = async (req, res) => {
       await user.save();
     }
 
+    let cart = await Cart.findOne({ userId: user._id });
+
+    if (!cart && cartItems && cartItems.length > 0) {
+      cart = new Cart({
+        userId: user._id,
+        items: cartItems
+      });
+      await cart.save();
+    }
+
     res.status(201).json({ message: 'User created or found successfully', userId: user._id });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error during user creation:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
