@@ -12,7 +12,7 @@ import CategoryManagement from './pages/admin/CategoryManagement';
 import AdminPage from './pages/admin/AdminPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import SearchPage from './pages/SearchPage';
-import Navbar from './components/Navbar';
+import Navbar from './components/navbar';
 import CouponManagementPage from './pages/admin/CouponManagementPage';
 import OrderHistoryPage from './pages/OrderHistory';
 import ManageProduct from './pages/admin/ManageProduct';
