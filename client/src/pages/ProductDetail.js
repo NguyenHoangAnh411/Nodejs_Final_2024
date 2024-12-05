@@ -164,7 +164,7 @@ function ProductDetail() {
         {product.images && product.images.length > 0 && (
           <img src={product.images[0]?.url} alt={product.name} className="product-image" />
         )}
-        <p><strong>Price:</strong> ${product.price}</p>
+        <p><strong>Price:</strong> {`${(product.price * 25000).toLocaleString('vi-VN')} VND`}</p>
         <p><strong>Description:</strong> {product.description}</p>
         <button onClick={handleAddToCart} className="add-to-cart-button" disabled={loading}>
           {loading ? 'Adding...' : 'Add to Cart'}

@@ -20,19 +20,19 @@ function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', description);
         formData.append('price', price);
         formData.append('category', category);
         formData.append('brand', brand);
-        formData.append('stock', stock); 
-        
+        formData.append('stock', stock);
+
         images.forEach((image) => {
             formData.append('images', image);
         });
-    
+
         try {
             const response = await axios.post(`http://localhost:5000/api/products/add-product`, formData, {
                 headers: {
@@ -52,7 +52,7 @@ function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
             alert('Failed to add product!');
         }
     };
-    
+
     return (
         <Modal
             isOpen={isOpen}
@@ -67,24 +67,25 @@ function AddProductModal({ isOpen, onRequestClose, onAddProduct }) {
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Product Description" required />
                 <input
                     type="text"
-                    value={`$${price}`}
-                    onChange={(e) => setPrice(e.target.value.replace('$', '').replace(',', ''))}
-                    placeholder="Price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value.replace(',', ''))}
+                    placeholder="Price in VND"
                     required
                 />
+
                 <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category" required />
                 <input type="text" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand" required />
                 <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} placeholder="Stock" required />
 
                 <div className="file-input-container">
                     <label htmlFor="file-input" className="file-label">Choose Product Images</label>
-                    <input 
-                        type="file" 
-                        id="file-input" 
-                        className="file-input" 
-                        multiple 
-                        onChange={handleImageChange} 
-                        required 
+                    <input
+                        type="file"
+                        id="file-input"
+                        className="file-input"
+                        multiple
+                        onChange={handleImageChange}
+                        required
                     />
                 </div>
 

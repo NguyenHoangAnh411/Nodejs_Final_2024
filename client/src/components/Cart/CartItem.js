@@ -5,9 +5,9 @@ function CartItem({ item, onQuantityChange, onRemove, selected, onSelect }) {
     <li className="cart-item">
       <input type="checkbox" checked={selected} onChange={onSelect} />
       <img src={item.productId.images?.[0]?.url || 'default.jpg'} alt={item.productId.name} />
-      <div class="cart-item-detail">
+      <div className="cart-item-detail">
         <h3>{item.productId.name}</h3>
-        <p>${item.productId.price}</p>
+        <p>{`${(item.productId.price * 25000).toLocaleString('vi-VN')} VND`}</p>
         <p>
           <button
             type="button"
@@ -25,10 +25,13 @@ function CartItem({ item, onQuantityChange, onRemove, selected, onSelect }) {
           >
             +
           </button>
-      </p>
+        </p>
 
-        <p>Total: ${(item.productId.price * item.quantity).toFixed(2)}</p>
-        <button class="remove-item-button" onClick={() => onRemove(item._id)}>Remove</button>
+        <p>
+          Total: 
+          {`${(item.productId.price * item.quantity * 25000).toLocaleString('vi-VN')} VND`}
+        </p>
+        <button className="remove-item-button" onClick={() => onRemove(item._id)}>Remove</button>
       </div>
     </li>
   );

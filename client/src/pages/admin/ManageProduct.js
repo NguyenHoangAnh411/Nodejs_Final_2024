@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { addProduct, updateProduct, deleteProduct, getAllProduct, getProductById } from '../../hooks/productApi'; 
+import { addProduct, updateProduct, deleteProduct, getAllProduct, getProductById } from '../../hooks/productApi';
 import { getAllCategories } from '../../hooks/categoryApi';
-import '../../css/ManageProduct.css'; 
+import '../../css/ManageProduct.css';
 import Sidebar from '../../components/Sidebar';
 
 function ManageProduct() {
@@ -96,7 +96,7 @@ function ManageProduct() {
     const formData = new FormData();
     Object.keys(newProduct).forEach((key) => {
       if (key !== 'images') {
-        formData.append(key, newProduct[key]);
+        formData.append('price', newProduct.price * 25000); // Convert price to VND before saving
       }
     });
 
@@ -171,10 +171,9 @@ function ManageProduct() {
             Product Name:
             <input type="text" name="name" value={newProduct.name} onChange={handleChange} required />
           </label>
-          <label>
-            Price:
-            <input type="number" name="price" value={newProduct.price} onChange={handleChange} required />
-          </label>
+          <label>Price (VND):</label>
+          <input type="number" name="price" value={newProduct.price} onChange={handleChange} />
+
           <label>
             Cost:
             <input type="number" name="cost" value={newProduct.cost} onChange={handleChange} required />

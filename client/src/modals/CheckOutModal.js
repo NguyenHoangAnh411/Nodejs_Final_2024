@@ -104,13 +104,13 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
             min={0}
             step={1}
           />
-          <p>Applied: {loyaltyPointsUsed * 1000} VND</p>
+          <p>Applied: {`${(loyaltyPointsUsed * 1000).toLocaleString('vi-VN')} VND`}</p>
         </div>
 
         {error && <p className="error">{error}</p>}
 
         <div>
-          <h3>Total Amount: {totalAmount} VND</h3>
+          <h3>Total Amount: {`${totalAmount.toLocaleString('vi-VN')} VND`}</h3>
         </div>
 
         <button onClick={handleCheckout} disabled={loading || !paymentMethod}> 

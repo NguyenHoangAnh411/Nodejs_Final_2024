@@ -36,6 +36,7 @@ function Cart() {
   const [shippingCost, setShippingCost] = useState(0);
   const [orderDetails, setOrderDetails] = useState(null);
   const [isCreateAccountModalOpen, setIsCreateAccountModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchCart = async () => {
       setLoading(true);
@@ -75,7 +76,6 @@ function Cart() {
     fetchCart();
   }, [userData]);
   
-  
   const handleShippingMethodChange = (fee) => {
     console.log("Changing shipping fee to: ", fee);
     setCart((prevCart) => {
@@ -103,7 +103,7 @@ function Cart() {
     setShippingCost(cost);
     handleShippingMethodChange(cost);
   };
-  
+
   const calculateTotal = (items, selectedItemIds = [], voucher = null) => {
     let totalPrice = 0;
     let taxes = 0;
@@ -113,10 +113,10 @@ function Cart() {
     const filteredItems = items.filter(item => selectedItemIds.includes(item._id));
   
     filteredItems.forEach(item => {
-      totalPrice += item.productId.price * item.quantity;
+      totalPrice += item.productId.price * item.quantity * 25000; // Updated line: item price is multiplied by 25000
     });
   
-    taxes = totalPrice * 0.1;
+    taxes = totalPrice * 0.1; // Updated line: taxes are calculated as 10% of the total price
   
     if (voucher) {
       discount = totalPrice * (voucher.discount / 100);
@@ -127,7 +127,7 @@ function Cart() {
       taxes,
       shippingFee,
       discount,
-      totalPayment: totalPrice + taxes + shippingFee - discount,
+      totalPayment: `${(totalPrice + taxes + shippingFee - discount).toLocaleString('vi-VN')} VND`, // Updated line: formatted total payment with tax, shipping, and discount
     };
   };
 
@@ -187,8 +187,7 @@ function Cart() {
       setError('Không thể xóa sản phẩm');
     }
   };
-  
-  
+
   const toggleSelectItem = (itemId) => {
     setSelectedItems((prev) => {
       const newSelected = prev.includes(itemId)
@@ -243,7 +242,6 @@ function Cart() {
     setUserCreatedData(userData);
     setCheckoutModalOpen(true);
   };
-  
 
   const handleCloseCheckoutModal = () => {
     setCheckoutModalOpen(false);
@@ -274,7 +272,7 @@ function Cart() {
       ...calculateTotal(prevCart.items, selectedItems, voucher),
     }));
   };
-  
+
   const handleCheckout = async () => {
     try {
       setCart(null);

@@ -5,11 +5,11 @@ function CartSummary({ totalPrice, taxes, shippingFee, discount, totalPayment, o
   return (
     <div>
       <h3>Order Summary</h3>
-      <p>Subtotal: ${formatNumber(totalPrice ?? 0)}</p>
-      <p>Taxes: ${formatNumber(taxes ?? 0)}</p>
-      <p>Shipping Fee: ${formatNumber(shippingFee ?? 0)}</p>
-      <p>Discount: ${formatNumber(discount ?? 0)}</p>
-      <h4>Total: ${formatNumber(totalPayment ?? 0)}</h4>
+      <p>Subtotal: {`${(totalPrice * 25000).toLocaleString('vi-VN')} VND`}</p>
+      <p>Taxes: {`${(taxes * 25000).toLocaleString('vi-VN')} VND`}</p>
+      <p>Shipping Fee: {`${(shippingFee * 25000).toLocaleString('vi-VN')} VND`}</p>
+      <p>Discount: {`${(discount * 25000).toLocaleString('vi-VN')} VND`}</p>
+      <h4>Total: {`${(totalPayment * 25000).toLocaleString('vi-VN')} VND`}</h4>
       <button onClick={onCheckout}>Checkout</button>
     </div>
   );

@@ -42,7 +42,7 @@ const addProduct = async (req, res) => {
           return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin bắt buộc' });
       }
 
-      const numericPrice = parseFloat(price);
+      const numericPrice = parseFloat(price) * 25000; // Convert to VND before saving
       const numericCost = parseFloat(cost);
       const numericStock = parseInt(stock);
 
@@ -217,7 +217,7 @@ const addComment = async (req, res) => {
     // Xử lý tham số priceRange (khoảng giá)
     if (priceRange) {
         const [min, max] = priceRange.split(',').map(Number); // Chuyển đổi priceRange thành mảng số
-        filters.price = { $gte: min, $lte: max }; // Tạo bộ lọc giá
+        filters.price = { $gte: min * 25000, $lte: max * 25000 }; // Convert to VND before filtering // Tạo bộ lọc giá
     }
 
     try {

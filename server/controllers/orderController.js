@@ -29,7 +29,7 @@ const checkout = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const pointsEarned = Math.floor(totalAmount * 0.05);
+    const pointsEarned = Math.floor(totalAmount * 25000 * 0.05); // Convert to VND before calculating points
     user.loyaltyPoints += pointsEarned;
     await user.save();
 
@@ -76,14 +76,16 @@ const checkout = async (req, res) => {
       text: `Thank you for your order! Here are your order details:\n\n
              Order ID: ${newOrder._id}\n
              Items: ${newOrder.items.map(item => `${item.productName} (x${item.quantity})`).join(', ')}\n
-             Total Amount: ${newOrder.totalAmount}$\n
+             Total Amount: ${(newOrder.totalAmount * 25000).toLocaleString('vi-VN')} VND\n
              Shipping Address: ${newOrder.shippingAddress.street}, ${newOrder.shippingAddress.city}\n
              Payment Method: ${newOrder.paymentMethod}`,
     };
 
+
     await transporter.sendMail(mailOptions);
 
-    res.json({ message: 'Order created successfully and confirmation email sent', 
+    res.json({
+      message: 'Order created successfully and confirmation email sent',
       order: newOrder,
       loyaltyPoints: user.loyaltyPoints,
     });
@@ -239,7 +241,7 @@ const getDailyRevenueForMonth = async (req, res) => {
       {
         $group: {
           _id: { $dayOfMonth: '$createdAt' },
-          totalRevenue: { $sum: '$totalAmount' },
+          totalRevenue: { $sum: { $multiply: ['$totalAmount', 25000] } }, // Convert to VND,
         },
       },
       {
@@ -275,7 +277,7 @@ const getMonthlyRevenueForYear = async (req, res) => {
       {
         $group: {
           _id: { $month: '$createdAt' },
-          totalRevenue: { $sum: '$totalAmount' },
+          totalRevenue: { $sum: { $multiply: ['$totalAmount', 25000] } } // Convert to VND,
         },
       },
       {
@@ -311,7 +313,7 @@ const getRevenueByDateRange = async (req, res) => {
       {
         $group: {
           _id: { $dayOfMonth: '$createdAt' },
-          totalRevenue: { $sum: '$totalAmount' },
+          totalRevenue: { $sum: { $multiply: ['$totalAmount', 25000] } } // Convert to VND,
         },
       },
       {
