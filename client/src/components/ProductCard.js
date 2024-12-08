@@ -34,7 +34,7 @@ function ProductCard({ productId }) {
         <img src="default-image-url.jpg" alt="Default" />
       )}
       <h5>{product.name}</h5>
-      <strong>Price:</strong> {`${(product.price * 25000).toLocaleString('vi-VN')} VND`}
+      <strong>Price:</strong> {`${(product.price).toLocaleString('vi-VN')} VND`}
       <p><strong>Description:</strong> {truncatedDescription}</p>
     </div>
   );

@@ -95,9 +95,9 @@ function Cart() {
 
     let cost = 0;
     if (method === 'standard') {
-      cost = 2;
+      cost = 50000;
     } else if (method === 'fast') {
-      cost = 4;
+      cost = 100000;
     }
 
     setShippingCost(cost);
@@ -113,7 +113,7 @@ function Cart() {
     const filteredItems = items.filter(item => selectedItemIds.includes(item._id));
   
     filteredItems.forEach(item => {
-      totalPrice += item.productId.price * item.quantity * 25000; // Updated line: item price is multiplied by 25000
+      totalPrice += item.productId.price * item.quantity
     });
   
     taxes = totalPrice * 0.1; // Updated line: taxes are calculated as 10% of the total price

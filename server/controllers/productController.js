@@ -42,7 +42,7 @@ const addProduct = async (req, res) => {
           return res.status(400).json({ message: 'Vui lòng điền đầy đủ thông tin bắt buộc' });
       }
 
-      const numericPrice = parseFloat(price) * 25000; // Convert to VND before saving
+      const numericPrice = parseFloat(price)
       const numericCost = parseFloat(cost);
       const numericStock = parseInt(stock);
 

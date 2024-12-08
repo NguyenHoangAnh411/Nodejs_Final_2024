@@ -94,18 +94,21 @@ function ManageProduct() {
     setLoading(true);
 
     const formData = new FormData();
+    // Add all fields to formData, including images
     Object.keys(newProduct).forEach((key) => {
       if (key !== 'images') {
-        formData.append('price', newProduct.price * 25000); // Convert price to VND before saving
+        formData.append(key, newProduct[key]);
       }
     });
 
+    // Append images to formData
     for (let i = 0; i < newProduct.images.length; i++) {
       formData.append('images', newProduct.images[i]);
     }
 
     try {
       if (productId) {
+        // Update product
         await updateProduct(productId, formData);
         setProducts((prev) =>
           prev.map((product) =>
@@ -114,6 +117,7 @@ function ManageProduct() {
         );
         setMessage('Sản phẩm đã được cập nhật thành công!');
       } else {
+        // Add new product
         const result = await addProduct(formData);
         setProducts((prev) => [...prev, result]);
         setMessage('Sản phẩm đã được thêm thành công!');
@@ -183,7 +187,7 @@ function ManageProduct() {
             <select name="category" value={newProduct.category} onChange={handleChange} required>
               <option value="">Choose Category</option>
               {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
+                <option key={cat._id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
@@ -229,7 +233,7 @@ function ManageProduct() {
           {products.map((product) => (
             <div key={product._id} className="product-item">
               <h3>{product.name}</h3>
-              <p>Price: $ {product.price}</p>
+              <p>Price: {product.price} VND</p>
               <p>Stock: {product.stock}</p>
               <button onClick={() => setProductId(product._id)} className="edit-button">
                 Edit

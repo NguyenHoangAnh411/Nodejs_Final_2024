@@ -7,7 +7,7 @@ function CartItem({ item, onQuantityChange, onRemove, selected, onSelect }) {
       <img src={item.productId.images?.[0]?.url || 'default.jpg'} alt={item.productId.name} />
       <div className="cart-item-detail">
         <h3>{item.productId.name}</h3>
-        <p>{`${(item.productId.price * 25000).toLocaleString('vi-VN')} VND`}</p>
+        <p>{`${(item.productId.price).toLocaleString('vi-VN')} VND`}</p>
         <p>
           <button
             type="button"
@@ -29,7 +29,7 @@ function CartItem({ item, onQuantityChange, onRemove, selected, onSelect }) {
 
         <p>
           Total: 
-          {`${(item.productId.price * item.quantity * 25000).toLocaleString('vi-VN')} VND`}
+          {`${(item.productId.price * item.quantity).toLocaleString('vi-VN')} VND`}
         </p>
         <button className="remove-item-button" onClick={() => onRemove(item._id)}>Remove</button>
       </div>
