@@ -135,14 +135,14 @@ function UpdateProfileModal({ isOpen, onRequestClose, userData, token, onProfile
                 </div>
             ))}
 
-            <div className="address-buttons">
+            {/* <div className="address-buttons">
                 <button onClick={handleAddAddress} className="add-btn">
                     Add Address
                 </button>
                 <button onClick={handleUpdateProfile} className="save-btn">
                     Save
                 </button>
-            </div>
+            </div> */}
 
         </Modal>
     );
