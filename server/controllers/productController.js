@@ -217,7 +217,7 @@ const addComment = async (req, res) => {
     // Xử lý tham số priceRange (khoảng giá)
     if (priceRange) {
         const [min, max] = priceRange.split(',').map(Number); // Chuyển đổi priceRange thành mảng số
-        filters.price = { $gte: min * 25000, $lte: max * 25000 }; // Convert to VND before filtering // Tạo bộ lọc giá
+        filters.price = { $gte: min, $lte: max }; // Convert to VND before filtering // Tạo bộ lọc giá
     }
 
     try {

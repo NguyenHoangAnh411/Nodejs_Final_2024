@@ -111,6 +111,7 @@ function Profile() {
                             <p><strong>Name:</strong> {userData.name}</p>
                             <p><strong>Email:</strong> {userData.email}</p>
                             <p><strong>Phone:</strong> {userData.phone}</p>
+                            <p><strong>Loyalty Points:</strong> {userData.loyaltyPoints}</p>
                             <h3>Addresses:</h3>
                             <ul>
                                 {userData.addresses && userData.addresses.map((address, index) => (

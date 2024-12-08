@@ -84,7 +84,7 @@ function SearchPage() {
                 <div>
                   <h3>{product.name}</h3>
                   <p>{product.description}</p>
-                  <p>Price: {`${(product.price * 25000).toLocaleString('vi-VN')} VND`}</p>
+                  <p>Price: {`${(product.price).toLocaleString('vi-VN')} VND`}</p>
                 </div>
               </div>
             ))}

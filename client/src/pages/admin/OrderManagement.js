@@ -118,7 +118,7 @@ function OrderManagement() {
               <tr key={order._id}>
                 <td>{order._id}</td>
                 <td>{order.userId}</td>
-                <td>{`${(order.totalAmount * 25000).toLocaleString('vi-VN')} VND`}</td>
+                <td>{`${(order.totalAmount).toLocaleString('vi-VN')} VND`}</td>
                 <td>
                   <select
                     value={order.status}
@@ -159,7 +159,7 @@ function OrderManagement() {
             <ul>
               {selectedOrder.items && selectedOrder.items.map((product) => (
                 <li key={product.productId}>
-                  {product.productName} - {`${(product.price * 25000).toLocaleString('vi-VN')} VND`} x {product.quantity}
+                  {product.productName} - {`${(product.price).toLocaleString('vi-VN')} VND`} x {product.quantity}
                 </li>
               ))}
             </ul>
