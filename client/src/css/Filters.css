@@ -71,3 +71,25 @@
   visibility: hidden;
   opacity: 0;
 }
+
+/* CẬP NHẬT THÊM */
+/* Hiển thị dropdown-item như option */
+.dropdown-item {
+  font-size: 14px;
+  line-height: 1.5;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu {
+  max-height: 200px; /* Giới hạn chiều cao menu */
+  overflow-y: auto; /* Thêm thanh cuộn nếu quá dài */
+}
+
+/* Đảm bảo dropdown-item luôn hiển thị khi mở menu */
+.dropdown-menu {
+  display: block !important;
+}

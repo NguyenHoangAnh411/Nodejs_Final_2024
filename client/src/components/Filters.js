@@ -18,6 +18,24 @@ const Filters = ({
     [125000000, Infinity], // 5000+ USD
   ];
 
+  // Format giá hiển thị
+  const formatPriceRange = (range) =>
+    `${range[0].toLocaleString('vi-VN')} - ${
+      range[1] === Infinity ? '∞' : range[1].toLocaleString('vi-VN')
+    } VND`;
+
+  // Hiển thị văn bản cho nút sắp xếp
+  const getSortLabel = () => {
+    if (sortOrder === 'newest') return 'Sản phẩm mới nhất';
+    if (sortOrder === 'oldest') return 'Sản phẩm cũ nhất';
+    return 'Sắp xếp theo';
+  };
+
+  // Hiển thị văn bản cho bộ lọc giá
+  const getPriceLabel = () => {
+    if (!selectedPriceRange) return 'Bộ lọc giá';
+    return formatPriceRange(selectedPriceRange);
+  };
 
   return (
     <div className="filters">
@@ -26,7 +44,7 @@ const Filters = ({
           className="filter-button"
           onClick={() => setIsSortOpen(!isSortOpen)}
         >
-          Sắp xếp theo
+          {getSortLabel()}
         </button>
         {isSortOpen && (
           <div className="dropdown-menu">
@@ -51,19 +69,17 @@ const Filters = ({
           className="filter-button"
           onClick={() => setIsPriceOpen(!isPriceOpen)}
         >
-          Bộ lọc giá
+          {getPriceLabel()}
         </button>
         {isPriceOpen && (
           <div className="dropdown-menu">
             {priceRanges.map((range, index) => (
               <button
                 key={index}
-                className={`dropdown-item ${selectedPriceRange === range ? 'active' : ''
-                  }`}
+                className={`dropdown-item ${selectedPriceRange === range ? 'active' : ''}`}
                 onClick={() => handlePriceRangeChange(range)}
               >
-                {range[0].toLocaleString('vi-VN')} - {range[1] === Infinity ? 'Infinity' : range[1].toLocaleString('vi-VN')} VND
-
+                {formatPriceRange(range)}
               </button>
             ))}
           </div>
