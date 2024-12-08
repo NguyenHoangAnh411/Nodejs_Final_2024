@@ -1,31 +1,77 @@
+/* Sidebar */
 .sidebar {
-    width: 250px;
-    height: 100vh;
-    background-color: #f4f4f4;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: 250px; /* Độ rộng cố định cho sidebar */
+  height: 100vh; /* Đảm bảo sidebar chiếm toàn bộ chiều cao màn hình */
+  background-color: #f4f4f4;
+  padding: 20px;
+  position: fixed; /* Giữ sidebar cố định */
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Đảm bảo Sidebar luôn ở trên */
+  overflow-y: auto; /* Cho phép cuộn nội dung khi vượt quá chiều cao */
+  transition: all 0.3s ease; /* Thêm hiệu ứng khi sidebar thay đổi trạng thái */
+}
+
+/* Danh sách liên kết trong sidebar */
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 15px 0;
+}
+
+.sidebar li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+/* Hover effect cho các liên kết */
+.sidebar li a:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Phần responsive: Nếu màn hình nhỏ, Sidebar sẽ thu nhỏ */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px; /* Thu nhỏ sidebar trên các màn hình nhỏ */
   }
-  
-  .sidebar ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    margin: 15px 0;
-  }
-  
+
   .sidebar li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 14px; /* Giảm kích thước font chữ khi màn hình nhỏ */
   }
-  
-  .sidebar li a:hover {
-    color: #007BFF;
+}
+
+/* Sidebar có thể được ẩn hoặc thu nhỏ khi cần thiết cho các màn hình nhỏ hơn */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%; /* Sidebar sẽ chiếm toàn bộ chiều rộng của màn hình */
+    height: 60px; /* Giảm chiều cao của sidebar trên màn hình rất nhỏ */
+    padding: 10px; /* Giảm padding */
+    box-shadow: none; /* Tắt hiệu ứng bóng khi trên màn hình nhỏ */
   }
-  
+
+  .sidebar ul {
+    display: flex; /* Hiển thị danh sách liên kết theo dạng ngang */
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar li {
+    margin: 0 10px;
+  }
+
+  .sidebar li a {
+    font-size: 12px;
+    padding: 5px 10px; /* Giảm padding để phù hợp với không gian nhỏ */
+  }
+}

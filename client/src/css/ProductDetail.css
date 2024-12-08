@@ -5,89 +5,115 @@
   width: 100%;
   background-color: #f4f4f4;
   overflow-x: hidden;
-  }
-  .product-image {
-    max-width: 100%;
-    height: 500px;
-    border-radius: 8px;
-  }
-  .shop-info {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 20px 0;
-  }
-  
-  .reviews-section {
-    margin-top: 20px;
-  }
-  
-  .rating-stars {
-    display: flex;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  .star {
-    font-size: 24px;
-    color: #d3d3d3;
-    margin-right: 5px;
-    transition: color 0.2s;
-  }
-  
-  .star.filled {
-    color: #ffcc00;
-  }
+}
 
-  textarea {
-    width: 100%;
-    height: 80px;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    resize: none;
-  }
-  
-  button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
+.product-image {
+  max-width: 100%;
+  height: 500px;
+  border-radius: 8px;
+}
 
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  ul li {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 10px;
-  }
+.shop-info {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
 
-  .add-to-cart-button {
-    background-color: #ff5722;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 15px 0;
-    transition: background-color 0.3s;
-  }
-  
-  .add-to-cart-button:hover {
-    background-color: #e64a19;
-  }
-  
+.reviews-section {
+  margin-top: 20px;
+}
+
+.rating-stars {
+  display: flex;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.star {
+  font-size: 24px;
+  color: #d3d3d3;
+  margin-right: 5px;
+  transition: color 0.2s;
+}
+
+.star.filled {
+  color: #ffcc00;
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: none;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.add-to-cart-button {
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 15px 0;
+  transition: background-color 0.3s;
+}
+
+.add-to-cart-button:hover {
+  background-color: #e64a19;
+}
+
+/* New styles for Related Products section */
+.related-products-list {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping if there's no space */
+  gap: 15px; /* Adds spacing between products */
+  justify-content: flex-start; /* Aligns items to the left */
+  margin-top: 15px;
+}
+
+.related-products-list .product-card {
+  width: 200px; /* Ensures all product cards are the same width */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for better aesthetics */
+  background-color: #fff;
+  transition: transform 0.2s ease-in-out;
+}
+
+.related-products-list .product-card:hover {
+  transform: scale(1.05); /* Adds a hover effect */
+}

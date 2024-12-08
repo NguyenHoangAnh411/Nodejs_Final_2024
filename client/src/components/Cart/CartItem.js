@@ -17,7 +17,7 @@ function CartItem({ item, onQuantityChange, onRemove, selected, onSelect }) {
           >
             -
           </button>
-          <span className="quantity-value">{item.quantity}</span>
+          <span className="quantity-value">   {item.quantity}   </span>
           <button
             type="button"
             onClick={() => onQuantityChange(item._id, item.quantity + 1)}

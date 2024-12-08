@@ -1,69 +1,137 @@
-.admin-page {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    padding: 20px;
-    margin-left: 16%;
-  }
-  
-  .admin-page h1 {
-    font-size: 2rem;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .admin-page p {
-    font-size: 1rem;
-    color: #555;
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  
-  .admin-links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Admin Dashboard Layout */
+#admin-dashboard {
+  display: flex;
+  min-height: 100vh; /* Đảm bảo trang luôn chiếm ít nhất chiều cao của màn hình */
+  flex-direction: row; /* Các phần tử nằm ngang */
+  margin-left: 250px; /* Đảm bảo không bị chèn vào sidebar */
+  justify-content: center; /* Căn giữa nội dung */
+}
 
+/* Sidebar */
+#admin-dashboard .sidebar {
+  width: 250px; /* Độ rộng của sidebar */
+  height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+  background-color: #f4f4f4;
+  padding: 20px;
+  position: fixed; /* Sidebar cố định bên trái màn hình */
+  top: 0;
+  left: 0;
+  z-index: 100; /* Đảm bảo Sidebar nằm trên cùng */
+  overflow-y: auto; /* Cho phép cuộn nội dung trong Sidebar */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column; /* Các mục trong Sidebar sắp xếp theo chiều dọc */
+}
+
+/* Các mục trong sidebar */
+#admin-dashboard .sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#admin-dashboard .sidebar li {
+  margin: 10px 0; /* Khoảng cách giữa các mục */
+}
+
+#admin-dashboard .sidebar li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Hiệu ứng hover cho liên kết trong sidebar */
+#admin-dashboard .sidebar li a:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Nội dung chính (Main Content) */
+.admin-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+  margin: 0 auto; /* Căn giữa nội dung */
+  width: 80%; /* Giới hạn chiều rộng của nội dung để dễ căn giữa */
+  max-width: 1200px; /* Chiều rộng tối đa */
+}
+
+/* Các liên kết trong admin */
+.admin-links ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-links li {
+  margin: 10px 0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  background-color: #f1f1f1; /* Màu nền nhẹ nhàng */
+  transition: background-color 0.3s ease; /* Thêm hiệu ứng chuyển đổi nền khi hover */
+}
+
+/* Màu chữ cho các liên kết */
+.admin-links li a {
+  text-decoration: none;
+  color: #333; /* Màu chữ tối để dễ đọc */
+  font-size: 16px;
+  font-weight: 500;
+  display: block;
+}
+
+/* Hiệu ứng hover cho các liên kết */
+.admin-links li a:hover {
+  color: white;
+  /* background-color: #007bff; Màu nền khi hover */
+  border-radius: 5px;
+}
+
+/* Thêm hiệu ứng cho hover của các mục trong admin-links */
+.admin-links li:hover {
+  background-color: #241f1f; /* Màu nền thay đổi khi hover trên mục li */
+}
+
+/* Các hiệu ứng color khi li:hover */
+.admin-links li:hover a {
+  color: #fff; /* Chữ trắng khi hover */
+}
+
+
+/* Khi thu nhỏ màn hình */
+@media (max-width: 768px) {
+  #admin-dashboard .sidebar {
+    width: 200px; /* Thu nhỏ Sidebar */
   }
-  
-  .admin-links ul {
-    list-style-type: none;
-    padding: 0;
+
+  #admin-dashboard .admin-page {
+    margin-left: 200px; /* Đảm bảo phần nội dung chính không bị chèn vào Sidebar */
+    width: calc(100% - 200px); /* Nội dung chiếm phần còn lại khi Sidebar thu nhỏ */
   }
-  
-  .admin-links li {
-    margin: 10px 0;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 480px) {
+  #admin-dashboard {
+    flex-direction: column; /* Chuyển giao diện thành dọc trên màn hình nhỏ */
   }
-  
-  .admin-links a {
-    display: block;
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #007bff;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    transition: background-color 0.3s ease;
+
+  #admin-dashboard .sidebar {
+    width: 100%; /* Sidebar chiếm toàn bộ chiều rộng */
+    height: 60px; /* Giảm chiều cao của Sidebar */
+    position: relative; /* Sidebar không cố định nữa */
+    box-shadow: none;
   }
-  
-  .admin-links a:hover {
-    background-color: #0056b3;
+
+  #admin-dashboard .admin-page {
+    margin-left: 0; /* Không có margin-left nữa trên màn hình nhỏ */
+    padding-top: 70px; /* Thêm khoảng cách trên để tránh bị che khuất bởi Sidebar */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
   }
-  
-  .admin-links li:last-child a {
-    background-color: #28a745;
-  }
-  
-  .admin-links li:last-child a:hover {
-    background-color: #218838;
-  }
-  
-  .admin-links li:not(:last-child) a {
-    background-color: #ffc107;
-  }
-  
-  .admin-links li:not(:last-child) a:hover {
-    background-color: #e0a800;
-  }
-  
+}

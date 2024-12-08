@@ -5,7 +5,7 @@ import Sidebar from '../../components/Sidebar';
 
 function AdminPage() {
   return (
-    <div>
+    <div id="admin-dashboard">
       <Sidebar />
       <div className="admin-page">
         <h1>Admin Dashboard</h1>

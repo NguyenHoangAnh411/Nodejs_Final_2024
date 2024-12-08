@@ -134,12 +134,10 @@ function ProductDetail() {
           cart.items.push(productToAdd);
         }
   
-        // Tính toán lại tổng giá trị của giỏ hàng (nếu cần)
         cart.totalPrice = cart.items.reduce((total, item) => total + item.productId.price * item.quantity, 0);
-        cart.taxes = 0; // Tính thuế nếu có
-        cart.shippingFee = 0; // Tính phí vận chuyển nếu có
+        cart.taxes = 0;
+        cart.shippingFee = 0;
   
-        // Cập nhật giỏ hàng trong localStorage
         localStorage.setItem('cart', JSON.stringify(cart));
       }
     } catch (error) {
