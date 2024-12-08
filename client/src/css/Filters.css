@@ -36,9 +36,15 @@
   border: 1px solid #ccc;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  visibility: visible; /* Đảm bảo menu luôn hiển thị */
-  opacity: 1; /* Đảm bảo menu không bị ẩn */
+  visibility: hidden; /* Menu sẽ ẩn mặc định */
+  opacity: 0; /* Menu sẽ không hiển thị mặc định */
   transition: opacity 0.3s ease, visibility 0s ease; /* Thêm hiệu ứng mượt mà */
+}
+
+/* Khi dropdown mở, menu sẽ hiện thị */
+.dropdown.open .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Các mục trong menu */
@@ -47,13 +53,14 @@
   width: 100%;
   text-align: left;
   cursor: pointer;
-  background-color: white;
+  background-color: #fff; /* Đảm bảo nền trắng cho các item */
+  color: #333; /* Màu chữ đen để rõ ràng */
   border: none;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s; /* Thêm hiệu ứng mượt mà */
 }
 
 .dropdown-item:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Màu nền khi hover */
 }
 
 .dropdown-item.active {
@@ -61,18 +68,6 @@
   color: white;
 }
 
-/* Ẩn menu khi không cần thiết (nếu muốn ẩn menu sau khi chọn) */
-.dropdown.open .dropdown-menu {
-  visibility: visible;
-  opacity: 1;
-}
-
-.dropdown.closed .dropdown-menu {
-  visibility: hidden;
-  opacity: 0;
-}
-
-/* CẬP NHẬT THÊM */
 /* Hiển thị dropdown-item như option */
 .dropdown-item {
   font-size: 14px;
@@ -92,4 +87,10 @@
 /* Đảm bảo dropdown-item luôn hiển thị khi mở menu */
 .dropdown-menu {
   display: block !important;
+}
+
+/* Sửa hiệu ứng khi mở dropdown khi click vào button */
+.dropdown.open .dropdown-menu {
+  visibility: visible;
+  opacity: 1;
 }

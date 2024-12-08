@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../css/Filters.css';
 
 const Filters = ({
@@ -10,28 +10,44 @@ const Filters = ({
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
 
+  // Tạo tham chiếu cho dropdowns
+  const sortRef = useRef(null);
+  const priceRef = useRef(null);
+
   const priceRanges = [
-    [0, 2500000],       // 0 - 100 USD
+    [0, 2500000], // 0 - 100 USD
     [2500000, 12500000], // 100 - 500 USD
     [12500000, 25000000], // 500 - 1000 USD
     [25000000, 125000000], // 1000 - 5000 USD
     [125000000, Infinity], // 5000+ USD
   ];
 
-  // Format giá hiển thị
+  // Sự kiện khi nhấn ngoài menu dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sortRef.current && !sortRef.current.contains(event.target)) {
+        setIsSortOpen(false);
+      }
+      if (priceRef.current && !priceRef.current.contains(event.target)) {
+        setIsPriceOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const formatPriceRange = (range) =>
     `${range[0].toLocaleString('vi-VN')} - ${
       range[1] === Infinity ? '∞' : range[1].toLocaleString('vi-VN')
     } VND`;
 
-  // Hiển thị văn bản cho nút sắp xếp
   const getSortLabel = () => {
     if (sortOrder === 'newest') return 'Sản phẩm mới nhất';
     if (sortOrder === 'oldest') return 'Sản phẩm cũ nhất';
     return 'Sắp xếp theo';
   };
 
-  // Hiển thị văn bản cho bộ lọc giá
   const getPriceLabel = () => {
     if (!selectedPriceRange) return 'Bộ lọc giá';
     return formatPriceRange(selectedPriceRange);
@@ -39,7 +55,7 @@ const Filters = ({
 
   return (
     <div className="filters">
-      <div className="dropdown">
+      <div className={`dropdown ${isSortOpen ? 'open' : ''}`} ref={sortRef}>
         <button
           className="filter-button"
           onClick={() => setIsSortOpen(!isSortOpen)}
@@ -64,7 +80,7 @@ const Filters = ({
         )}
       </div>
 
-      <div className="dropdown">
+      <div className={`dropdown ${isPriceOpen ? 'open' : ''}`} ref={priceRef}>
         <button
           className="filter-button"
           onClick={() => setIsPriceOpen(!isPriceOpen)}
