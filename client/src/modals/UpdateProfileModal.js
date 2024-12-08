@@ -124,14 +124,6 @@ function UpdateProfileModal({ isOpen, onRequestClose, userData, token, onProfile
                             placeholder="Enter phone"
                         />
                     </div>
-                    <div className="button-group-inline">
-                        <button onClick={() => handleRemoveAddress(index)} className="remove-btn">
-                            Remove
-                        </button>
-                        <button onClick={handleUpdateProfile} className="save-btn">
-                            Save
-                        </button>
-                    </div>
                 </div>
             ))}
 
@@ -142,6 +134,19 @@ function UpdateProfileModal({ isOpen, onRequestClose, userData, token, onProfile
                 <button onClick={handleUpdateProfile} className="save-btn">
                     Save
                 </button>
+                {updatedData.addresses.length > 0 && (
+                    <div className="remove-address-buttons">
+                        {updatedData.addresses.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleRemoveAddress(index)}
+                                className="remove-btn"
+                            >
+                                Remove
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
         </Modal>
