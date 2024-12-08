@@ -9,6 +9,9 @@ const OrderHistoryPage = () => {
   const [error, setError] = useState('');
   const [intervalId, setIntervalId] = useState(null);
 
+  // Exchange rate: 1 USD = 25,387 VND
+  const exchangeRate = 25387;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -58,7 +61,10 @@ const OrderHistoryPage = () => {
                 <p><strong>Order ID:</strong> {order._id}</p>
                 <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                 <p><strong>Status:</strong> {order.status}</p>
-                <p><strong>Total Amount:</strong> ${order.totalAmount.toFixed(2)}</p>
+                <p>
+                  <strong>Total Amount:</strong>{' '}
+                  {(order.totalAmount * exchangeRate).toLocaleString('vi-VN')} VND
+                </p>
                 <ul>
                   {order.items.map((item) => (
                     <li key={item.productId}>
@@ -68,13 +74,21 @@ const OrderHistoryPage = () => {
                   ))}
                 </ul>
                 {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
-                  <div>
-                    <button onClick={() => handleUpdateStatus(order._id, 'Cancelled')}>Cancel Order</button>
-                  </div>
-                )}
-                {order.status === 'Shipped' && (
-                  <div>
-                    <button onClick={() => handleUpdateStatus(order._id, 'Delivered')}>Mark as Delivered</button>
+                  <div className="button-group-inline">
+                    <button
+                      onClick={() => handleUpdateStatus(order._id, 'Cancelled')}
+                      className="cancel-order-btn"
+                    >
+                      Cancel Order
+                    </button>
+                    {order.status === 'Shipped' && (
+                      <button
+                        onClick={() => handleUpdateStatus(order._id, 'Delivered')}
+                        className="mark-delivered-btn"
+                      >
+                        Mark as Delivered
+                      </button>
+                    )}
                   </div>
                 )}
               </li>

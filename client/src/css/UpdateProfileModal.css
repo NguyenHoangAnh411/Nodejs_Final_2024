@@ -1,38 +1,37 @@
-/* Modal styling */
-.modal {
+.custom-modal {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* transform: translate(-50%); */
+    transform: translate(-50%, -50%);
     background-color: #fff;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+    width: 450px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
 }
 
-/* Modal title */
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
+.modal-title {
+    font-size: 22px;
     color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-/* Form group styling */
+.form-container {
+    margin-bottom: 20px;
+}
+
 .form-group {
     margin-bottom: 15px;
 }
 
-label {
+.form-group label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
     display: block;
-    font-size: 16px;
-    color: #555;
 }
 
 input[type="text"] {
@@ -40,24 +39,22 @@ input[type="text"] {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 5px;
 }
 
-/* Address section */
-h3 {
-    margin-top: 20px;
-    font-size: 20px;
-    color: #333;
+.error-message {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 10px;
 }
 
 .address-form {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    display: flex;
-    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
 }
 
 button {
@@ -69,17 +66,19 @@ button {
     transition: background-color 0.3s ease;
 }
 
+/* Add Button Styles */
 .add-btn {
-    background-color: #4CAF50;
+    background-color: #4caf50; /* Green */
     color: white;
 }
 
 .add-btn:hover {
-    background-color: #45a049;
+    background-color: #45a049; /* Darker Green */
 }
 
+/* Save Button Styles */
 .save-btn {
-    background-color: #4CAF50;
+    background-color: #4caf50; /* Green */
     color: white;
 }
 
@@ -87,61 +86,79 @@ button {
     background-color: #45a049;
 }
 
+/* Close Button (Cancel) Styles */
 .close-btn {
-    background-color: #ccc;
-    color: black;
+    background-color: #f44336; /* Red */
+    color: white;
 }
 
 .close-btn:hover {
-    background-color: #bbb;
+    background-color: #d32f2f; /* Darker Red */
 }
 
+/* Remove Button Styles */
 .remove-btn {
-    background-color: #f44336;
+    background-color: #e57373; /* Light Red */
     color: white;
-    margin-top: 10px;
-
 }
 
 .remove-btn:hover {
-    background-color: #d32f2f;
+    background-color: #c62828; /* Darker Red */
 }
 
-/* Button group layout */
+/* Inline Button Group for Remove and Save */
+.button-group-inline {
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Add spacing from form fields */
+}
+
+/* Button Group Layout */
 .button-group {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Space out buttons */
+    gap: 10px;
     margin-top: 20px;
-    width: 50%;
 }
 
-/* Responsive styles */
+/* Address Buttons Section */
+.address-buttons {
+    display: flex;
+    justify-content: flex-start; /* Align buttons in address section */
+    gap: 15px; /* Space between buttons */
+    margin-top: 20px;
+}
+
+/* Responsive Design */
 @media (max-width: 600px) {
-    .modal {
+    .custom-modal {
         width: 90%;
-        padding: 15px;
+        padding: 20px;
     }
 
-    h2 {
-        font-size: 20px;
-    }
-
-    .form-group label {
-        font-size: 14px;
-    }
-
-    .button-group {
+    .button-group,
+    .button-group-inline,
+    .address-buttons {
         flex-direction: column;
         gap: 10px;
     }
 
     button {
-        font-size: 14px;
         width: 100%;
-        padding: 12px;
     }
 
     .address-form {
-        padding: 8px;
+        padding: 10px;
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
