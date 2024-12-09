@@ -1,50 +1,77 @@
-import React, { useState } from 'react';
-import { resetPassword } from '../hooks/userApi';
+import React, { useState } from "react";
+import { resetPassword } from "../hooks/userApi";
+import { useNavigate } from "react-router-dom";
+import "../css/HomeButton.css"; // Import CSS từ HomeButton.css
+import "../css/ResetPassword.css"; // Import CSS dành cho ResetPassword
 
 const ResetPassword = () => {
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
       const result = await resetPassword(phone, email);
       setMessage(result.message);
-      setError('');
+      setError("");
     } catch (err) {
-      setError(err.message || 'Có lỗi xảy ra');
-      setMessage('');
+      setError(err.message || "An error occurred");
+      setMessage("");
     }
   };
 
+  const goToLogin = () => {
+    navigate("/login");
+  };
+
   return (
-    <div>
-      <h2>Password Recovery</h2>
-      <form onSubmit={handleResetPassword}>
+    <div className="reset-password">
+      {/* Nút Home */}
+      <button className="home-button" onClick={() => navigate("/")}>
+        Home
+      </button>
+
+      <form onSubmit={handleResetPassword} method="POST" className="reset-password-form">
+        <h2>Password Recovery</h2>
         <div>
-          <label>Phone number:</label>
+          <label htmlFor="phone">Phone</label>
           <input
-            type="text"
+            type="tel"
+            id="phone"
+            name="phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            placeholder="Enter your phone number"
             required
           />
         </div>
         <div>
-          <label>Email:</label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
+            id="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
             required
           />
         </div>
-        <button type="submit">Password Recovery</button>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
+        <button type="submit" className="reset-password-button">Recover Password</button>
+        <div className="reset-password-footer">
+          <p>
+            Remember your password?{" "}
+            <button onClick={goToLogin} className="link-button">
+              Back to Login
+            </button>
+          </p>
+        </div>
       </form>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
