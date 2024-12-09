@@ -1,17 +1,18 @@
-/* Đảm bảo Cart không chồng lên Sidebar */
+/* Cart Page */
 .cart-page {
-  margin-left: 250px; /* Đẩy Cart sang phải để không chồng lên Sidebar */
+  margin-left: 250px; /* Offset for the sidebar */
   padding: 100px;
-  max-width: calc(100% - 250px); /* Điều chỉnh độ rộng của Cart */
+  max-width: calc(100% - 250px); /* Adjust width to avoid overlapping with the sidebar */
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   font-family: 'Arial', sans-serif;
   transition: margin-left 0.3s, max-width 0.3s;
-  height: 100vh; /* Đảm bảo chiều cao của Cart bằng chiều cao màn hình */
-  overflow-y: auto; /* Nếu nội dung vượt quá chiều cao, có thể cuộn dọc */
+  height: 100vh; /* Full height */
+  overflow-y: auto; /* Scrollable content if it exceeds height */
 }
 
+/* Heading Styles */
 h2 {
   text-align: center;
   font-size: 24px;
@@ -20,7 +21,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* Các kiểu còn lại của Cart */
+/* Cart Items */
 .cart-items ul {
   list-style-type: none;
   padding: 0;
@@ -54,7 +55,7 @@ h2 {
 }
 
 .cart-item-detail {
-  margin-top: 20px; /* Tăng khoảng cách phía trên để phần item-detail không quá sát tựa đề */
+  margin-top: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -73,21 +74,20 @@ h2 {
   margin: 0;
 }
 
+/* Quantity and Remove Buttons */
 .quantity-button {
   background-color: #ddd;
   border: none;
-  padding: 4px 8px; /* Giảm padding để nút nhỏ hơn */
+  padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-size: 14px; /* Giảm kích thước font */
-  width: auto; /* Để tự động điều chỉnh kích thước */
+  font-size: 14px;
 }
 
 .quantity-button:hover {
   background-color: #ccc;
 }
-
 
 .remove-item-button {
   background-color: #ff4d4d;
@@ -97,9 +97,7 @@ h2 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s, width 0.3s;
-  max-width: 150px; /* Set a maximum width to prevent it from stretching */
   text-align: center;
-  white-space: nowrap; /* Prevent text from wrapping */
 }
 
 .remove-item-button:hover {
@@ -182,7 +180,7 @@ h2 {
   background-color: #45a049;
 }
 
-/* Empty Cart */
+/* Empty Cart Message */
 .empty-cart-message {
   text-align: center;
   font-size: 18px;
@@ -222,15 +220,18 @@ h2 {
 }
 
 @media (max-width: 768px) {
+  .cart-page {
+    margin-left: 0; /* Reset margin for smaller screens */
+    padding: 10px;
+  }
+
   .cart-item {
     flex-direction: column;
-    align-items: flex-start;
     gap: 10px;
   }
 
-  .cart-item img {
-    margin-right: 0;
-    margin-bottom: 10px;
+  .cart-summary {
+    padding: 10px;
   }
 
   .checkout-button {
@@ -261,4 +262,3 @@ h2 {
     height: 50px;
   }
 }
-
