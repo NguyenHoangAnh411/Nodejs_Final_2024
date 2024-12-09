@@ -18,7 +18,7 @@ function Sidebar() {
     <div>
       {/* Sidebar Toggle Button */}
       <button className="toggle-button" onClick={toggleSidebar}>
-        {isOpen ? 'Close' : 'Open'}
+        {isOpen ? '' : 'Open'}
       </button>
 
       {/* Sidebar Content */}
@@ -37,7 +37,7 @@ function Sidebar() {
           )}
           <li>
             <button className="close-sidebar-btn" onClick={toggleSidebar}>
-              {isOpen ? 'Close Sidebar' : 'Open Sidebar'}
+              {isOpen ? 'Close Sidebar' : 'Close Sidebar'}
             </button>
           </li>
         </ul>

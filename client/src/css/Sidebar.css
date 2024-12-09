@@ -48,16 +48,51 @@
   color: white;
 }
 
+/* Nút toggle cải tiến */
 .toggle-button {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #333;
-  color: white;
+  top: 15px;
+  left: 15px;
+  background-color: #007bff; /* Màu nền chính */
+  color: white; /* Màu chữ */
   border: none;
-  padding: 10px;
+  padding: 10px 15px;
+  border-radius: 5px; /* Bo góc */
   cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease; /* Hiệu ứng mượt */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
 }
+
+.toggle-button:hover {
+  background-color: #0056b3; /* Màu nền khi hover */
+  transform: scale(1.1); /* Tăng kích thước nhẹ */
+  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2); /* Tăng hiệu ứng bóng */
+}
+
+/* Biểu tượng thanh ngang (hamburger) */
+.toggle-button span {
+  display: block;
+  width: 20px;
+  height: 3px;
+  background-color: white;
+  margin: 4px 0; /* Khoảng cách giữa các thanh */
+  transition: all 0.3s ease; /* Hiệu ứng chuyển động */
+}
+
+/* Biểu tượng khi Sidebar mở */
+.sidebar.open + .toggle-button span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px); /* Biến đổi thanh đầu */
+}
+
+.sidebar.open + .toggle-button span:nth-child(2) {
+  opacity: 0; /* Ẩn thanh giữa */
+}
+
+.sidebar.open + .toggle-button span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px); /* Biến đổi thanh cuối */
+}
+
 
 .close-sidebar-btn {
   background-color: #e74c3c; /* Red for close button */
