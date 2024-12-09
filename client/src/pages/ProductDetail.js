@@ -58,32 +58,33 @@ function ProductDetail() {
   const handleReviewSubmit = useCallback(async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     if (reviewText.trim() === '' || rating < 1 || rating > 5) {
       alert('Vui lòng điền đầy đủ thông tin bình luận và xếp hạng.');
       setIsSubmitting(false);
       return;
     }
-
+  
     const newReview = {
-      productId,
       content: reviewText,
       rating,
-      user: userData,
     };
-
+  
     try {
       const addedReview = await addCommentToProduct(productId, newReview);
-      setReviews((prevReviews) => [addedReview, ...prevReviews]);
+      setReviews((prevReviews) => [addedReview.comment, ...prevReviews]);
       setReviewText('');
       setRating(0);
+      window.location.reload();
     } catch (error) {
       console.error('Error submitting review:', error.message);
       alert('Có lỗi khi gửi bình luận.');
     } finally {
       setIsSubmitting(false);
     }
-  }, [reviewText, rating, userData, productId]);
+  }, [reviewText, rating, productId]);
+  
+  
 
   const handleDeleteComment = useCallback(async (commentId) => {
     if (window.confirm('Bạn có chắc chắn muốn xoá bình luận này?')) {

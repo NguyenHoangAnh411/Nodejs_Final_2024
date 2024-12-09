@@ -29,7 +29,7 @@ const checkout = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const pointsEarned = Math.floor(totalAmount * 0.05); // Convert to VND before calculating points
+    const pointsEarned = Math.floor(totalAmount * 0.05);
     user.loyaltyPoints += pointsEarned;
     await user.save();
 
@@ -205,8 +205,6 @@ const deleteOrderById = async (req, res) => {
     res.status(500).json({ message: 'Failed to delete Order' });
   }
 };
-
-
 
 const getOrderById = async (req, res) => {
   try {

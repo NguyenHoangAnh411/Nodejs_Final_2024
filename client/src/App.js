@@ -19,6 +19,7 @@ import ManageProduct from './pages/admin/ManageProduct';
 import UserManagement from './pages/admin/UserManagement';
 import OrderManagement from './pages/admin/OrderManagement';
 import Reports from './pages/admin/Reports';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -35,11 +36,12 @@ function AppWithNavBar() {
 
   return (
     <div className="app">
-      {location.pathname !== '/login' && location.pathname !== '/register' && <Navbar />}
+      {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/reset-password' && <Navbar />}
 
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/product/:productId" element={<ProductDetail />} />

@@ -5,7 +5,7 @@ const { storage } = require('../../client/src/components/firebaseService');
 const { ref, uploadBytes, getDownloadURL } = require('firebase/storage');
 const mongoose = require('mongoose');
 const Cart = require('../models/CartModel');
-
+const nodemailer = require('nodemailer');
 const register = async (req, res) => {
     try {
         const result = await authService.register(req.body);
@@ -268,8 +268,49 @@ const createUser = async (req, res) => {
   }
 };
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'facebookmangxahoi22@gmail.com',
+    pass: 'qtnp mtzy ukvq mklr',
+  },
+});
+
+const resetPassword = async (req, res) => {
+  const { phone, email } = req.body;
+
+  try {
+    const user = await User.findOne({ phone, email });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Người dùng không tồn tại với thông tin này.' });
+    }
+
+    const newPassword = Math.random().toString(36).slice(-8);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    const mailOptions = {
+      from: 'facebookmangxahoi22@gmail.com',
+      to: user.email,
+      subject: 'Password Recovery',
+      text: `Your new password is:${newPassword}\n\nPlease change your password after logging in.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: 'A new password has been emailed to you.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred during password recovery.' });
+  }
+};
 
 module.exports = {
+    resetPassword,
     register,
     login,
     getUserById,

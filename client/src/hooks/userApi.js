@@ -21,6 +21,18 @@ export const getUsers = async (search) => {
   }
 };
 
+export const resetPassword = async (phone, email) => {
+  try {
+    const response = await axios.post(`${API_URL}/reset-password`, {
+      phone,
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 
   export const deleteUser = async (id) => {
     try {

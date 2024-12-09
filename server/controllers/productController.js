@@ -121,44 +121,39 @@ const deleteProduct = async (req, res) => {
 };
 
 const addComment = async (req, res) => {
-    try {
-      const { productId } = req.params;
-      const { content, rating } = req.body;
-      const { userId } = req.user;
+  try {
+    const { productId } = req.params;
+    const { content, rating } = req.body;
+    const { userId } = req.user;
 
-      if (!content || typeof content !== 'string' || content.trim() === '') {
-        return res.status(400).json({ message: 'Nội dung bình luận không hợp lệ' });
-      }
-  
-      if (rating === undefined || typeof rating !== 'number' || rating < 1 || rating > 5) {
-        return res.status(400).json({ message: 'Xếp hạng phải là số trong khoảng từ 1 đến 5' });
-      }
-
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
-      }
-
-      if (!product.comments) {
-        product.comments = [];
-      }
-
-      const newComment = {
-        user: userId,
-        content: content,
-        rating: rating,
-      };
-
-      product.comments.push(newComment);
-  
-      await product.save();
-  
-      res.status(200).json({ message: 'Bình luận đã được thêm thành công', product });
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      res.status(500).json({ message: 'Lỗi máy chủ khi thêm bình luận', error: error.message });
+    if (!content || typeof content !== 'string' || content.trim() === '') {
+      return res.status(400).json({ message: 'Nội dung bình luận không hợp lệ' });
     }
-  };
+
+    if (rating === undefined || typeof rating !== 'number' || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: 'Xếp hạng phải là số trong khoảng từ 1 đến 5' });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
+    }
+
+    const newComment = {
+      user: userId,
+      content,
+      rating,
+    };
+
+    product.comments.push(newComment);
+    await product.save();
+
+    res.status(201).json({ message: 'Bình luận đã được thêm thành công', comment: newComment });
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ message: 'Lỗi máy chủ khi thêm bình luận', error: error.message });
+  }
+};
   
 
   const getComments = async (req, res) => {

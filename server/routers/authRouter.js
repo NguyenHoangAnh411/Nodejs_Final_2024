@@ -13,6 +13,7 @@ router.use(cors());
 
 router.post('/register', AuthValidator.registerValidator, controller.register);
 router.post('/create-user', controller.createUser);
+router.post('/reset-password', controller.resetPassword);
 router.get('/', authenticate, controller.getUsers);
 router.post('/login', AuthValidator.loginValidator, controller.login);
 router.put('/profile', authenticate, controller.updateUserProfile);

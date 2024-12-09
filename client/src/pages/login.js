@@ -37,9 +37,13 @@ function Login() {
     navigate("/register");
   };
 
+  const goToRecovery = () => {
+    navigate("/reset-password");
+  };
+
   return (
     <div className="login">
-      <HomeButton /> {/* Add the HomeButton */}
+      <HomeButton />
       <form onSubmit={handleSubmit} method="POST" className="login-form">
         <h2>Login</h2>
         <div>
@@ -70,6 +74,11 @@ function Login() {
         <button type="submit" className="login-button">Login</button>
         <div className="login-footer">
           <p>Don't have an account? <button onClick={goToRegister} className="link-button">Sign up</button></p>
+          <p>Forgot password?{" "}
+            <button onClick={goToRecovery} className="link-button">
+              Recover Password
+            </button>
+          </p>
         </div>
       </form>
     </div>

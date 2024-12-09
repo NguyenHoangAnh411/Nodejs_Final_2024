@@ -91,6 +91,7 @@ export const addCommentToProduct = async (productId, commentData) => {
   }
 };
 
+
 export const deleteCommentFromProduct = async (productId, commentId) => {
   try {
     const response = await fetch(`${BASE_URL}/${productId}/comments/${commentId}`, {
