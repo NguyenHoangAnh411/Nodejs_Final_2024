@@ -1,9 +1,40 @@
 .navbar {
   background-color: #333;
-  padding: 5px 20px;
+  padding: 5px 30px;
   color: white;
-  margin-left: 15%;
+  margin-left: 16%; /* Default margin for larger screens */
+  transition: margin-left 0.3s ease; /* Smooth transition */
 }
+
+.sidebar.open ~ .navbar {
+  margin-left: calc(16% + 250px); /* Adjust when Sidebar is open */
+}
+
+.sidebar.closed ~ .navbar {
+  margin-left: 16%; /* Reset margin when Sidebar is closed */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .navbar {
+    margin-left: calc(10% + 200px); /* Adjust for smaller Sidebar width */
+  }
+
+  .sidebar.closed ~ .navbar {
+    margin-left: 10%; /* Reset margin for closed Sidebar on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    margin-left: 0; /* Full width for small screens */
+  }
+
+  .sidebar.closed ~ .navbar {
+    margin-left: 0; /* No offset for closed Sidebar on small screens */
+  }
+}
+
 
 .nav-links {
   display: flex;
@@ -63,6 +94,7 @@
   border-color: #5cb85c;
   box-shadow: 0 0 8px rgba(92, 184, 92, 0.5);
 }
+
 .search-form button {
   position: absolute;
   right: 5px;
@@ -110,16 +142,34 @@
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    margin-left: calc(10% + 200px); /* Adjust for smaller Sidebar */
+  }
+
+  .sidebar.closed ~ .navbar {
+    margin-left: 10%; /* Adjust for closed Sidebar on smaller screens */
+  }
+
   .nav-links {
-      flex-direction: column;
-      gap: 10px;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .search-form input {
-      width: 150px;
+    width: 150px;
   }
 
   .navbar {
-      padding: 10px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    margin-left: 0; /* Full width for small screens */
+  }
+
+  .sidebar.closed ~ .navbar {
+    margin-left: 0; /* No offset for closed Sidebar on small screens */
   }
 }

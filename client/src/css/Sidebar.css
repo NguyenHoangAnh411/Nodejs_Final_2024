@@ -1,22 +1,31 @@
-/* Sidebar */
 .sidebar {
-  width: 250px; /* Độ rộng cố định cho sidebar */
-  height: 100vh; /* Đảm bảo sidebar chiếm toàn bộ chiều cao màn hình */
+  width: 250px; /* Default width for larger screens */
+  height: 100vh; /* Full height */
   background-color: #f4f4f4;
   padding: 20px;
-  position: fixed; /* Giữ sidebar cố định */
+  position: fixed; /* Fixed position */
   top: 0;
   left: 0;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  z-index: 10; /* Đảm bảo Sidebar luôn ở trên */
-  overflow-y: auto; /* Cho phép cuộn nội dung khi vượt quá chiều cao */
-  transition: all 0.3s ease; /* Thêm hiệu ứng khi sidebar thay đổi trạng thái */
+  z-index: 10; /* Ensure it stays on top */
+  overflow-y: auto; /* Allow scrolling */
+  transition: all 0.3s ease, transform 0.3s ease; /* Smooth transitions for both states */
 }
 
-/* Danh sách liên kết trong sidebar */
+.sidebar.closed {
+  transform: translateX(-100%); /* Move horizontally off-screen */
+}
+
+@media (max-width: 480px) {
+  .sidebar.closed {
+    transform: translateY(-100%); /* Move vertically off-screen for small screens */
+  }
+}
+
 .sidebar ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
 .sidebar li {
@@ -31,36 +40,81 @@
   display: block;
   padding: 10px 15px;
   border-radius: 5px;
+  text-align: center; /* Align links and buttons */
 }
 
-/* Hover effect cho các liên kết */
 .sidebar li a:hover {
   background-color: #007bff;
   color: white;
 }
 
-/* Phần responsive: Nếu màn hình nhỏ, Sidebar sẽ thu nhỏ */
+.toggle-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.close-sidebar-btn {
+  background-color: #e74c3c; /* Red for close button */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.close-sidebar-btn:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+
+.main-content {
+  margin-left: 250px; /* Default offset for open Sidebar */
+  transition: margin-left 0.3s ease; /* Smooth transition */
+}
+
+.sidebar.closed ~ .main-content {
+  margin-left: 0; /* Remove offset when Sidebar is closed */
+}
+
 @media (max-width: 768px) {
   .sidebar {
-    width: 200px; /* Thu nhỏ sidebar trên các màn hình nhỏ */
+    width: 200px; /* Adjust width for smaller screens */
+    padding: 15px; /* Adjust padding */
   }
 
   .sidebar li a {
-    font-size: 14px; /* Giảm kích thước font chữ khi màn hình nhỏ */
+    font-size: 14px; /* Smaller font size */
+  }
+
+  .main-content {
+    margin-left: 200px; /* Adjust offset for smaller Sidebar width */
+  }
+
+  .sidebar.closed ~ .main-content {
+    margin-left: 0; /* Remove offset for closed Sidebar */
   }
 }
 
-/* Sidebar có thể được ẩn hoặc thu nhỏ khi cần thiết cho các màn hình nhỏ hơn */
 @media (max-width: 480px) {
   .sidebar {
-    width: 100%; /* Sidebar sẽ chiếm toàn bộ chiều rộng của màn hình */
-    height: 60px; /* Giảm chiều cao của sidebar trên màn hình rất nhỏ */
-    padding: 10px; /* Giảm padding */
-    box-shadow: none; /* Tắt hiệu ứng bóng khi trên màn hình nhỏ */
+    width: 100%; /* Full width */
+    height: 60px; /* Reduced height for smaller screens */
+    padding: 10px; /* Adjust padding */
+    box-shadow: none; /* Remove shadow */
+    position: relative; /* Adjust position for smaller screens */
   }
 
   .sidebar ul {
-    display: flex; /* Hiển thị danh sách liên kết theo dạng ngang */
+    display: flex; /* Horizontal layout */
     justify-content: space-between;
     padding: 0;
     margin: 0;
@@ -71,7 +125,16 @@
   }
 
   .sidebar li a {
-    font-size: 12px;
-    padding: 5px 10px; /* Giảm padding để phù hợp với không gian nhỏ */
+    font-size: 12px; /* Smaller font size */
+    padding: 5px 10px; /* Adjust padding */
+}
+
+  .main-content {
+    margin-left: 0; /* No offset for small screens */
+    margin-top: 60px; /* Add top margin to accommodate Sidebar */
+  }
+
+  .sidebar.closed ~ .main-content {
+    margin-top: 0; /* Remove top margin when Sidebar is closed */
   }
 }
