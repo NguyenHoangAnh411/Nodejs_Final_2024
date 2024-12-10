@@ -41,9 +41,9 @@ export const addProduct = async (productData) => {
 export const updateProduct = async (productId, productData) => {
   try {
     const response = await axios.put(`${BASE_URL}/${productId}`, productData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: { 
+        'Authorization': `Bearer ${token}`, 
+      }
     });
     return response.data;
   } catch (error) {

@@ -83,27 +83,39 @@ const addProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-    try {
-        const { productId } = req.params;
-        const updates = req.body;
+  try {
+      const { productId } = req.params;
+      const updates = req.body;
 
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
-        }
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
+      }
 
-        if (updates.images) {
-            delete updates.images;
-        }
+      if (updates.category) {
+          const categoryDoc = await Category.findOne({ name: updates.category });
+          if (!categoryDoc) {
+              return res.status(400).json({ message: 'Danh mục không hợp lệ' });
+          }
+          updates.category = categoryDoc._id;
+      }
 
-        Object.assign(product, updates);
-        await product.save();
+      if (updates.images) {
+          delete updates.images;
+      }
 
-        res.status(200).json({ message: 'Sản phẩm đã được cập nhật', product });
-    } catch (error) {
-        res.status(500).json({ message: 'Lỗi máy chủ khi cập nhật sản phẩm', error: error.message });
-    }
+      Object.assign(product, updates);
+      await product.save();
+
+      res.status(200).json({ message: 'Sản phẩm đã được cập nhật', product });
+  } catch (error) {
+      res.status(500).json({ 
+          message: 'Lỗi máy chủ khi cập nhật sản phẩm', 
+          error: error.message 
+      });
+  }
 };
+
 
 const deleteProduct = async (req, res) => {
     try {
