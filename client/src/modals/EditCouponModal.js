@@ -79,8 +79,12 @@ function EditCouponModal({ showModal, closeModal, couponData, setCoupons }) {
               />
             </label>
             <div className="modal-buttons">
-              <button type="submit" className="save-btn">Save</button>
-              <button type="button" onClick={closeModal} className="cancel-btn">Cancel</button>
+              <button type="button" onClick={closeModal} className="cancel-btn">
+                Cancel
+              </button>
+              <button type="submit" className="save-btn">
+                Save
+              </button>
             </div>
           </form>
         </div>
