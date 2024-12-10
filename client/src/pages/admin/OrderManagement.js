@@ -150,7 +150,7 @@ function OrderManagement() {
             <h2>Order Details</h2>
             <p><strong>Order ID:</strong> {selectedOrder._id}</p>
             <p><strong>Customer Name:</strong> {selectedOrder.userId}</p>
-            <p><strong>Total Amount:</strong> ${selectedOrder.totalAmount}</p>
+            <p><strong>Total Amount:</strong> VND{selectedOrder.totalAmount}</p>
             <p><strong>Discount Applied:</strong> {selectedOrder.discount ? 'Yes' : 'No'}</p>
             <p><strong>Order Status:</strong> {selectedOrder.status}</p>
             <p><strong>Purchase Time:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
