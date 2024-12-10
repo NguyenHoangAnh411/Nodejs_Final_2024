@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/coupons';
-const token = localStorage.getItem('token');
+
 
 export const createCoupon = async (couponData) => {
   try {
@@ -81,6 +81,7 @@ export const deleteCoupon = async (id) => {
 
 export const updateCouponStatus = async (couponId, data) => {
   try {
+    const token = localStorage.getItem('token');
     await axios.patch(`${API_URL}/${couponId}/status`, data, {
       headers: {
         'Authorization': `Bearer ${token}`,

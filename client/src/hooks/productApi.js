@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:5000/api/products';
-const token = localStorage.getItem('token');
+
 
 export const getProductById = async (productId) => {
   const response = await axios.get(`${BASE_URL}/${productId}`);
@@ -25,6 +25,7 @@ export const getAllProduct = async () => {
 
 export const addProduct = async (productData) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.post(BASE_URL, productData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -40,6 +41,7 @@ export const addProduct = async (productData) => {
 
 export const updateProduct = async (productId, productData) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.put(`${BASE_URL}/${productId}`, productData, {
       headers: { 
         'Authorization': `Bearer ${token}`, 
@@ -54,6 +56,7 @@ export const updateProduct = async (productId, productData) => {
 
 export const deleteProduct = async (productId) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.delete(`${BASE_URL}/${productId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -79,6 +82,7 @@ export const getCommentsForProduct = async (productId) => {
 
 export const addCommentToProduct = async (productId, commentData) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.post(`${BASE_URL}/${productId}/comments`, commentData, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -94,6 +98,7 @@ export const addCommentToProduct = async (productId, commentData) => {
 
 export const deleteCommentFromProduct = async (productId, commentId) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${BASE_URL}/${productId}/comments/${commentId}`, {
       method: 'DELETE',
       headers: {

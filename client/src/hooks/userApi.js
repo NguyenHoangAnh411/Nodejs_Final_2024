@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/users';
-const token = localStorage.getItem('token');
+
 
 export const getUserById = async (userId) => {
     const response = await axios.get(`${API_URL}/${userId}`);
@@ -10,6 +10,7 @@ export const getUserById = async (userId) => {
 
 export const getUsers = async (search) => {
   try {
+    const token = localStorage.getItem('token');
     const response = await axios.get(`${API_URL}/?search=${search}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -36,6 +37,7 @@ export const resetPassword = async (phone, email) => {
 
   export const deleteUser = async (id) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.delete(`${API_URL}/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -48,6 +50,7 @@ export const resetPassword = async (phone, email) => {
   };
 
   export const getUserData = async () => {
+    const token = localStorage.getItem('token');
     const response = await axios.get(`${API_URL}/profile`, {
         headers: { Authorization: `Bearer ${token}` },
     });
@@ -55,6 +58,7 @@ export const resetPassword = async (phone, email) => {
 };
 
 export const changePassword = async (oldPassword, newPassword) => {
+  const token = localStorage.getItem('token');
   const response = await axios.post(
       `${API_URL}/change-password`,
       { oldpassword: oldPassword, newpassword: newPassword },
@@ -64,6 +68,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 };
 
 export const uploadAvatar = async (file, userId) => {
+  const token = localStorage.getItem('token');
   const formData = new FormData();
   formData.append('avatar', file);
   formData.append('userId', userId);
@@ -80,6 +85,7 @@ export const uploadAvatar = async (file, userId) => {
 
 export const updateProfile = async (updatedData, token) => {
   try {
+    const token = localStorage.getItem('token');
       const response = await axios.put(`${API_URL}/profile`, updatedData, {
         headers: { 
           'Authorization': `Bearer ${token}`, 
@@ -93,6 +99,7 @@ export const updateProfile = async (updatedData, token) => {
 
 export const banUser = async (userId, banned) => {
   try {
+    const token = localStorage.getItem('token');
       const response = await axios.patch(
           `${API_URL}/${userId}/ban`,
           { banned },
@@ -110,6 +117,7 @@ export const banUser = async (userId, banned) => {
 
 export const updateUser = async (userId, updatedData) => {
   try {
+    const token = localStorage.getItem('token');
       const response = await axios.put(
           `${API_URL}/${userId}`,
           updatedData,
