@@ -18,8 +18,14 @@
 }
 
 .coupon-table th {
-  background-color: #f4f4f4;
+  background-color: #f4f4f4; /* Nền xám nhạt */
+  color: #333333; /* Màu chữ đen đậm để dễ nhìn */
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ddd;
 }
+
 
 .create-coupon-button {
   background-color: #4CAF50;

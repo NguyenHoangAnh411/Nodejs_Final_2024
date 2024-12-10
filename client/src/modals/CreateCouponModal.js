@@ -66,7 +66,7 @@ function CreateCouponModal({ showModal, closeModal }) {
       <div className="modal-container">
         <h2>Create New Coupon</h2>
         {error && <p className="error">{error}</p>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="coupon-form">
           <div className="form-group">
             <label htmlFor="code">Coupon Code</label>
             <input

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { addProduct, updateProduct, deleteProduct, getAllProduct, getProductById } from '../../hooks/productApi';
+import {
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProduct,
+  getProductById,
+} from '../../hooks/productApi';
 import { getAllCategories } from '../../hooks/categoryApi';
 import '../../css/ManageProduct.css';
 import Sidebar from '../../components/Sidebar';
@@ -30,7 +36,7 @@ function ManageProduct() {
         const result = await getAllProduct();
         setProducts(result);
       } catch (error) {
-        console.error('Lỗi khi lấy danh sách sản phẩm:', error.message);
+        console.error('Error fetching products:', error.message);
       }
     };
 
@@ -39,11 +45,12 @@ function ManageProduct() {
         const result = await getAllCategories();
         setCategories(result);
       } catch (error) {
-        console.error('Lỗi khi lấy danh sách danh mục:', error.message);
+        console.error('Error fetching categories:', error.message);
       }
     };
-    fetchCategories();
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -52,21 +59,15 @@ function ManageProduct() {
         try {
           const result = await getProductById(productId);
           setNewProduct({
-            name: result.name,
-            price: result.price,
-            cost: result.cost,
-            description: result.description,
-            category: result.category,
-            brand: result.brand,
-            stock: result.stock,
-            color: result.color,
+            ...result,
             images: [],
           });
         } catch (error) {
-          console.error('Lỗi khi lấy chi tiết sản phẩm:', error.message);
+          console.error('Error fetching product details:', error.message);
         }
       }
     };
+
     fetchProductDetails();
   }, [productId]);
 
@@ -84,9 +85,7 @@ function ManageProduct() {
       ...prevState,
       images: files,
     }));
-
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages(previews);
+    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
   };
 
   const handleSubmitProduct = async (e) => {
@@ -94,39 +93,35 @@ function ManageProduct() {
     setLoading(true);
 
     const formData = new FormData();
-    // Add all fields to formData, including images
     Object.keys(newProduct).forEach((key) => {
       if (key !== 'images') {
         formData.append(key, newProduct[key]);
       }
     });
 
-    // Append images to formData
-    for (let i = 0; i < newProduct.images.length; i++) {
-      formData.append('images', newProduct.images[i]);
+    for (const file of newProduct.images) {
+      formData.append('images', file);
     }
 
     try {
       if (productId) {
-        // Update product
         await updateProduct(productId, formData);
         setProducts((prev) =>
           prev.map((product) =>
             product._id === productId ? { ...product, ...newProduct } : product
           )
         );
-        setMessage('Sản phẩm đã được cập nhật thành công!');
+        setMessage('Product updated successfully!');
       } else {
-        // Add new product
         const result = await addProduct(formData);
         setProducts((prev) => [...prev, result]);
-        setMessage('Sản phẩm đã được thêm thành công!');
+        setMessage('Product added successfully!');
       }
 
       handleCancel();
     } catch (error) {
-      console.error('Lỗi khi xử lý sản phẩm:', error.message);
-      setMessage('Có lỗi xảy ra khi xử lý sản phẩm!');
+      console.error('Error handling product:', error.message);
+      setMessage('Error occurred while handling the product.');
     } finally {
       setLoading(false);
       setTimeout(() => setMessage(''), 3000);
@@ -137,11 +132,11 @@ function ManageProduct() {
     try {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((product) => product._id !== id));
-      setMessage('Sản phẩm đã được xóa!');
+      setMessage('Product deleted successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
-      console.error('Lỗi khi xóa sản phẩm:', error.message);
-      setMessage('Có lỗi xảy ra khi xóa sản phẩm!');
+      console.error('Error deleting product:', error.message);
+      setMessage('Error occurred while deleting the product.');
     }
   };
 
@@ -166,25 +161,48 @@ function ManageProduct() {
     <div className="manage-product-container">
       <Sidebar />
       <div className="content">
-        <h1>Product Management</h1>
+        <h1>Manage Products</h1>
 
         <form onSubmit={handleSubmitProduct} className="product-form">
           <h2>{productId ? 'Update Product' : 'Add New Product'}</h2>
 
-          <label>
-            Product Name:
-            <input type="text" name="name" value={newProduct.name} onChange={handleChange} required />
-          </label>
-          <label>Price (VND):</label>
-          <input type="number" name="price" value={newProduct.price} onChange={handleChange} />
-
-          <label>
-            Cost:
-            <input type="number" name="cost" value={newProduct.cost} onChange={handleChange} required />
-          </label>
-          <label>
-            Category:
-            <select name="category" value={newProduct.category} onChange={handleChange} required>
+          <div className="form-group">
+            <label>Product Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={newProduct.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Price (VND):</label>
+            <input
+              type="number"
+              name="price"
+              value={newProduct.price}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>Cost:</label>
+            <input
+              type="number"
+              name="cost"
+              value={newProduct.cost}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Category:</label>
+            <select
+              name="category"
+              value={newProduct.category}
+              onChange={handleChange}
+              required
+            >
               <option value="">Choose Category</option>
               {categories.map((cat) => (
                 <option key={cat._id} value={cat.name}>
@@ -192,38 +210,61 @@ function ManageProduct() {
                 </option>
               ))}
             </select>
-          </label>
-          <label>
-            Brand:
-            <input type="text" name="brand" value={newProduct.brand} onChange={handleChange} />
-          </label>
-          <label>
-            Stock:
-            <input type="number" name="stock" value={newProduct.stock} onChange={handleChange} required />
-          </label>
-          <label>
-            Color:
-            <input type="text" name="color" value={newProduct.color} onChange={handleChange} />
-          </label>
-          <label>
-            Description:
-            <textarea name="description" value={newProduct.description} onChange={handleChange}></textarea>
-          </label>
-          <label>
-            Image:
+          </div>
+          <div className="form-group">
+            <label>Brand:</label>
+            <input
+              type="text"
+              name="brand"
+              value={newProduct.brand}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>Stock:</label>
+            <input
+              type="number"
+              name="stock"
+              value={newProduct.stock}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Color:</label>
+            <input
+              type="text"
+              name="color"
+              value={newProduct.color}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>Description:</label>
+            <textarea
+              name="description"
+              value={newProduct.description}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+          <div className="form-group">
+            <label>Image:</label>
             <input type="file" multiple onChange={handleImageChange} />
             <div className="image-previews">
               {previewImages.map((src, index) => (
                 <img key={index} src={src} alt={`preview-${index}`} />
               ))}
             </div>
-          </label>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Đang xử lý...' : productId ? 'Update' : 'Add Product'}
-          </button>
-          <button type="button" onClick={handleCancel}>
-            Cancel
-          </button>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" disabled={loading}>
+              {loading ? 'Processing...' : productId ? 'Update' : 'Add Product'}
+            </button>
+            <button type="button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
         </form>
 
         {message && <div className="message">{message}</div>}
@@ -235,12 +276,20 @@ function ManageProduct() {
               <h3>{product.name}</h3>
               <p>Price: {product.price} VND</p>
               <p>Stock: {product.stock}</p>
-              <button onClick={() => setProductId(product._id)} className="edit-button">
-                Edit
-              </button>
-              <button onClick={() => handleDeleteProduct(product._id)} className="delete-button">
-                Delete
-              </button>
+              <div className="product-actions">
+                <button
+                  onClick={() => setProductId(product._id)}
+                  className="edit-button"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteProduct(product._id)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
