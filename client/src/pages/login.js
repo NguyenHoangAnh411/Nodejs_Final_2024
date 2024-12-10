@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import "../css/Login.css";
-import HomeButton from "./HomeButton"; // Import the HomeButton component
+import HomeButton from "./HomeButton";
 
 function Login() {
   const [phone, setPhone] = useState("");

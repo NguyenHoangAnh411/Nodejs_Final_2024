@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/CheckOutModal.css';
 import { checkoutOrder } from '../hooks/orderApi';
+import { updateProfile } from '../hooks/userApi';
 
 const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, addresses, orderDetails }) => {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
   const [totalAmount, setTotalAmount] = useState(orderDetails ? orderDetails.totalAmount : 0);
   const [newAddress, setNewAddress] = useState({ recipientName: '', street: '', city: '', postalCode: '', phone: '' });
   const [isAddingAddress, setIsAddingAddress] = useState(false);
-
+  const token = localStorage.getItem('token');
   useEffect(() => {
     if (orderDetails) {
       setLoyaltyPoints(orderDetails.loyaltyPoints || 0);
@@ -21,18 +22,33 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
 
   if (!isOpen) return null;
 
-  const handleAddNewAddress = () => {
+  const handleAddNewAddress = async () => {
     if (!newAddress.recipientName || !newAddress.street || !newAddress.city || !newAddress.postalCode || !newAddress.phone) {
       setError('Vui lòng nhập đầy đủ thông tin địa chỉ.');
       return;
     }
-    onChange({
-      ...checkoutInfo,
-      address: newAddress,
-    });
-    addresses.push(newAddress);
-    setIsAddingAddress(false);
-    setError('');
+
+    setLoading(true);
+
+    try {
+      const updatedData = {
+        addresses: [...addresses, newAddress],
+      };
+      await updateProfile(updatedData, token);
+
+      onChange({
+        ...checkoutInfo,
+        address: newAddress,
+      });
+      addresses.push(newAddress);
+      setIsAddingAddress(false);
+      setError('');
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      setError('Lỗi khi thêm địa chỉ. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCheckout = async () => {
@@ -54,7 +70,7 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
     try {
       const response = await checkoutOrder(orderData);
       setLoading(false);
-      
+
       if (response && response.message) {
         setLoyaltyPoints(response.loyaltyPoints);
         onConfirm(response);
@@ -104,7 +120,9 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
               value={newAddress.phone}
               onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
             />
-            <button onClick={handleAddNewAddress}>Lưu địa chỉ</button>
+            <button onClick={handleAddNewAddress} disabled={loading}>
+              {loading ? 'Đang xử lý...' : 'Lưu địa chỉ'}
+            </button>
           </>
         ) : (
           <>

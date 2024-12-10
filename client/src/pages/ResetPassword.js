@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { resetPassword } from "../hooks/userApi";
 import { useNavigate } from "react-router-dom";
-import "../css/HomeButton.css"; // Import CSS từ HomeButton.css
-import "../css/ResetPassword.css"; // Import CSS dành cho ResetPassword
+import "../css/HomeButton.css";
+import "../css/ResetPassword.css"; 
 
 const ResetPassword = () => {
   const [phone, setPhone] = useState("");

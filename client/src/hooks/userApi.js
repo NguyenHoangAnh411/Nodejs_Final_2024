@@ -81,8 +81,10 @@ export const uploadAvatar = async (file, userId) => {
 export const updateProfile = async (updatedData, token) => {
   try {
       const response = await axios.put(`${API_URL}/profile`, updatedData, {
-          headers: { Authorization: `Bearer ${token}` }
-      });
+        headers: { 
+          'Authorization': `Bearer ${token}`, 
+        }
+      });      
       return response.data;
   } catch (error) {
       throw error;
