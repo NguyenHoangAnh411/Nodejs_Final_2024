@@ -10,7 +10,7 @@ const OrderHistoryPage = () => {
   const [intervalId, setIntervalId] = useState(null);
 
   // Exchange rate: 1 USD = 25,387 VND
-  const exchangeRate = 25387;
+  // const exchangeRate = 25387;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -63,7 +63,7 @@ const OrderHistoryPage = () => {
                 <p><strong>Status:</strong> {order.status}</p>
                 <p>
                   <strong>Total Amount:</strong>{' '}
-                  {(order.totalAmount * exchangeRate).toLocaleString('vi-VN')} VND
+                  {(order.totalAmount).toLocaleString('vi-VN')} VND
                 </p>
                 <ul>
                   {order.items.map((item) => (
