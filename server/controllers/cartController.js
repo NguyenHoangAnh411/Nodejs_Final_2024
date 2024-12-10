@@ -1,7 +1,7 @@
 const Cart = require('../models/CartModel');
 
 const addToCart = async (req, res) => {
-  const { productId } = req.params; 
+  const { productId } = req.params;
   const { userId } = req.user;
 
   try {
@@ -25,6 +25,7 @@ const addToCart = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 const addCartNotLoggedUser = async (req, res) => {
   try {
