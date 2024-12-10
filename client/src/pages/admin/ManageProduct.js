@@ -183,6 +183,7 @@ function ManageProduct() {
             <input
               type="text"
               name="name"
+              className="special-input"
               value={newProduct.name}
               onChange={handleChange}
               required
@@ -232,6 +233,7 @@ function ManageProduct() {
             <input
               type="text"
               name="brand"
+              className="special-input"
               value={newProduct.brand}
               onChange={handleChange}
             />
@@ -253,6 +255,7 @@ function ManageProduct() {
             <input
               type="text"
               name="color"
+              className="special-input"
               value={newProduct.color}
               onChange={handleChange}
             />
