@@ -36,7 +36,7 @@ function ManageProduct() {
         const result = await getAllProduct();
         setProducts(result);
       } catch (error) {
-        console.error('Error fetching products:', error.message);
+        console.error('Error fetching product list:', error.message);
       }
     };
 
@@ -45,7 +45,7 @@ function ManageProduct() {
         const result = await getAllCategories();
         setCategories(result);
       } catch (error) {
-        console.error('Error fetching categories:', error.message);
+        console.error('Error fetching category list:', error.message);
       }
     };
 
@@ -130,7 +130,7 @@ function ManageProduct() {
       handleCancel();
     } catch (error) {
       console.error('Error handling product:', error.message);
-      setMessage('Error occurred while handling the product.');
+      setMessage('An error occurred while handling the product.');
     } finally {
       setLoading(false);
       setTimeout(() => setMessage(''), 3000);
@@ -145,7 +145,7 @@ function ManageProduct() {
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error deleting product:', error.message);
-      setMessage('Error occurred while deleting the product.');
+      setMessage('An error occurred while deleting the product.');
     }
   };
 
@@ -167,10 +167,13 @@ function ManageProduct() {
   };
 
   return (
-    <div className="manage-product-container">
+    <div
+      className="manage-product-container"
+      style={{ background: 'linear-gradient(to right, #f9f9f9, #ffffff)' }}
+    >
       <Sidebar />
       <div className="content">
-        <h1>Manage Products</h1>
+        <h1 style={{ color: '#4caf50' }}>Manage Products</h1>
 
         <form onSubmit={handleSubmitProduct} className="product-form">
           <h2>{productId ? 'Update Product' : 'Add New Product'}</h2>
@@ -185,6 +188,7 @@ function ManageProduct() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Price (VND):</label>
             <input
@@ -194,6 +198,7 @@ function ManageProduct() {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Cost:</label>
             <input
@@ -204,6 +209,7 @@ function ManageProduct() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Category:</label>
             <select
@@ -214,12 +220,13 @@ function ManageProduct() {
             >
               <option value="">Choose Category</option>
               {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
+                <option key={cat._id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
             </select>
           </div>
+
           <div className="form-group">
             <label>Brand:</label>
             <input
@@ -229,6 +236,7 @@ function ManageProduct() {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Stock:</label>
             <input
@@ -239,6 +247,7 @@ function ManageProduct() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Color:</label>
             <input
@@ -248,6 +257,7 @@ function ManageProduct() {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Description:</label>
             <textarea
@@ -256,6 +266,7 @@ function ManageProduct() {
               onChange={handleChange}
             ></textarea>
           </div>
+
           <div className="form-group">
             <label>Image:</label>
             <input type="file" multiple onChange={handleImageChange} />
@@ -278,7 +289,7 @@ function ManageProduct() {
 
         {message && <div className="message">{message}</div>}
 
-        <h2>Product List</h2>
+        <h2 style={{ color: '#4caf50' }}>Product List</h2>
         <div className="product-list">
           {products.map((product) => (
             <div key={product._id} className="product-item">
