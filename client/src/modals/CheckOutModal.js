@@ -82,6 +82,18 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
     }
   };
 
+  const handleLoyaltyPointsChange = (e) => {
+    let pointsUsed = parseInt(e.target.value, 10) || 0;
+    const maxPoints = loyaltyPoints >= 1000 ? Math.floor(loyaltyPoints / 1000) : loyaltyPoints;
+    const maxAmount = Math.floor(orderDetails.totalAmount / 1000);
+
+    pointsUsed = pointsUsed > maxPoints ? maxPoints : pointsUsed;
+    pointsUsed = pointsUsed > maxAmount ? maxAmount : pointsUsed;
+
+    setLoyaltyPointsUsed(pointsUsed);
+    setTotalAmount(orderDetails.totalAmount - pointsUsed * 1000);
+};
+
   return (
     <div className="modal">
       <div className="modal-content">
@@ -152,8 +164,12 @@ const CheckoutModal = ({ isOpen, onClose, onConfirm, checkoutInfo, onChange, add
           <label>Sử dụng điểm: </label>
           <input
             type="number"
+            id="loyaltyPoints"
             value={loyaltyPointsUsed}
-            onChange={(e) => setLoyaltyPointsUsed(Number(e.target.value))}
+            onChange={handleLoyaltyPointsChange}
+            max={Math.floor(loyaltyPoints / 1000)}
+            min={0}
+            step={1}
           />
           <p>Được giảm: {loyaltyPointsUsed * 1000} VND</p>
         </div>

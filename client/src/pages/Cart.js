@@ -353,7 +353,7 @@ function Cart() {
           onClose={handleCloseCheckoutModal}
           onConfirm={handleCheckout}
           checkoutInfo={checkoutInfo}
-          onChange={(updatedInfo) => setCheckoutInfo(updatedInfo)} // Đảm bảo cập nhật trạng thái đúng
+          onChange={(updatedInfo) => setCheckoutInfo(updatedInfo)}
           addresses={userData?.addresses || []}
           orderDetails={orderDetails}
       />
