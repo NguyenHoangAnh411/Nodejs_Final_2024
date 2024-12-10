@@ -128,11 +128,15 @@ textarea {
 
 .message {
   text-align: center;
-  margin: 20px 0;
-  color: #4caf50;
-  font-size: 1.2rem;
+  margin: 15px 0;
+  color: #4caf50; /* Màu hiển thị */
   font-weight: bold;
 }
+
+.message {
+  display: block !important;
+}
+
 
 .product-list {
   display: flex;

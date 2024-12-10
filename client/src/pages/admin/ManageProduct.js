@@ -59,7 +59,14 @@ function ManageProduct() {
         try {
           const result = await getProductById(productId);
           setNewProduct({
-            ...result,
+            name: result.name,
+            price: result.price,
+            cost: result.cost,
+            description: result.description,
+            category: result.category,
+            brand: result.brand,
+            stock: result.stock,
+            color: result.color,
             images: [],
           });
         } catch (error) {
@@ -85,7 +92,9 @@ function ManageProduct() {
       ...prevState,
       images: files,
     }));
-    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreviewImages(previews);
   };
 
   const handleSubmitProduct = async (e) => {
@@ -99,8 +108,8 @@ function ManageProduct() {
       }
     });
 
-    for (const file of newProduct.images) {
-      formData.append('images', file);
+    for (let i = 0; i < newProduct.images.length; i++) {
+      formData.append('images', newProduct.images[i]);
     }
 
     try {
@@ -205,7 +214,7 @@ function ManageProduct() {
             >
               <option value="">Choose Category</option>
               {categories.map((cat) => (
-                <option key={cat._id} value={cat.name}>
+                <option key={cat._id} value={cat._id}>
                   {cat.name}
                 </option>
               ))}
