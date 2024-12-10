@@ -96,12 +96,17 @@ export const deleteCommentFromProduct = async (productId, commentId) => {
   try {
     const response = await fetch(`${BASE_URL}/${productId}/comments/${commentId}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (!response.ok) {
-      throw new Error('Failed to delete comment');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete comment');
     }
     return await response.json();
   } catch (error) {
+    console.error('Error deleting comment:', error);
     throw new Error(error.message);
   }
 };

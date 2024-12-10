@@ -185,64 +185,68 @@ const addComment = async (req, res) => {
 
   const deleteComment = async (req, res) => {
     try {
-      const { productId, commentId } = req.params;
-      const userId = req.user.id;
-  
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
-      }
+        const { productId, commentId } = req.params;
+        const { userId } = req.user;
 
-      const commentIndex = product.comments.findIndex(
-        (comment) => comment._id.toString() === commentId && comment.user.toString() === userId
-      );
-  
-      if (commentIndex === -1) {
-        return res.status(404).json({ message: 'Bình luận không tồn tại hoặc bạn không có quyền xóa' });
-      }
+        if (!userId) {
+            console.error('User ID is missing');
+            return res.status(403).json({ message: 'Không xác định được người dùng' });
+        }
 
-      product.comments.splice(commentIndex, 1);
-      await product.save();
-  
-      res.status(200).json({ message: 'Bình luận đã được xóa thành công' });
+        const product = await Product.findById(productId);
+        if (!product) {
+            console.error(`Product with ID ${productId} not found`);
+            return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
+        }
+
+        const commentIndex = product.comments.findIndex(
+            (comment) => comment._id.toString() === commentId && comment.user.toString() === userId.toString()
+        );
+
+        if (commentIndex === -1) {
+            console.error(`Comment with ID ${commentId} not found or user ${userId.toString()} has no permission`);
+            return res.status(404).json({ message: 'Bình luận không tồn tại hoặc bạn không có quyền xóa' });
+        }
+
+        product.comments.splice(commentIndex, 1);
+        await product.save();
+
+        console.log(`Comment ${commentId} deleted successfully`);
+        res.status(200).json({ message: 'Bình luận đã được xóa thành công' });
     } catch (error) {
-      res.status(500).json({ message: 'Lỗi máy chủ khi xóa bình luận', error: error.message });
+        console.error('Error deleting comment:', error);
+        res.status(500).json({ message: 'Lỗi máy chủ khi xóa bình luận', error: error.message });
     }
-  };
+};
+
 
   const searchProducts = async (req, res) => {
     const { query = '', page = 1, limit = 20, priceRange } = req.query;
 
-    // Khởi tạo bộ lọc
     const filters = {};
 
-    // Xử lý tham số tìm kiếm (query)
     if (query) {
-        filters.name = new RegExp(query, 'i'); // Tìm kiếm theo tên sản phẩm (không phân biệt chữ hoa/thường)
+        filters.name = new RegExp(query, 'i');
     }
 
-    // Xử lý tham số priceRange (khoảng giá)
     if (priceRange) {
-        const [min, max] = priceRange.split(',').map(Number); // Chuyển đổi priceRange thành mảng số
-        filters.price = { $gte: min, $lte: max }; // Convert to VND before filtering // Tạo bộ lọc giá
+        const [min, max] = priceRange.split(',').map(Number); 
+        filters.price = { $gte: min, $lte: max }; 
     }
 
     try {
-        // Đếm tổng số sản phẩm phù hợp với bộ lọc
+
         const totalProducts = await Product.countDocuments(filters);
 
-        // Lấy danh sách sản phẩm dựa trên bộ lọc, phân trang
         const products = await Product.find(filters)
-            .skip((page - 1) * limit) // Bỏ qua các sản phẩm trước đó
-            .limit(parseInt(limit)); // Giới hạn số sản phẩm trả về
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit)); 
 
-        // Trả về kết quả
         res.json({
             products,
-            totalPages: Math.ceil(totalProducts / limit), // Tổng số trang
+            totalPages: Math.ceil(totalProducts / limit),
         });
     } catch (error) {
-        // Log lỗi và trả về lỗi
         console.error('Detailed error fetching products:', error);
         res.status(500).json({ error: error.message });
     }
