@@ -349,14 +349,15 @@ function Cart() {
 
         {userData && userData.addresses && (
           <CheckoutModal
-            isOpen={isCheckoutModalOpen}
-            onClose={handleCloseCheckoutModal}
-            onConfirm={handleCheckout}
-            checkoutInfo={checkoutInfo}
-            onChange={handleInputChange}
-            addresses={userData.addresses}
-            orderDetails={orderDetails}
-          />
+          isOpen={isCheckoutModalOpen}
+          onClose={handleCloseCheckoutModal}
+          onConfirm={handleCheckout}
+          checkoutInfo={checkoutInfo}
+          onChange={(updatedInfo) => setCheckoutInfo(updatedInfo)} // Đảm bảo cập nhật trạng thái đúng
+          addresses={userData?.addresses || []}
+          orderDetails={orderDetails}
+      />
+      
         )}
         {showSuccess && <div className="success">{successMessage}</div>}
         {isVoucherModalOpen && (

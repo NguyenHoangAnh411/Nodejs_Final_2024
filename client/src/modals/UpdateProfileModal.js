@@ -136,17 +136,15 @@ function UpdateProfileModal({ isOpen, onRequestClose, userData, token, onProfile
                 </button>
                 {updatedData.addresses.length > 0 && (
                     <div className="remove-address-buttons">
-                        {updatedData.addresses.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleRemoveAddress(index)}
-                                className="remove-btn"
-                            >
-                                Remove
-                            </button>
-                        ))}
+                        <button
+                            onClick={() => handleRemoveAddress(0)} // Xóa địa chỉ đầu tiên trong danh sách
+                            className="remove-btn"
+                        >
+                            Remove
+                        </button>
                     </div>
                 )}
+
             </div>
 
         </Modal>
